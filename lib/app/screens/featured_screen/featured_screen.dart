@@ -45,7 +45,7 @@ class FeaturedScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      ListOfSubjects(),
+                      const ListOfSubjects(),
                     ],
                   ),
                 ),

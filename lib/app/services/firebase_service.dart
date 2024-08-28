@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class FirebaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  // Banners Collection Begin ====================== **
   Future<QuerySnapshot<Map<String, dynamic>>?> getAllBanners(
       {bool activeOnly = false}) async {
     Query<Map<String, dynamic>> query = _firestore.collection('banners');
@@ -17,6 +18,7 @@ class FirebaseService {
 
     return await query.get();
   }
+  // Banners Collection End ========================= **
 
   Future<QuerySnapshot<Map<String, dynamic>>?> getAllSubjects() async {
     final snapshot = await _firestore.collection('subjects').get();

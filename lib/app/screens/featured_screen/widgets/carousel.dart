@@ -1,5 +1,6 @@
 import 'package:app/app/config/them_constants.dart';
 import 'package:app/app/repositories/banner_respository.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:app/app/models/app_banner.dart';
@@ -41,7 +42,7 @@ class _CarouselState extends State<Carousel> {
             itemBuilder: (context, index, realIndex) => ClipRRect(
               borderRadius:
                   BorderRadius.circular(ThemConstants.borderRadiusMedium),
-              child: Image.network(_banners[index].imagePath),
+              child: CachedNetworkImage(imageUrl: _banners[index].imagePath),
             ),
           );
   }
