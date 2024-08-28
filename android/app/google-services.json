@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "330277784027",
+    "project_id": "arzam-physics-app",
+    "storage_bucket": "arzam-physics-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:330277784027:android:48af2884c17ee1c6333ffe",
+        "android_client_info": {
+          "package_name": "lk.arzamphysics.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDalZf3M7uBL0gHi_VJn4l7SuXh36934CU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
