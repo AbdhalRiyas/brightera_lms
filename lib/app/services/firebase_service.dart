@@ -1,4 +1,4 @@
-import 'package:app/app/models/cours.dart';
+import 'package:app/app/models/course.dart';
 import 'package:app/app/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -23,6 +23,27 @@ class FirebaseService {
   Future<QuerySnapshot<Map<String, dynamic>>?> getAllSubjects() async {
     final snapshot = await _firestore.collection('subjects').get();
     return snapshot;
+  }
+
+  Future<QuerySnapshot<Map<String, dynamic>>?> getCoursesBySubject(
+      String subjectId) async {
+    try {
+      // Create a reference to the specific subject document
+      DocumentReference subjectRef =
+          _firestore.collection('subjects').doc(subjectId);
+
+      // Query the courses collection where the subject field matches the subject reference
+      final coursesSnapshot = await _firestore
+          .collection('courses')
+          .where('subject', isEqualTo: subjectRef)
+          .get();
+
+      return coursesSnapshot;
+    } catch (e) {
+      // Handle any errors here
+      print('Error fetching courses by subject: $e');
+      return null;
+    }
   }
 
   Future<Map<String, dynamic>?> getUserData(String id) async {

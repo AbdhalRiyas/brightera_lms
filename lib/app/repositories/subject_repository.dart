@@ -19,6 +19,7 @@ class SubjectRepository {
           isActive: doc['is_active'],
           isHidden: doc['is_hidden'], // Corrected the typo 'is_hideen'
           name: doc['name'],
+          icon: doc['icon'],
         ));
       }
     }

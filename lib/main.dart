@@ -1,7 +1,8 @@
-import 'package:app/app/config/them_constants.dart';
+import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/screens/home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'app/config/firebase_options.dart';
 
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Arzam Physics',
       debugShowCheckedModeBanner: false,
-      theme: ThemConstants.lightTheme,
+      theme: ThemeConstants.lightTheme,
       home: const HomeScreen(title: 'Arzam Physics'),
     );
   }
