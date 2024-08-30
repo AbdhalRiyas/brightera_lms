@@ -1,7 +1,7 @@
 import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/screens/featured_screen/widgets/carousel.dart';
 import 'package:app/app/screens/featured_screen/widgets/custom_app_bar.dart';
-import 'package:app/app/screens/featured_screen/widgets/list_of_subjects.dart';
+import 'package:app/app/screens/featured_screen/widgets/courses/courses.dart';
 import 'package:flutter/material.dart';
 
 class FeaturedScreen extends StatefulWidget {
@@ -50,7 +50,7 @@ class _FeaturedScreenState extends State<FeaturedScreen>
                               "Courses",
                               style: ThemeConstants.headingStyle,
                             ),
-                            ListOfSubjects(),
+                            Courses(),
                           ],
                         ),
                       ),

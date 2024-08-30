@@ -1,18 +1,18 @@
 import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/models/subject.dart';
 import 'package:app/app/repositories/subject_repository.dart';
-import 'package:app/app/screens/featured_screen/widgets/list_of_courses.dart';
-import 'package:app/app/screens/featured_screen/widgets/subject_button.dart';
+import 'package:app/app/screens/featured_screen/widgets/courses/list_of_courses.dart';
+import 'package:app/app/screens/featured_screen/widgets/courses/subject_button.dart';
 import 'package:flutter/material.dart';
 
-class ListOfSubjects extends StatefulWidget {
-  const ListOfSubjects({super.key});
+class Courses extends StatefulWidget {
+  const Courses({super.key});
 
   @override
-  State<ListOfSubjects> createState() => _ListOfSubjectsState();
+  State<Courses> createState() => _CoursesState();
 }
 
-class _ListOfSubjectsState extends State<ListOfSubjects> {
+class _CoursesState extends State<Courses> {
   final SubjectRepository _repository = SubjectRepository();
   final GlobalKey<ListOfCoursesState> _key = GlobalKey<ListOfCoursesState>();
 
