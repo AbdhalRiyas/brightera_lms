@@ -70,8 +70,8 @@ class _CarouselState extends State<Carousel> {
                       onTap: () => _controller.animateToPage(entry.key),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
-                        width: _current == entry.key ? 30.0 : 12.0,
-                        height: 12.0,
+                        width: _current == entry.key ? 30.0 : 6.0,
+                        height: 6.0,
                         margin: const EdgeInsets.symmetric(
                             vertical: 8.0, horizontal: 4.0),
                         decoration: BoxDecoration(

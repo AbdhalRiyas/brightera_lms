@@ -38,7 +38,7 @@ class _CoursesState extends State<Courses> {
 
   void _switchSubject(String subectId) {
     if (_selectedSubject != subectId) {
-      // Calling child method using global key
+      // Calling child method using a global key
       _key.currentState?.fetchCourses(subectId);
       setState(() {
         _selectedSubject = subectId;
