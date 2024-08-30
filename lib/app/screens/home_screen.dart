@@ -65,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
       body: PageView(
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         controller: _pageController,
         children: _tabs,
         onPageChanged: (page) {

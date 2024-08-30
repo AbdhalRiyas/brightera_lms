@@ -50,8 +50,8 @@ class ThemeConstants {
     brightness: Brightness.light,
     // buttonTheme: const ButtonThemeData(buttonColor: Colors.blueAccent),
     fontFamily: 'Poppins',
-    textTheme: TextTheme(),
-    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+    textTheme: const TextTheme(),
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       selectedIconTheme: IconThemeData(
         color: accentColor,
       ),

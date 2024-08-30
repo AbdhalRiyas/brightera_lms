@@ -18,7 +18,6 @@ class _CarouselState extends State<Carousel> {
   final BannerRespository _repository = BannerRespository();
   List<Appbanner> _banners = [];
   bool _isLoading = true;
-
   int _current = 0;
 
   @override
@@ -31,6 +30,12 @@ class _CarouselState extends State<Carousel> {
     _banners = await _repository.getAllActiveBanners();
     setState(() {
       _isLoading = false;
+    });
+  }
+
+  void _onSliderChange(index, reason) {
+    setState(() {
+      _current = index;
     });
   }
 
@@ -85,11 +90,5 @@ class _CarouselState extends State<Carousel> {
               ],
             ),
           );
-  }
-
-  _onSliderChange(index, reason) {
-    setState(() {
-      _current = index;
-    });
   }
 }

@@ -1,11 +1,9 @@
 import 'package:app/app/config/theme_constants.dart';
-import 'package:app/app/models/course.dart';
 import 'package:app/app/models/subject.dart';
-import 'package:app/app/repositories/course_repository.dart';
 import 'package:app/app/repositories/subject_repository.dart';
+import 'package:app/app/screens/featured_screen/widgets/list_of_courses.dart';
+import 'package:app/app/screens/featured_screen/widgets/subject_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter_svg/svg.dart';
 
 class ListOfSubjects extends StatefulWidget {
   const ListOfSubjects({super.key});
@@ -15,11 +13,10 @@ class ListOfSubjects extends StatefulWidget {
 }
 
 class _ListOfSubjectsState extends State<ListOfSubjects> {
-  final SubjectRepository _subjectRepository = SubjectRepository();
-  final CourseRepository _courseRepository = CourseRepository();
+  final SubjectRepository _repository = SubjectRepository();
+  final GlobalKey<ListOfCoursesState> _key = GlobalKey<ListOfCoursesState>();
 
   List<Subject> _subjects = [];
-  List<Course> _courses = [];
   bool _isLoading = true;
   String? _selectedSubject;
 
@@ -30,20 +27,23 @@ class _ListOfSubjectsState extends State<ListOfSubjects> {
   }
 
   Future<void> _fetchSubjects() async {
-    final subjects = await _subjectRepository.getAllSubjects();
+    final subjects = await _repository.getAllSubjects();
     _subjects = subjects;
-    _fetchCourses(_subjects.first.id);
+    _selectedSubject = _subjects.first.id;
+    _key.currentState?.fetchCourses(_subjects.first.id);
     setState(() {
       _isLoading = false;
     });
   }
 
-  Future<void> _fetchCourses(String subjectId) async {
-    _selectedSubject = subjectId;
-    final courses = await _courseRepository.getCoursesBySubject(subjectId);
-    setState(() {
-      _courses = courses;
-    });
+  void _switchSubject(String subectId) {
+    if (_selectedSubject != subectId) {
+      // Calling child method using global key
+      _key.currentState?.fetchCourses(subectId);
+      setState(() {
+        _selectedSubject = subectId;
+      });
+    }
   }
 
   @override
@@ -62,48 +62,10 @@ class _ListOfSubjectsState extends State<ListOfSubjects> {
                     scrollDirection: Axis.horizontal,
                     shrinkWrap: true,
                     itemCount: _subjects.length,
-                    itemBuilder: (context, i) => GestureDetector(
-                      onTap: _selectedSubject == _subjects[i].id
-                          ? null
-                          : () => _fetchCourses(_subjects[i].id),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: ThemeConstants.paddingLarge),
-                        decoration: BoxDecoration(
-                          color: _getPillBackgroundColor(_subjects[i].id),
-                          border: Border.all(
-                              width: 1 / 2,
-                              color: _getPillBorderColor(_subjects[i].id)),
-                          borderRadius: BorderRadius.circular(
-                              ThemeConstants.borderRadiusLarge * 2),
-                        ),
-                        child: Center(
-                          child: Row(
-                            children: [
-                              if (_subjects[i].icon.startsWith('https://'))
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      right: ThemeConstants.paddingSmall),
-                                  child: SvgPicture.network(
-                                    _subjects[i].icon,
-                                    width: 24,
-                                    colorFilter: ColorFilter.mode(
-                                        _getPillTextColor(_subjects[i].id),
-                                        BlendMode.srcIn),
-                                  ),
-                                ),
-                              Text(
-                                _subjects[i].name,
-                                style: TextStyle(
-                                  color: _getPillTextColor(_subjects[i].id),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    itemBuilder: (context, i) => SubjectButton(
+                      onTap: () => _switchSubject(_subjects[i].id),
+                      selectedSubject: _selectedSubject ?? '',
+                      subject: _subjects[i],
                     ),
                     separatorBuilder: (BuildContext context, int index) =>
                         const SizedBox(
@@ -112,62 +74,11 @@ class _ListOfSubjectsState extends State<ListOfSubjects> {
                   ),
                 ),
               ),
-              _courses.isNotEmpty
-                  ? SizedBox(
-                      height: 150,
-                      child: LayoutBuilder(builder: (context, constraints) {
-                        return ListView.separated(
-                          shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, i) => AnimatedContainer(
-                            width: constraints.maxWidth / 2,
-                            duration: const Duration(milliseconds: 300),
-                            decoration: BoxDecoration(
-                              color: ThemeConstants
-                                  .lavenderMist, // Change this as needed
-                              borderRadius: BorderRadius.circular(
-                                  ThemeConstants.borderRadiusLarge * 2),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(
-                                  ThemeConstants.paddingLarge),
-                              child: Text(
-                                _courses[i].title,
-                                maxLines: 3,
-                                style: const TextStyle(
-                                  fontSize: ThemeConstants.fontSizeMedium,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-                          separatorBuilder: (context, i) => const SizedBox(
-                            width: 10,
-                          ),
-                          itemCount: _courses.length,
-                        );
-                      }),
-                    )
-                  : const Text(
-                      "No Courses Have Been Added For This Subject",
-                    ),
+              ListOfCourses(
+                key: _key,
+                subjectId: _selectedSubject ?? '',
+              ),
             ],
           );
-  }
-
-  Color _getPillBorderColor(String id) {
-    return id == _selectedSubject ? ThemeConstants.primaryColor : Colors.black;
-  }
-
-  Color _getPillBackgroundColor(String id) {
-    return id == _selectedSubject
-        ? ThemeConstants.primaryButtonColor
-        : Colors.transparent;
-  }
-
-  Color _getPillTextColor(String id) {
-    return id == _selectedSubject
-        ? ThemeConstants.primaryButtonTextColor
-        : Colors.black;
   }
 }
