@@ -1,9 +1,8 @@
+import 'package:app/app/config/firebase_options.dart';
 import 'package:app/app/config/theme_constants.dart';
-import 'package:app/app/screens/home_screen.dart';
+import 'package:app/app/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
-import 'app/config/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +23,7 @@ class MyApp extends StatelessWidget {
       title: 'Arzam Physics',
       debugShowCheckedModeBanner: false,
       theme: ThemeConstants.lightTheme,
-      home: const HomeScreen(title: 'Arzam Physics'),
+      onGenerateRoute: routes,
     );
   }
 }
