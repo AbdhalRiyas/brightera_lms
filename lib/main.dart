@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Arzam Physics',
+      title: 'EdPi',
       debugShowCheckedModeBanner: false,
       theme: ThemeConstants.lightTheme,
       onGenerateRoute: routes,

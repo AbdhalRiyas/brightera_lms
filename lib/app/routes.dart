@@ -7,7 +7,7 @@ Route<dynamic>? routes(RouteSettings settings) {
     case '/':
       return MaterialPageRoute(
         builder: (context) => const HomeScreen(
-          title: 'Arzam Physics',
+          title: 'EdPi',
         ),
       );
     case '/course':
