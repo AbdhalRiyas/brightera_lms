@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:330277784027:android:48af2884c17ee1c6333ffe",
+        "mobilesdk_app_id": "1:330277784027:android:b0751034ddf04360333ffe",
         "android_client_info": {
-          "package_name": "lk.arzamphysics.app"
+          "package_name": "com.edpiapp.app"
         }
       },
       "oauth_client": [],

@@ -1,4 +1,4 @@
-package lk.arzamphysics.app
+package com.edpiapp.app
 
 import io.flutter.embedding.android.FlutterActivity
 
