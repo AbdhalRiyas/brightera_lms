@@ -3,7 +3,7 @@ class Subject {
   final bool isActive, isHidden;
   final String icon;
 
-  Subject(
+  const Subject(
       {required this.id,
       required this.name,
       required this.isActive,

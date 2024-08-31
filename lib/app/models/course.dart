@@ -5,7 +5,7 @@ class Course {
   final DocumentReference subject;
   final num? price;
 
-  Course(
+  const Course(
       {required this.id,
       required this.title,
       required this.description,
