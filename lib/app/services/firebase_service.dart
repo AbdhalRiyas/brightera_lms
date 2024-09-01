@@ -1,9 +1,30 @@
 import 'package:app/app/models/course.dart';
 import 'package:app/app/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 
 class FirebaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFunctions _functions = FirebaseFunctions.instance;
+
+  Future<void> createUser(User user, String plainPassword) async {
+    try {
+      final HttpsCallable callable = _functions.httpsCallable('createUser');
+      final results = await callable.call(<String, dynamic>{
+        'indexNumber': user.id,
+        'plainPassword': plainPassword,
+        'name': user.name,
+        'mobileNumber':
+            user.mobileNumber, // Assuming mobile number is stored as email
+        'userRole': user.userRole.name,
+      });
+
+      print(results.data); // Handle success
+    } catch (e) {
+      print('Error creating user: $e');
+      // Handle error
+    }
+  }
 
   // Banners Collection Begin ====================== **
   Future<QuerySnapshot<Map<String, dynamic>>?> getAllBanners(
@@ -52,22 +73,22 @@ class FirebaseService {
     return snapshot.data();
   }
 
-  Future<void> createUser(User user) async {
-    // Create a new user in Firestore
-    await _firestore.collection('users').doc(user.id).set({
-      'id': user.id,
-      'name': user.name,
-      'email': user.email,
-    });
-  }
+  // Future<void> createUser(User user) async {
+  //   // Create a new user in Firestore
+  //   await _firestore.collection('users').doc(user.id).set({
+  //     'id': user.id,
+  //     'name': user.name,
+  //     'email': user.email,
+  //   });
+  // }
 
-  Future<void> updateUser(User user) async {
-    // Update an existing user in Firestore
-    await _firestore.collection('users').doc(user.id).update({
-      'name': user.name,
-      'email': user.email,
-    });
-  }
+  // Future<void> updateUser(User user) async {
+  //   // Update an existing user in Firestore
+  //   await _firestore.collection('users').doc(user.id).update({
+  //     'name': user.name,
+  //     'email': user.email,
+  //   });
+  // }
 
   Future<void> deleteUser(String id) async {
     // Delete a user from Firestore

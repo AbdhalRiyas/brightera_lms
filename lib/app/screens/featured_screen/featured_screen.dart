@@ -1,4 +1,6 @@
 import 'package:app/app/config/theme_constants.dart';
+import 'package:app/app/models/user.dart';
+import 'package:app/app/repositories/user_repository.dart';
 import 'package:app/app/screens/featured_screen/widgets/carousel.dart';
 import 'package:app/app/screens/featured_screen/widgets/custom_app_bar.dart';
 import 'package:app/app/screens/featured_screen/widgets/courses/courses.dart';
@@ -41,16 +43,34 @@ class _FeaturedScreenState extends State<FeaturedScreen>
                           ],
                         ),
                       ),
-                      const Padding(
-                        padding: EdgeInsets.all(ThemeConstants.paddingSmall),
+                      Padding(
+                        padding:
+                            const EdgeInsets.all(ThemeConstants.paddingSmall),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            const Text(
                               "Courses",
                               style: ThemeConstants.headingStyle,
                             ),
-                            Courses(),
+                            const Courses(),
+                            ElevatedButton(
+                                onPressed: () {
+                                  final UserRepository _userRepository =
+                                      UserRepository();
+
+                                  User newUser = User(
+                                      id: '19970822',
+                                      name: 'Rikas',
+                                      mobileNumber: '+94767675740',
+                                      userRole: UserRole.instructor);
+
+                                  _userRepository.createUser(
+                                    newUser,
+                                    '19970822',
+                                  );
+                                },
+                                child: const Text("Create User")),
                           ],
                         ),
                       ),
