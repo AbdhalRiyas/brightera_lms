@@ -56,21 +56,9 @@ class _FeaturedScreenState extends State<FeaturedScreen>
                             const Courses(),
                             ElevatedButton(
                                 onPressed: () {
-                                  final UserRepository _userRepository =
-                                      UserRepository();
-
-                                  User newUser = User(
-                                      id: '19970822',
-                                      name: 'Rikas',
-                                      mobileNumber: '+94767675740',
-                                      userRole: UserRole.instructor);
-
-                                  _userRepository.createUser(
-                                    newUser,
-                                    '19970822',
-                                  );
+                                  Navigator.pushNamed(context, '/lectures');
                                 },
-                                child: const Text("Create User")),
+                                child: const Text("Show lectures")),
                           ],
                         ),
                       ),

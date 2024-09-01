@@ -1,5 +1,6 @@
 import 'package:app/app/screens/course_screen/course_screen.dart';
 import 'package:app/app/screens/home_screen.dart';
+import 'package:app/app/screens/lectures_screen/lectures_screen.dart';
 import 'package:flutter/material.dart';
 
 Route<dynamic>? routes(RouteSettings settings) {
@@ -16,6 +17,10 @@ Route<dynamic>? routes(RouteSettings settings) {
         builder: (context) => CourseScreen(
           course: args?.course,
         ),
+      );
+    case '/lectures':
+      return MaterialPageRoute(
+        builder: (context) => LecturesScreen(),
       );
     default:
       // Return null or a fallback route if no matching route is found
