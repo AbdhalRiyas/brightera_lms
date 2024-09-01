@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:330277784027:android:b0751034ddf04360333ffe",
+        "mobilesdk_app_id": "1:330277784027:android:955416ec90fea6b6333ffe",
         "android_client_info": {
-          "package_name": "com.edpiapp.app"
+          "package_name": "lk.brightera.app"
         }
       },
       "oauth_client": [],

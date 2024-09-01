@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDalZf3M7uBL0gHi_VJn4l7SuXh36934CU',
-    appId: '1:330277784027:android:b0751034ddf04360333ffe',
+    appId: '1:330277784027:android:955416ec90fea6b6333ffe',
     messagingSenderId: '330277784027',
     projectId: 'arzam-physics-app',
     storageBucket: 'arzam-physics-app.appspot.com',
@@ -59,10 +59,10 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCKAeUuj0Uk738dwhBKqfxB1EiImhxLwC0',
-    appId: '1:330277784027:ios:06ee937f20929c06333ffe',
+    appId: '1:330277784027:ios:16f047e6063af1ca333ffe',
     messagingSenderId: '330277784027',
     projectId: 'arzam-physics-app',
     storageBucket: 'arzam-physics-app.appspot.com',
-    iosBundleId: 'com.edpiapp.app',
+    iosBundleId: 'lk.brightera.app',
   );
 }
