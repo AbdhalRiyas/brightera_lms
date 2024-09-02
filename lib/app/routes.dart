@@ -1,6 +1,7 @@
 import 'package:app/app/screens/course_screen/course_screen.dart';
 import 'package:app/app/screens/home_screen.dart';
 import 'package:app/app/screens/lectures_screen/lectures_screen.dart';
+import 'package:app/app/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 
 Route<dynamic>? routes(RouteSettings settings) {
@@ -10,6 +11,13 @@ Route<dynamic>? routes(RouteSettings settings) {
         builder: (context) => const HomeScreen(
           title: 'EdPi',
         ),
+      );
+    case '/login':
+      // final args = settings.arguments as CourseScreenArguments?;
+      return MaterialPageRoute(
+        builder: (context) => LoginScreen(
+            // course: args?.course,
+            ),
       );
     case '/course':
       final args = settings.arguments as CourseScreenArguments?;

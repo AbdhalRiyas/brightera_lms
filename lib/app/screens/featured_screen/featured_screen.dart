@@ -56,7 +56,7 @@ class _FeaturedScreenState extends State<FeaturedScreen>
                             const Courses(),
                             ElevatedButton(
                                 onPressed: () {
-                                  Navigator.pushNamed(context, '/lectures');
+                                  Navigator.pushNamed(context, '/login');
                                 },
                                 child: const Text("Show lectures")),
                           ],
