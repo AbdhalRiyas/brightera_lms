@@ -1,13 +1,119 @@
 import 'package:app/app/models/course.dart';
-import 'package:app/app/models/user.dart';
+import 'package:app/app/models/user.dart' as userModal;
+import 'package:app/app/services/user_manager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class FirebaseService {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseFunctions _functions = FirebaseFunctions.instance;
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-  Future<void> createUser(User user, String plainPassword) async {
+  User? get currentUser => _auth.currentUser;
+
+  Future<void> signInWithCustomToken(
+      String indexNumber, String password) async {
+    try {
+      final HttpsCallable callable =
+          FirebaseFunctions.instance.httpsCallable('customAuth');
+      final response = await callable.call(<String, dynamic>{
+        'indexNumber': indexNumber,
+        'password': password,
+      });
+
+      final token = response.data['token'];
+
+      // Sign in with the custom token
+      await FirebaseAuth.instance.signInWithCustomToken(token);
+
+      // Store the token securely
+      await _storage.write(key: 'custom_token', value: token);
+
+      print('Sign-in successful');
+
+      // After successful sign-in, retrieve and store user details
+      final userDetails = await getCurrentUserDetails();
+      UserManager().setUserDetails(userDetails);
+    } on FirebaseFunctionsException catch (e) {
+      if (e.code == 'resource-exhausted') {
+        print('Too many requests. Please try again later.');
+      } else if (e.code == 'unauthenticated') {
+        print('Invalid index number or password.');
+      } else {
+        print('Error: ${e.message}');
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
+    }
+  }
+
+  Future<void> checkAndSignIn() async {
+    if (currentUser == null) {
+      // Retrieve the custom token from secure storage
+      final token = await _storage.read(key: 'custom_token');
+
+      if (token != null) {
+        try {
+          // Sign in with the custom token
+          await FirebaseAuth.instance.signInWithCustomToken(token);
+          print('User re-signed in successfully');
+
+          // After successful sign-in, retrieve and store user details
+          final userDetails = await getCurrentUserDetails();
+          UserManager().setUserDetails(userDetails);
+        } catch (e) {
+          print('Error signing in with stored token: $e');
+          // Optionally, you might want to delete the token if it's invalid
+          await _storage.delete(key: 'custom_token');
+        }
+      } else {
+        print('No stored token found. User needs to sign in again.');
+      }
+    } else {
+      print('User is already signed in.');
+      // Retrieve and store user details if needed
+      final userDetails = await getCurrentUserDetails();
+      UserManager().setUserDetails(userDetails);
+    }
+  }
+
+  // Method to get the current user's details from Firestore
+  Future<Map<String, dynamic>?> getCurrentUserDetails() async {
+    // Check if the user is signed in
+    if (currentUser != null) {
+      try {
+        // Retrieve the user document from Firestore
+        DocumentSnapshot userDoc =
+            await _firestore.collection('users').doc(currentUser?.uid).get();
+
+        if (userDoc.exists) {
+          // Get the user data
+          Map<String, dynamic> userData =
+              userDoc.data() as Map<String, dynamic>;
+
+          // Remove the password field if it exists
+          userData.remove('password');
+
+          // Return the filtered user data
+          return userData;
+        } else {
+          print('User document does not exist');
+          return null;
+        }
+      } catch (e) {
+        print('Error fetching user details: $e');
+        return null;
+      }
+    } else {
+      print('No user is currently signed in.');
+      return null;
+    }
+  }
+
+  Future<void> createUser(userModal.User user, String plainPassword) async {
     try {
       final HttpsCallable callable = _functions.httpsCallable('createUser');
       final results = await callable.call(<String, dynamic>{

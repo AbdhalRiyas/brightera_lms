@@ -1,14 +1,50 @@
 import 'package:app/app/config/theme_constants.dart';
+import 'package:app/app/repositories/user_repository.dart';
+import 'package:app/app/services/user_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final UserRepository _userRepository = UserRepository();
+  final _indexController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   Future<void> _launchUrl(String url) async {
     if (!await launchUrl(Uri.parse(url))) {
       throw Exception('Could not launch $url');
+    }
+  }
+
+  @override
+  void dispose() {
+    _indexController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _signIn() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        await _userRepository.login(
+          _indexController.text.trim(),
+          _passwordController.text.trim(),
+        );
+        // Handle successful login, e.g., navigate to another screen
+      } catch (e) {
+        // Handle errors, e.g., show a snackbar or alert dialog
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login failed: ${e.toString()}')),
+        );
+      }
     }
   }
 
@@ -40,52 +76,73 @@ class LoginScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(ThemeConstants.paddingMedium),
                   child: Form(
-                      child: Column(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(
-                            bottom: ThemeConstants.paddingMedium),
-                        decoration: BoxDecoration(
-                          border: Border.all(),
-                          borderRadius: BorderRadius.circular(
-                              ThemeConstants.borderRadiusLarge * 2),
-                        ),
-                        child: TextFormField(
-                          textAlign: TextAlign.center,
-                          decoration: const InputDecoration(
-                            hintText: 'Index',
-                            border: InputBorder.none,
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(
+                            bottom: ThemeConstants.paddingMedium,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(),
+                            borderRadius: BorderRadius.circular(
+                              ThemeConstants.borderRadiusLarge * 2,
+                            ),
+                          ),
+                          child: TextFormField(
+                            controller: _indexController,
+                            textAlign: TextAlign.center,
+                            decoration: const InputDecoration(
+                              hintText: 'Index',
+                              border: InputBorder.none,
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your index number';
+                              }
+                              return null;
+                            },
                           ),
                         ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(
-                            bottom: ThemeConstants.paddingMedium),
-                        decoration: BoxDecoration(
-                          border: Border.all(),
-                          borderRadius: BorderRadius.circular(
-                              ThemeConstants.borderRadiusLarge * 2),
-                        ),
-                        child: TextFormField(
-                          textAlign: TextAlign.center,
-                          decoration: const InputDecoration(
-                            hintText: 'Password',
-                            border: InputBorder.none,
+                        Container(
+                          margin: const EdgeInsets.only(
+                            bottom: ThemeConstants.paddingMedium,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(),
+                            borderRadius: BorderRadius.circular(
+                              ThemeConstants.borderRadiusLarge * 2,
+                            ),
+                          ),
+                          child: TextFormField(
+                            controller: _passwordController,
+                            obscureText: true,
+                            textAlign: TextAlign.center,
+                            decoration: const InputDecoration(
+                              hintText: 'Password',
+                              border: InputBorder.none,
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your password';
+                              }
+                              return null;
+                            },
                           ),
                         ),
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: ThemeConstants.primaryButtonColor,
-                          foregroundColor:
-                              ThemeConstants.primaryButtonTextColor,
-                          minimumSize: const Size.fromHeight(50), // NEW
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ThemeConstants.primaryButtonColor,
+                            foregroundColor:
+                                ThemeConstants.primaryButtonTextColor,
+                            minimumSize: const Size.fromHeight(50),
+                          ),
+                          onPressed: _signIn,
+                          child: const Text("Login"),
                         ),
-                        onPressed: () {},
-                        child: const Text("Login"),
-                      )
-                    ],
-                  )),
+                      ],
+                    ),
+                  ),
                 ),
                 const Text("Don't have an account?"),
                 TextButton(

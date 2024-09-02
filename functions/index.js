@@ -14,6 +14,9 @@ exports.customAuth = functions.https.onCall(async (data, context) => {
     }
 
     try {
+        // Log input data for debugging
+        console.log(`Received auth request for index number: ${indexNumber}`);
+
         // Retrieve the user document based on the index number
         const userSnapshot = await db.collection('users').doc(indexNumber).get();
 
@@ -22,6 +25,9 @@ exports.customAuth = functions.https.onCall(async (data, context) => {
         }
 
         const userData = userSnapshot.data();
+
+        // Log user data retrieval
+        console.log(`User data retrieved for index number: ${indexNumber}`);
 
         // Check if the password is valid
         const isPasswordValid = await bcrypt.compare(password, userData.password);
@@ -34,14 +40,22 @@ exports.customAuth = functions.https.onCall(async (data, context) => {
                 mobileNumber: userData.mobileNumber
             });
 
+            // Log token generation
+            console.log(`Custom token generated for index number: ${indexNumber}`);
+
             return { token: customToken };
         } else {
             throw new functions.https.HttpsError('unauthenticated', 'Invalid index number or password.');
         }
     } catch (error) {
-        throw new functions.https.HttpsError('internal', 'Error during authentication: ' + error.message);
+        // Log the full error
+        console.error('Error during authentication:', error);
+
+        // Return an internal error with a detailed message
+        throw new functions.https.HttpsError('internal', `Error during authentication: ${error.message}`);
     }
 });
+
 
 exports.createUser = functions.https.onCall(async (data, context) => {
     // Optional: Check if the user is authenticated

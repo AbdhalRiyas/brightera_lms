@@ -1,4 +1,5 @@
 import 'package:app/app/config/theme_constants.dart';
+import 'package:app/app/screens/account_screen.dart';
 import 'package:app/app/screens/featured_screen/featured_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -19,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
     FeaturedScreen(),
     Text('My Learning'),
     Text('Wishlist'),
-    Text('Account'),
+    AccountScreen(),
   ];
 
   @override

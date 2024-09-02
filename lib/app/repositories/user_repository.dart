@@ -17,6 +17,11 @@ class UserRepository {
   //   return null;
   // }
 
+  Future<void> login(String index, String password) async {
+    // Create a new user in Firebase
+    await _firebaseService.signInWithCustomToken(index, password);
+  }
+
   Future<void> createUser(User user, String password) async {
     // Create a new user in Firebase
     await _firebaseService.createUser(user, password);

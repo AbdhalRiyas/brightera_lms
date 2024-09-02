@@ -1,5 +1,6 @@
 import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/routes.dart';
+import 'package:app/app/services/firebase_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +12,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  FirebaseService firebaseService = FirebaseService();
+  await firebaseService.checkAndSignIn();
 
   runApp(const MyApp());
 }

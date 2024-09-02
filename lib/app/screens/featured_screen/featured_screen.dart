@@ -1,9 +1,8 @@
 import 'package:app/app/config/theme_constants.dart';
-import 'package:app/app/models/user.dart';
-import 'package:app/app/repositories/user_repository.dart';
 import 'package:app/app/screens/featured_screen/widgets/carousel.dart';
 import 'package:app/app/screens/featured_screen/widgets/custom_app_bar.dart';
 import 'package:app/app/screens/featured_screen/widgets/courses/courses.dart';
+import 'package:app/app/services/user_manager.dart';
 import 'package:flutter/material.dart';
 
 class FeaturedScreen extends StatefulWidget {
@@ -56,6 +55,14 @@ class _FeaturedScreenState extends State<FeaturedScreen>
                             const Courses(),
                             ElevatedButton(
                                 onPressed: () {
+                                  // final userDetails =
+                                  //     UserManager().getUserDetails();
+                                  // if (userDetails != null) {
+                                  //   // Use user details
+                                  //   print('User name: ${userDetails['name']}');
+                                  // } else {
+                                  //   print('User details not available');
+                                  // }
                                   Navigator.pushNamed(context, '/login');
                                 },
                                 child: const Text("Show lectures")),
