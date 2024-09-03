@@ -34,11 +34,14 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _signIn() async {
     if (_formKey.currentState!.validate()) {
       try {
+        _showLoader();
         await _userRepository.login(
           _indexController.text.trim(),
           _passwordController.text.trim(),
         );
+
         if (mounted) {
+          Navigator.pop(context);
           Navigator.pop(context);
         }
 
@@ -51,6 +54,21 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     }
   }
+
+  void _showLoader() => showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const AlertDialog(
+          content: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+            ],
+          ),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
