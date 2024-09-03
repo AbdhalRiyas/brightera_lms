@@ -2,7 +2,6 @@ import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/screens/featured_screen/widgets/carousel.dart';
 import 'package:app/app/screens/featured_screen/widgets/custom_app_bar.dart';
 import 'package:app/app/screens/featured_screen/widgets/courses/courses.dart';
-import 'package:app/app/services/user_manager.dart';
 import 'package:flutter/material.dart';
 
 class FeaturedScreen extends StatefulWidget {

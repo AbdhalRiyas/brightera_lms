@@ -1,18 +1,27 @@
 import 'package:app/app/models/course.dart';
 import 'package:app/app/models/user.dart' as userModal;
-import 'package:app/app/services/user_manager.dart';
+import 'package:app/app/services/auth_manager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class FirebaseService {
+  FirebaseService._privateConstructor();
+
+  static final FirebaseService _instance =
+      FirebaseService._privateConstructor();
+
+  factory FirebaseService() {
+    return _instance;
+  }
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseFunctions _functions = FirebaseFunctions.instance;
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   User? get currentUser => _auth.currentUser;
+
+  Stream<User?> get authStateChanges => _auth.authStateChanges();
 
   Future<void> signInWithCustomToken(
       String indexNumber, String password) async {
@@ -29,14 +38,11 @@ class FirebaseService {
       // Sign in with the custom token
       await FirebaseAuth.instance.signInWithCustomToken(token);
 
-      // Store the token securely
-      await _storage.write(key: 'custom_token', value: token);
-
       print('Sign-in successful');
 
       // After successful sign-in, retrieve and store user details
       final userDetails = await getCurrentUserDetails();
-      UserManager().setUserDetails(userDetails);
+      AuthManager().setUserDetails(userDetails);
     } on FirebaseFunctionsException catch (e) {
       if (e.code == 'resource-exhausted') {
         print('Too many requests. Please try again later.');
@@ -47,36 +53,6 @@ class FirebaseService {
       }
     } catch (e) {
       print('Unexpected error: $e');
-    }
-  }
-
-  Future<void> checkAndSignIn() async {
-    if (currentUser == null) {
-      // Retrieve the custom token from secure storage
-      final token = await _storage.read(key: 'custom_token');
-
-      if (token != null) {
-        try {
-          // Sign in with the custom token
-          await FirebaseAuth.instance.signInWithCustomToken(token);
-          print('User re-signed in successfully');
-
-          // After successful sign-in, retrieve and store user details
-          final userDetails = await getCurrentUserDetails();
-          UserManager().setUserDetails(userDetails);
-        } catch (e) {
-          print('Error signing in with stored token: $e');
-          // Optionally, you might want to delete the token if it's invalid
-          await _storage.delete(key: 'custom_token');
-        }
-      } else {
-        print('No stored token found. User needs to sign in again.');
-      }
-    } else {
-      print('User is already signed in.');
-      // Retrieve and store user details if needed
-      final userDetails = await getCurrentUserDetails();
-      UserManager().setUserDetails(userDetails);
     }
   }
 
@@ -130,6 +106,10 @@ class FirebaseService {
       print('Error creating user: $e');
       // Handle error
     }
+  }
+
+  Future<void> singOut() async {
+    await _auth.signOut();
   }
 
   // Banners Collection Begin ====================== **
