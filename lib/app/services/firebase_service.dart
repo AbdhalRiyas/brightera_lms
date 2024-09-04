@@ -1,6 +1,7 @@
 import 'package:app/app/models/course.dart';
-import 'package:app/app/models/user.dart' as userModal;
+import 'package:app/app/models/user.dart' as usermodal;
 import 'package:app/app/services/auth_manager.dart';
+import 'package:app/app/utils/result.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,7 +24,7 @@ class FirebaseService {
 
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
-  Future<void> signInWithCustomToken(
+  Future<Result<String>> signInWithCustomToken(
       String indexNumber, String password) async {
     try {
       final HttpsCallable callable =
@@ -38,21 +39,24 @@ class FirebaseService {
       // Sign in with the custom token
       await FirebaseAuth.instance.signInWithCustomToken(token);
 
-      print('Sign-in successful');
-
       // After successful sign-in, retrieve and store user details
       final userDetails = await getCurrentUserDetails();
       AuthManager().setUserDetails(userDetails);
+
+      return Result(data: 'Sign-in successful');
     } on FirebaseFunctionsException catch (e) {
+      String errorMessage = '';
       if (e.code == 'resource-exhausted') {
-        print('Too many requests. Please try again later.');
+        errorMessage = 'Too many requests. Please try again later.';
       } else if (e.code == 'unauthenticated') {
-        print('Invalid index number or password.');
+        errorMessage = 'Invalid index number or password.';
       } else {
-        print('Error: ${e.message}');
+        errorMessage = 'Error: ${e.message}';
       }
+
+      return Result(error: errorMessage);
     } catch (e) {
-      print('Unexpected error: $e');
+      return Result(error: 'Unexpected error: $e');
     }
   }
 
@@ -89,7 +93,7 @@ class FirebaseService {
     }
   }
 
-  Future<void> createUser(userModal.User user, String plainPassword) async {
+  Future<void> createUser(usermodal.User user, String plainPassword) async {
     try {
       final HttpsCallable callable = _functions.httpsCallable('createUser');
       final results = await callable.call(<String, dynamic>{

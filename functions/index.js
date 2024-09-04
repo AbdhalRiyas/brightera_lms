@@ -48,11 +48,11 @@ exports.customAuth = functions.https.onCall(async (data, context) => {
             throw new functions.https.HttpsError('unauthenticated', 'Invalid index number or password.');
         }
     } catch (error) {
-        // Log the full error
-        console.error('Error during authentication:', error);
-
-        // Return an internal error with a detailed message
-        throw new functions.https.HttpsError('internal', `Error during authentication: ${error.message}`);
+        if (error instanceof functions.https.HttpsError) {
+            throw error;
+        } else {
+            throw new functions.https.HttpsError('internal', 'Error during authentication: ' + error.message);
+        }
     }
 });
 

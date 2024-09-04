@@ -62,7 +62,7 @@ class _FeaturedScreenState extends State<FeaturedScreen>
                                   // } else {
                                   //   print('User details not available');
                                   // }
-                                  Navigator.pushNamed(context, '/login');
+                                  Navigator.pushNamed(context, '/lectures');
                                 },
                                 child: const Text("Show lectures")),
                           ],

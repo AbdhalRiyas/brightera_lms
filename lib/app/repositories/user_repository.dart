@@ -1,3 +1,5 @@
+import 'package:app/app/utils/result.dart';
+
 import '../models/user.dart';
 import '../services/firebase_service.dart';
 
@@ -17,9 +19,10 @@ class UserRepository {
   //   return null;
   // }
 
-  Future<void> login(String index, String password) async {
+  Future<Result<String>> login(String index, String password) async {
     // Create a new user in Firebase
-    await _firebaseService.signInWithCustomToken(index, password);
+    var result = await _firebaseService.signInWithCustomToken(index, password);
+    return result;
   }
 
   Future<void> createUser(User user, String password) async {
