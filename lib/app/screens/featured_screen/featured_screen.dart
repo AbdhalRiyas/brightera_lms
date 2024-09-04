@@ -17,64 +17,53 @@ class _FeaturedScreenState extends State<FeaturedScreen>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-        backgroundColor: ThemeConstants.backgroundColor,
-        body: LayoutBuilder(builder: (context, constraints) {
-          return Stack(
-            children: [
-              Image.asset(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 250.0, // Height of the expanded AppBar
+            title: const CustomAppBar(),
+            bottom: const PreferredSize(
+              preferredSize: Size.fromHeight(250),
+              child: Carousel(),
+            ),
+            flexibleSpace: FlexibleSpaceBar(
+              background: Image.asset(
                 "assets/images/hero.webp",
-                fit: BoxFit.fill,
-                height: constraints.maxHeight * 0.50,
+                fit: BoxFit.cover,
               ),
-              SafeArea(
-                child: SingleChildScrollView(
+            ),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+          ),
+          SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                Padding(
+                  padding: const EdgeInsets.all(ThemeConstants.paddingSmall),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
                     children: [
-                      SizedBox(
-                        height: constraints.maxHeight * 0.50 - 50,
-                        child: const Column(
-                          children: [
-                            CustomAppBar(),
-                            Carousel(),
-                          ],
-                        ),
+                      const Text(
+                        "Courses",
+                        style: ThemeConstants.headingStyle,
                       ),
-                      Padding(
-                        padding:
-                            const EdgeInsets.all(ThemeConstants.paddingSmall),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Courses",
-                              style: ThemeConstants.headingStyle,
-                            ),
-                            const Courses(),
-                            ElevatedButton(
-                                onPressed: () {
-                                  // final userDetails =
-                                  //     UserManager().getUserDetails();
-                                  // if (userDetails != null) {
-                                  //   // Use user details
-                                  //   print('User name: ${userDetails['name']}');
-                                  // } else {
-                                  //   print('User details not available');
-                                  // }
-                                  Navigator.pushNamed(context, '/lectures');
-                                },
-                                child: const Text("Show lectures")),
-                          ],
-                        ),
+                      const SizedBox(height: 10), // Add spacing if needed
+                      const Courses(),
+                      const SizedBox(height: 10), // Add spacing if needed
+                      ElevatedButton(
+                        onPressed: () =>
+                            Navigator.pushNamed(context, '/lectures'),
+                        child: const Text("Show lectures"),
                       ),
                     ],
                   ),
                 ),
-              ),
-            ],
-          );
-        }));
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
