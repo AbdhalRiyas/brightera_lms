@@ -57,53 +57,56 @@ class _LoginScreenState extends State<LoginScreen> {
     return StreamBuilder<Object>(
         stream: null,
         builder: (context, snapshot) {
-          return Scaffold(
-              appBar: AppBar(),
-              body: SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: MediaQuery.of(context).size.height -
-                        kToolbarHeight - // Exclude the AppBar height
-                        MediaQuery.of(context)
-                            .padding
-                            .top - // Exclude the status bar height
-                        MediaQuery.of(context)
-                            .padding
-                            .bottom, // Exclude the bottom notch or system UI height
-                  ),
-                  child: FirebaseService().currentUser != null
-                      ? const Center(child: Text("You're signed in!"))
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Align(
-                              alignment: Alignment.center,
-                              child: Image.asset(
-                                'assets/images/logo.webp',
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(
-                                  ThemeConstants.paddingMedium),
-                              child: Form(
-                                key: _formKey,
-                                child: Column(
-                                  children: [
-                                    IndexField(
-                                        indexController: _indexController),
-                                    PasswordField(
-                                        passwordController:
-                                            _passwordController),
-                                    LoginButton(onPressed: _signIn),
-                                  ],
+          return GestureDetector(
+            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+            child: Scaffold(
+                appBar: AppBar(),
+                body: SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: MediaQuery.of(context).size.height -
+                          kToolbarHeight - // Exclude the AppBar height
+                          MediaQuery.of(context)
+                              .padding
+                              .top - // Exclude the status bar height
+                          MediaQuery.of(context)
+                              .padding
+                              .bottom, // Exclude the bottom notch or system UI height
+                    ),
+                    child: FirebaseService().currentUser != null
+                        ? const Center(child: Text("You're signed in!"))
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Align(
+                                alignment: Alignment.center,
+                                child: Image.asset(
+                                  'assets/images/logo.webp',
                                 ),
                               ),
-                            ),
-                            const RegisterNow(),
-                          ],
-                        ),
-                ),
-              ));
+                              Padding(
+                                padding: const EdgeInsets.all(
+                                    ThemeConstants.paddingMedium),
+                                child: Form(
+                                  key: _formKey,
+                                  child: Column(
+                                    children: [
+                                      IndexField(
+                                          indexController: _indexController),
+                                      PasswordField(
+                                          passwordController:
+                                              _passwordController),
+                                      LoginButton(onPressed: _signIn),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const RegisterNow(),
+                            ],
+                          ),
+                  ),
+                )),
+          );
         });
   }
 
