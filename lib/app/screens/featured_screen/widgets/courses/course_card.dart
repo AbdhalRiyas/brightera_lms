@@ -20,11 +20,8 @@ class CourseCard extends StatelessWidget {
     return AnimatedContainer(
       width: maxWidth / 2,
       duration: const Duration(milliseconds: 300),
-      decoration: BoxDecoration(
-        color: ThemeConstants.lavenderMist, // Change this as needed
-        borderRadius: BorderRadius.circular(ThemeConstants.borderRadiusLarge),
-      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           ClipRRect(
             borderRadius: const BorderRadius.only(
@@ -47,13 +44,56 @@ class CourseCard extends StatelessWidget {
             padding: const EdgeInsets.all(
               ThemeConstants.paddingSmall,
             ),
-            child: Text(
-              _course.title,
-              maxLines: 3,
-              style: const TextStyle(
-                fontSize: ThemeConstants.fontSizeMedium,
-                fontWeight: FontWeight.w600,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  "${_course.title} ${_course.title} ${_course.title}",
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  textAlign: TextAlign.start,
+                  style: const TextStyle(
+                    fontSize: ThemeConstants.fontSizeSmall,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const Text(
+                  "30 Hours",
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    fontSize: ThemeConstants.fontSizeSmall * 0.80,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey,
+                  ),
+                ),
+                const Text.rich(
+                  TextSpan(
+                    text: "Rs.3000",
+                    style: TextStyle(
+                      fontSize: ThemeConstants.fontSizeSmall,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: "  ", // Add space
+                        style: TextStyle(
+                          fontSize: ThemeConstants.fontSizeSmall,
+                        ),
+                      ),
+                      TextSpan(
+                        text: "Rs.5000",
+                        style: TextStyle(
+                            decoration: TextDecoration.lineThrough,
+                            fontSize: ThemeConstants.fontSizeSmall,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey),
+                      )
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ],

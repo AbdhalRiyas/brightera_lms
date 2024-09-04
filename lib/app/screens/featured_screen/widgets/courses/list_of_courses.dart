@@ -35,7 +35,7 @@ class ListOfCoursesState extends State<ListOfCourses> {
     return _courses.isNotEmpty
         ? Builder(builder: (context) {
             return SizedBox(
-              height: 250,
+              height: 200,
               child: LayoutBuilder(builder: (context, constraints) {
                 return ListView.separated(
                   shrinkWrap: true,
