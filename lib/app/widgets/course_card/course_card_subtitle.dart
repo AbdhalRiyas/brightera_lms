@@ -6,10 +6,10 @@ class CourseCardSubtitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
+        Text(
           "30 Hours",
           overflow: TextOverflow.ellipsis,
           maxLines: 2,
@@ -20,7 +20,7 @@ class CourseCardSubtitle extends StatelessWidget {
             color: Colors.grey,
           ),
         ),
-        const Text.rich(
+        Text.rich(
           TextSpan(
             text: "Rs.3000",
             style: TextStyle(

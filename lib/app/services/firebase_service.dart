@@ -5,6 +5,7 @@ import 'package:app/app/utils/result.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class FirebaseService {
   FirebaseService._privateConstructor();
@@ -80,15 +81,15 @@ class FirebaseService {
           // Return the filtered user data
           return userData;
         } else {
-          print('User document does not exist');
+          debugPrint('User document does not exist');
           return null;
         }
       } catch (e) {
-        print('Error fetching user details: $e');
+        debugPrint('Error fetching user details: $e');
         return null;
       }
     } else {
-      print('No user is currently signed in.');
+      debugPrint('No user is currently signed in.');
       return null;
     }
   }
@@ -105,9 +106,9 @@ class FirebaseService {
         'userRole': user.userRole.name,
       });
 
-      print(results.data); // Handle success
+      debugPrint(results.data); // Handle success
     } catch (e) {
-      print('Error creating user: $e');
+      debugPrint('Error creating user: $e');
       // Handle error
     }
   }
@@ -156,7 +157,7 @@ class FirebaseService {
       return await query.get();
     } catch (e) {
       // Handle any errors here
-      print('Error fetching courses by subject: $e');
+      debugPrint('Error fetching courses by subject: $e');
       return null;
     }
   }

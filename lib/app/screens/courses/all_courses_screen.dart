@@ -1,8 +1,6 @@
-import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/models/course.dart';
 import 'package:app/app/models/subject.dart';
 import 'package:app/app/widgets/course_card/course_card.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class AllCoursesScreen extends StatefulWidget {
