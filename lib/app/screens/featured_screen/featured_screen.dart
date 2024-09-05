@@ -18,54 +18,34 @@ class _FeaturedScreenState extends State<FeaturedScreen>
     super.build(context);
     return Scaffold(
       appBar: AppBar(
-        title: CustomAppBar(),
+        title: const CustomAppBar(),
       ),
-      body: CustomScrollView(
-        slivers: [
-          // SliverAppBar(
-          //   expandedHeight: 250.0, // Height of the expanded AppBar
-          //   title: const CustomAppBar(),
-          //   bottom: const PreferredSize(
-          //     preferredSize: Size.fromHeight(250),
-          //     child: Carousel(),
-          //   ),
-          //   flexibleSpace: FlexibleSpaceBar(
-          //     background: Image.asset(
-          //       "assets/images/hero.webp",
-          //       fit: BoxFit.cover,
-          //     ),
-          //   ),
-          //   backgroundColor: Colors.transparent,
-          //   elevation: 0,
-          // ),
-          SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                const Carousel(),
-                Padding(
-                  padding: const EdgeInsets.all(ThemeConstants.paddingSmall),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Courses",
-                        style: ThemeConstants.headingStyle,
-                      ),
-                      const SizedBox(height: 10), // Add spacing if needed
-                      const Courses(),
-                      const SizedBox(height: 10), // Add spacing if needed
-                      ElevatedButton(
-                        onPressed: () =>
-                            Navigator.pushNamed(context, '/lectures'),
-                        child: const Text("Show lectures"),
-                      ),
-                    ],
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Carousel(),
+            Padding(
+              padding: const EdgeInsets.all(ThemeConstants.paddingSmall),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Courses",
+                    style: ThemeConstants.headingStyle,
                   ),
-                ),
-              ],
+                  const SizedBox(height: 10), // Add spacing if needed
+                  const Courses(),
+                  const SizedBox(height: 10), // Add spacing if needed
+                  ElevatedButton(
+                    onPressed: () => Navigator.pushNamed(context, '/lectures'),
+                    child: const Text("Show lectures"),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

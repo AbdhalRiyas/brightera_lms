@@ -12,14 +12,14 @@ class ThemeConstants {
   static const double paddingLarge = 24.0;
 
   // Colors
-  static const Color primaryColor = Color(0xFFe0b9d7);
+  static const Color primaryColor = Color(0xFF830182);
   static const Color accentColor = Color.fromARGB(255, 255, 195, 142);
   static const Color backgroundColor = Colors.white;
   static const Color almondMilk = Color(0xFFF1EDE9);
   static const Color lavenderMist = Color(0xFFE6DFF1);
   static const Color aqua = Color(0xFFC0DEDB);
 
-  static const Color primaryButtonColor = Colors.black;
+  static const Color primaryButtonColor = primaryColor;
   static const Color primaryButtonTextColor = Colors.white;
 
   // Font Sizes
