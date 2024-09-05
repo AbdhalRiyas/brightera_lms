@@ -184,11 +184,15 @@ class CourseScreen extends StatelessWidget {
                         ),
                         contentPadding: const EdgeInsets.only(
                             left: ThemeConstants.paddingLarge),
-                        trailing: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.play_circle_outline_sharp,
-                            color: ThemeConstants.primaryButtonColor,
+                        trailing: Material(
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(
+                                ThemeConstants.borderRadiusLarge),
+                            onTap: () {},
+                            child: const Icon(
+                              Icons.play_circle_outline_sharp,
+                              color: ThemeConstants.primaryButtonColor,
+                            ),
                           ),
                         ),
                       ),
