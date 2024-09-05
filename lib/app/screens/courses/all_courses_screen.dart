@@ -1,4 +1,8 @@
+import 'package:app/app/config/theme_constants.dart';
+import 'package:app/app/models/course.dart';
 import 'package:app/app/models/subject.dart';
+import 'package:app/app/widgets/course_card/course_card.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class AllCoursesScreen extends StatefulWidget {
@@ -18,7 +22,20 @@ class _AllCoursesScreenState extends State<AllCoursesScreen> {
         title: Text("Top Courses in ${widget.subject?.name}"),
         centerTitle: false,
       ),
-      body: const Placeholder(),
+      body: ListView.builder(
+        itemCount: 10,
+        itemBuilder: (_, i) => CourseCard(
+          listMode: true,
+          course: const Course(
+            id: 'dqd',
+            title: 'Accounting in 60 Minutes - A Brief Introduction',
+            description: 'qwdqwdqwd',
+            price: 5000,
+            subject: null,
+          ),
+          onTap: () {},
+        ),
+      ),
     );
   }
 }

@@ -4,7 +4,7 @@ import 'package:app/app/models/subject.dart';
 import 'package:app/app/repositories/course_repository.dart';
 import 'package:app/app/screens/courses/all_courses_screen.dart';
 import 'package:app/app/screens/courses/course_screen.dart';
-import 'package:app/app/screens/featured_screen/widgets/courses/course_card.dart';
+import 'package:app/app/widgets/course_card/course_card.dart';
 import 'package:flutter/material.dart';
 
 class ListOfCourses extends StatefulWidget {
@@ -65,18 +65,14 @@ class ListOfCoursesState extends State<ListOfCourses> {
                             ),
                           ),
                         )
-                      : InkWell(
+                      : CourseCard(
+                          course: _courses[0],
+                          maxWidth: constraints.maxWidth,
+                          maxHeight: constraints.maxHeight,
                           onTap: () => Navigator.pushNamed(
                             context,
                             '/course',
                             arguments: CourseScreenArguments(_courses[i]),
-                          ),
-                          borderRadius: BorderRadius.circular(
-                              ThemeConstants.borderRadiusLarge),
-                          child: CourseCard(
-                            course: _courses[0],
-                            maxWidth: constraints.maxWidth,
-                            maxHeight: constraints.maxHeight,
                           ),
                         ),
                   separatorBuilder: (context, i) => const SizedBox(width: 10),

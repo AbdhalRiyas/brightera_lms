@@ -14,6 +14,7 @@ class ThemeConstants {
   // Colors
   static const Color primaryColor = Color(0xFF830182);
   static const Color accentColor = Color.fromARGB(255, 255, 195, 142);
+  static const Color borderColor = Color.fromARGB(255, 221, 220, 221);
   static const Color backgroundColor = Colors.white;
   static const Color almondMilk = Color(0xFFF1EDE9);
   static const Color lavenderMist = Color(0xFFE6DFF1);
@@ -32,6 +33,11 @@ class ThemeConstants {
   static const double imageSizeMedium = 48.0; // e.g., for profile pictures
   static const double imageSizeLarge =
       120.0; // e.g., for large banners or thumbnails
+
+  // Brderd Sizes
+  static const double borderSizeSmall = 1 / 2;
+  static const double borderSizeMedium = 1;
+  static const double borderSizeLarge = 2;
 
   // Elevation
   static const double cardElevation = 4.0;
