@@ -73,6 +73,14 @@ class _LecturesScreenState extends State<LecturesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 0,
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.abc), label: 'dwdw'),
+          BottomNavigationBarItem(icon: Icon(Icons.abc), label: 'dwdw'),
+          BottomNavigationBarItem(icon: Icon(Icons.abc), label: 'dwdw'),
+        ],
+      ),
       body: SafeArea(
         child: YoutubePlayerBuilder(
           player: YoutubePlayer(
@@ -90,8 +98,8 @@ class _LecturesScreenState extends State<LecturesScreen> {
             },
           ),
           builder: (context, player) {
-            return CustomScrollView(
-              slivers: [
+            return Column(
+              children: [
                 // SliverAppBar(
                 //   pinned: true,
                 //   flexibleSpace: FlexibleSpaceBar(
@@ -104,60 +112,115 @@ class _LecturesScreenState extends State<LecturesScreen> {
                 //           ),
                 //   ),
                 // ),
-                SliverToBoxAdapter(
-                  child: Stack(
-                    children: [
-                      player,
-                      if (_isControlsVisible)
-                        SafeArea(
-                          child: IconButton(
-                              onPressed: () => Navigator.pop(context),
-                              icon: const Icon(
-                                Icons.arrow_back_ios,
-                                color: Colors.white,
-                              )),
-                        ),
-                      if (_isControlsVisible)
-                        Positioned.fill(
-                          child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                IconButton(
-                                  onPressed: _replayBackward,
-                                  icon: const Icon(
-                                    Icons.replay_10,
-                                    size: 48,
-                                    color: Colors.white,
-                                  ),
+                Stack(
+                  children: [
+                    player,
+                    if (_isControlsVisible)
+                      SafeArea(
+                        child: IconButton(
+                            onPressed: () => Navigator.pop(context),
+                            icon: const Icon(
+                              Icons.arrow_back_ios,
+                              color: Colors.white,
+                            )),
+                      ),
+                    if (_isControlsVisible)
+                      Positioned.fill(
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              IconButton(
+                                onPressed: _replayBackward,
+                                icon: const Icon(
+                                  Icons.replay_10,
+                                  size: 48,
+                                  color: Colors.white,
                                 ),
-                                IconButton(
-                                  onPressed: _skipForward,
-                                  icon: const Icon(
-                                    Icons.forward_10,
-                                    color: Colors.white,
-                                    size: 48,
-                                  ),
+                              ),
+                              IconButton(
+                                onPressed: _skipForward,
+                                icon: const Icon(
+                                  Icons.forward_10,
+                                  color: Colors.white,
+                                  size: 48,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        )
-                    ],
-                  ),
+                        ),
+                      )
+                  ],
                 ),
                 if (!_isFullScreen) ...[
-                  SliverList(
-                    delegate: SliverChildListDelegate(
-                      [
-                        const Padding(
+                  Expanded(
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: const [
+                        Padding(
                           padding: EdgeInsets.all(16.0),
                           child: Text(
                             "Lecture Content",
                             style: TextStyle(fontSize: 20),
                           ),
                         ),
-                        const Padding(
+                        Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text(
+                            "More details about the lecture go here.",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text(
+                            "Lecture Content",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text(
+                            "More details about the lecture go here.",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text(
+                            "Lecture Content",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text(
+                            "More details about the lecture go here.",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text(
+                            "Lecture Content",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text(
+                            "More details about the lecture go here.",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text(
+                            "Lecture Content",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ),
+                        Padding(
                           padding: EdgeInsets.all(16.0),
                           child: Text(
                             "More details about the lecture go here.",
@@ -166,7 +229,7 @@ class _LecturesScreenState extends State<LecturesScreen> {
                         ),
                       ],
                     ),
-                  ),
+                  )
                 ],
               ],
             );
