@@ -126,13 +126,15 @@ class CourseScreen extends StatelessWidget {
               ),
             ),
             Accordion(
+              paddingListTop: 0,
+              contentVerticalPadding: ThemeConstants.paddingSmall,
               disableScrolling: true,
               rightIcon: const Icon(
                 Icons.keyboard_arrow_down,
                 color: Colors.black,
                 size: 22,
               ),
-              headerBorderRadius: 0,
+              headerBorderRadius: ThemeConstants.borderRadiusSmall,
               headerBorderWidth: 0,
               paddingListHorizontal: 0,
               headerBorderColorOpened: Colors.transparent,
@@ -146,6 +148,7 @@ class CourseScreen extends StatelessWidget {
               headerPadding: const EdgeInsets.symmetric(vertical: 7),
               sectionOpeningHapticFeedback: SectionHapticFeedback.heavy,
               sectionClosingHapticFeedback: SectionHapticFeedback.light,
+              maxOpenSections: 100,
               children: [
                 AccordionSection(
                   isOpen: true,
@@ -157,16 +160,35 @@ class CourseScreen extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  content: const Column(
+                  content: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       ListTile(
-                        leading: Text("1"),
-                        title: Text(
-                          "qdqwd",
+                        leading: const Text(
+                          "1",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        title: const Text(
+                          "Had better (Learn)",
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        subtitle: const Text(
+                          "Video - 02:24 mins",
+                          style: TextStyle(fontSize: 11),
+                        ),
+                        contentPadding: const EdgeInsets.only(
+                            left: ThemeConstants.paddingLarge),
+                        trailing: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.play_circle_outline_sharp,
+                            color: ThemeConstants.primaryButtonColor,
                           ),
                         ),
                       ),

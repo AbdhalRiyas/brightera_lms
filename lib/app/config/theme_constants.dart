@@ -53,12 +53,16 @@ class ThemeConstants {
   static final ThemeData lightTheme = ThemeData(
     colorSchemeSeed: primaryColor,
     canvasColor: backgroundColor,
+    scaffoldBackgroundColor: backgroundColor,
     useMaterial3: true,
     brightness: Brightness.light,
     // buttonTheme: const ButtonThemeData(buttonColor: Colors.blueAccent),
     fontFamily: 'Poppins',
     textTheme: const TextTheme(),
+    appBarTheme: const AppBarTheme(backgroundColor: backgroundColor),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      elevation: 0,
+      backgroundColor: backgroundColor,
       selectedIconTheme: IconThemeData(
         color: accentColor,
       ),
