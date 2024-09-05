@@ -32,7 +32,9 @@ class SubjectButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
+      splashColor: ThemeConstants.accentColor,
+      borderRadius: BorderRadius.circular(ThemeConstants.borderRadiusLarge * 2),
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),

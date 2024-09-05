@@ -13,7 +13,7 @@ class ThemeConstants {
 
   // Colors
   static const Color primaryColor = Color(0xFF830182);
-  static const Color accentColor = Color.fromARGB(255, 255, 195, 142);
+  static const Color accentColor = Color(0xFFf300fe);
   static const Color borderColor = Color.fromARGB(255, 221, 220, 221);
   static const Color backgroundColor = Colors.white;
   static const Color almondMilk = Color(0xFFF1EDE9);
@@ -52,6 +52,7 @@ class ThemeConstants {
 
   static final ThemeData lightTheme = ThemeData(
     colorSchemeSeed: primaryColor,
+    canvasColor: backgroundColor,
     useMaterial3: true,
     brightness: Brightness.light,
     // buttonTheme: const ButtonThemeData(buttonColor: Colors.blueAccent),

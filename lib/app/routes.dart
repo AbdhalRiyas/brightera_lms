@@ -34,7 +34,7 @@ Route<dynamic>? routes(RouteSettings settings) {
     case '/course':
       final args = settings.arguments as CourseScreenArguments?;
       return MaterialPageRoute(
-        builder: (context) => CourseScreen(course: args?.course),
+        builder: (context) => CourseScreen(course: args!.course),
       );
 
     case '/lectures':

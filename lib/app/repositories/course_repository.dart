@@ -18,6 +18,7 @@ class CourseRepository {
         // Create a Subject object from each document
         courses.add(Course(
           id: doc.id,
+          image: doc['image'],
           title: doc['title'],
           description: doc['description'],
           salePrice: doc['salePrice'],
