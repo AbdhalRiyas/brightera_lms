@@ -36,11 +36,6 @@ class _FeaturedScreenState extends State<FeaturedScreen>
                   ),
                   SizedBox(height: 10),
                   FeaturedCourses(),
-                  SizedBox(height: 10), // Add spacing if needed
-                  // ElevatedButton(
-                  //   onPressed: () => Navigator.pushNamed(context, '/lectures'),
-                  //   child: const Text("Show lectures"),
-                  // ),
                 ],
               ),
             ),

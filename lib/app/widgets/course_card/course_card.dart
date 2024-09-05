@@ -44,7 +44,7 @@ class CourseCard extends StatelessWidget {
                 listMode: true,
               ),
               title: CourseCardTitle(title: _course.title),
-              subtitle: const CourseCardSubtitle(),
+              subtitle: CourseCardSubtitle(course: _course),
             )
           : InkWell(
               onTap: onTap,
@@ -65,7 +65,7 @@ class CourseCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         CourseCardTitle(title: _course.title),
-                        const CourseCardSubtitle(),
+                        CourseCardSubtitle(course: _course),
                       ],
                     ),
                   ),

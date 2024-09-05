@@ -1,8 +1,8 @@
 import 'package:app/app/screens/account_screen.dart';
-import 'package:app/app/screens/courses/all_courses_screen.dart';
 import 'package:app/app/screens/courses/course_screen.dart';
 import 'package:app/app/screens/home_screen.dart';
 import 'package:app/app/screens/lectures_screen/lectures_screen.dart';
+import 'package:app/app/screens/list_of_courses_screen/list_of_courses_screen.dart';
 import 'package:app/app/screens/login_screen/login_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -24,9 +24,9 @@ Route<dynamic>? routes(RouteSettings settings) {
       );
 
     case '/all-courses':
-      final args = settings.arguments as AllCoursesScreenArguments?;
+      final args = settings.arguments as ListOfCoursesScreenArguments?;
       return MaterialPageRoute(
-        builder: (context) => AllCoursesScreen(
+        builder: (context) => ListOfCoursesScreen(
           subject: args?.subject,
         ),
       );

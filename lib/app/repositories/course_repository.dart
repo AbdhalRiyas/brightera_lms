@@ -19,8 +19,11 @@ class CourseRepository {
         courses.add(Course(
           id: doc.id,
           title: doc['title'],
-          description: doc['description'], // Corrected the typo 'is_hideen'
-          price: doc['price'], subject: doc['subject'],
+          description: doc['description'],
+          salePrice: doc['salePrice'],
+          regularPrice: doc['regularPrice'],
+          subject: doc['subject'],
+          durationInHours: doc['durationInHours'],
         ));
       }
     }

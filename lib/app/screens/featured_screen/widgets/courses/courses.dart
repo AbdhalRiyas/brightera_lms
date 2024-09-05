@@ -1,6 +1,6 @@
 import 'package:app/app/models/subject.dart';
 import 'package:app/app/repositories/subject_repository.dart';
-import 'package:app/app/screens/featured_screen/widgets/courses/list_of_courses.dart';
+import 'package:app/app/screens/list_of_courses_screen/list_of_courses_screen.dart';
 import 'package:app/app/screens/featured_screen/widgets/courses/subject_button.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +13,8 @@ class FeaturedCourses extends StatefulWidget {
 
 class _FeaturedCoursesState extends State<FeaturedCourses> {
   final SubjectRepository _repository = SubjectRepository();
-  final GlobalKey<ListOfCoursesState> _key = GlobalKey<ListOfCoursesState>();
+  final GlobalKey<ListOfCoursesScreenState> _key =
+      GlobalKey<ListOfCoursesScreenState>();
 
   List<Subject> _subjects = [];
   bool _isLoading = true;
@@ -70,9 +71,10 @@ class _FeaturedCoursesState extends State<FeaturedCourses> {
                 ),
               ),
               const SizedBox(height: 20),
-              ListOfCourses(
+              ListOfCoursesScreen(
                 key: _key,
                 subject: _selectedSubject,
+                featuredCoursesOnly: true,
               ),
             ],
           );

@@ -1,48 +1,55 @@
 import 'package:app/app/config/theme_constants.dart';
+import 'package:app/app/models/course.dart';
+import 'package:app/app/utils/format_price.dart';
 import 'package:flutter/material.dart';
 
 class CourseCardSubtitle extends StatelessWidget {
-  const CourseCardSubtitle({super.key});
+  const CourseCardSubtitle({super.key, required this.course});
+
+  final Course course;
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          "30 Hours",
-          overflow: TextOverflow.ellipsis,
-          maxLines: 2,
-          textAlign: TextAlign.start,
-          style: TextStyle(
-            fontSize: ThemeConstants.fontSizeSmall * 0.80,
-            fontWeight: FontWeight.w500,
-            color: Colors.grey,
+        if (course.durationInHours != null)
+          Text(
+            "${course.durationInHours} Hours",
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+            textAlign: TextAlign.start,
+            style: const TextStyle(
+              fontSize: ThemeConstants.fontSizeSmall * 0.80,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey,
+            ),
           ),
-        ),
         Text.rich(
           TextSpan(
-            text: "Rs.3000",
-            style: TextStyle(
+            text: formatPrice(course.salePrice),
+            style: const TextStyle(
               fontSize: ThemeConstants.fontSizeSmall,
               fontWeight: FontWeight.w600,
             ),
-            children: [
-              TextSpan(
-                text: "  ", // Add space
-                style: TextStyle(
-                  fontSize: ThemeConstants.fontSizeSmall,
-                ),
-              ),
-              TextSpan(
-                text: "Rs.5000",
-                style: TextStyle(
-                    decoration: TextDecoration.lineThrough,
-                    fontSize: ThemeConstants.fontSizeSmall,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey),
-              )
-            ],
+            children: course.regularPrice > 0
+                ? [
+                    const TextSpan(
+                      text: "  ", // Add space
+                      style: TextStyle(
+                        fontSize: ThemeConstants.fontSizeSmall,
+                      ),
+                    ),
+                    TextSpan(
+                      text: formatPrice(course.regularPrice),
+                      style: const TextStyle(
+                          decoration: TextDecoration.lineThrough,
+                          fontSize: ThemeConstants.fontSizeSmall,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey),
+                    )
+                  ]
+                : null,
           ),
         ),
       ],
