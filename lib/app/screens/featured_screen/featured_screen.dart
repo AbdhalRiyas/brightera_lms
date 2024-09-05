@@ -17,27 +17,31 @@ class _FeaturedScreenState extends State<FeaturedScreen>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
+      appBar: AppBar(
+        title: CustomAppBar(),
+      ),
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
-            expandedHeight: 250.0, // Height of the expanded AppBar
-            title: const CustomAppBar(),
-            bottom: const PreferredSize(
-              preferredSize: Size.fromHeight(250),
-              child: Carousel(),
-            ),
-            flexibleSpace: FlexibleSpaceBar(
-              background: Image.asset(
-                "assets/images/hero.webp",
-                fit: BoxFit.cover,
-              ),
-            ),
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-          ),
+          // SliverAppBar(
+          //   expandedHeight: 250.0, // Height of the expanded AppBar
+          //   title: const CustomAppBar(),
+          //   bottom: const PreferredSize(
+          //     preferredSize: Size.fromHeight(250),
+          //     child: Carousel(),
+          //   ),
+          //   flexibleSpace: FlexibleSpaceBar(
+          //     background: Image.asset(
+          //       "assets/images/hero.webp",
+          //       fit: BoxFit.cover,
+          //     ),
+          //   ),
+          //   backgroundColor: Colors.transparent,
+          //   elevation: 0,
+          // ),
           SliverList(
             delegate: SliverChildListDelegate(
               [
+                const Carousel(),
                 Padding(
                   padding: const EdgeInsets.all(ThemeConstants.paddingSmall),
                   child: Column(
