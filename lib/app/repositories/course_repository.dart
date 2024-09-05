@@ -5,9 +5,11 @@ import '../services/firebase_service.dart';
 class CourseRepository {
   final FirebaseService _firebaseService = FirebaseService();
 
-  Future<List<Course>> getCoursesBySubject(String subjectId) async {
+  Future<List<Course>> getCoursesBySubject(String subjectId,
+      [bool onlyFeatured = false]) async {
     // Fetch user data from Firebase
-    final data = await _firebaseService.getCoursesBySubject(subjectId);
+    final data =
+        await _firebaseService.getCoursesBySubject(subjectId, onlyFeatured);
     final List<Course> courses = [];
 
     // Ensure data is not null and iterate through documents

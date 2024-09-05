@@ -1,24 +1,23 @@
-import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/models/subject.dart';
 import 'package:app/app/repositories/subject_repository.dart';
 import 'package:app/app/screens/featured_screen/widgets/courses/list_of_courses.dart';
 import 'package:app/app/screens/featured_screen/widgets/courses/subject_button.dart';
 import 'package:flutter/material.dart';
 
-class Courses extends StatefulWidget {
-  const Courses({super.key});
+class FeaturedCourses extends StatefulWidget {
+  const FeaturedCourses({super.key});
 
   @override
-  State<Courses> createState() => _CoursesState();
+  State<FeaturedCourses> createState() => _FeaturedCoursesState();
 }
 
-class _CoursesState extends State<Courses> {
+class _FeaturedCoursesState extends State<FeaturedCourses> {
   final SubjectRepository _repository = SubjectRepository();
   final GlobalKey<ListOfCoursesState> _key = GlobalKey<ListOfCoursesState>();
 
   List<Subject> _subjects = [];
   bool _isLoading = true;
-  String? _selectedSubject;
+  Subject? _selectedSubject;
 
   @override
   void initState() {
@@ -29,19 +28,19 @@ class _CoursesState extends State<Courses> {
   Future<void> _fetchSubjects() async {
     final subjects = await _repository.getAllSubjects();
     _subjects = subjects;
-    _selectedSubject = _subjects.first.id;
+    _selectedSubject = _subjects.first;
     _key.currentState?.fetchCourses(_subjects.first.id);
     setState(() {
       _isLoading = false;
     });
   }
 
-  void _switchSubject(String subectId) {
-    if (_selectedSubject != subectId) {
+  void _switchSubject(Subject subject) {
+    if (_selectedSubject?.id != subject.id) {
       // Calling child method using a global key
-      _key.currentState?.fetchCourses(subectId);
+      _key.currentState?.fetchCourses(subject.id);
       setState(() {
-        _selectedSubject = subectId;
+        _selectedSubject = subject;
       });
     }
   }
@@ -53,30 +52,27 @@ class _CoursesState extends State<Courses> {
         : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: ThemeConstants.paddingMedium),
-                child: SizedBox(
-                  height: 50,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    shrinkWrap: true,
-                    itemCount: _subjects.length,
-                    itemBuilder: (context, i) => SubjectButton(
-                      onTap: () => _switchSubject(_subjects[i].id),
-                      selectedSubject: _selectedSubject ?? '',
-                      subject: _subjects[i],
-                    ),
-                    separatorBuilder: (BuildContext context, int index) =>
-                        const SizedBox(
-                      width: 10,
-                    ),
+              SizedBox(
+                height: 50,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  shrinkWrap: true,
+                  itemCount: _subjects.length,
+                  itemBuilder: (context, i) => SubjectButton(
+                    onTap: () => _switchSubject(_subjects[i]),
+                    selectedSubject: _selectedSubject?.id ?? '',
+                    subject: _subjects[i],
+                  ),
+                  separatorBuilder: (BuildContext context, int index) =>
+                      const SizedBox(
+                    width: 10,
                   ),
                 ),
               ),
+              const SizedBox(height: 20),
               ListOfCourses(
                 key: _key,
-                subjectId: _selectedSubject ?? '',
+                subject: _selectedSubject,
               ),
             ],
           );

@@ -1,13 +1,16 @@
+import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/models/course.dart';
+import 'package:app/app/models/subject.dart';
 import 'package:app/app/repositories/course_repository.dart';
-import 'package:app/app/screens/course_screen/course_screen.dart';
+import 'package:app/app/screens/courses/all_courses_screen.dart';
+import 'package:app/app/screens/courses/course_screen.dart';
 import 'package:app/app/screens/featured_screen/widgets/courses/course_card.dart';
 import 'package:flutter/material.dart';
 
 class ListOfCourses extends StatefulWidget {
-  const ListOfCourses({super.key, required this.subjectId});
+  const ListOfCourses({super.key, required this.subject});
 
-  final String subjectId;
+  final Subject? subject;
 
   @override
   State<ListOfCourses> createState() => ListOfCoursesState();
@@ -19,12 +22,12 @@ class ListOfCoursesState extends State<ListOfCourses> {
 
   @override
   void initState() {
-    fetchCourses(widget.subjectId);
+    fetchCourses(widget.subject?.id ?? '');
     super.initState();
   }
 
   Future<void> fetchCourses(String subjectId) async {
-    final courses = await _repository.getCoursesBySubject(subjectId);
+    final courses = await _repository.getCoursesBySubject(subjectId, true);
     setState(() {
       _courses = courses;
     });
@@ -40,24 +43,50 @@ class ListOfCoursesState extends State<ListOfCourses> {
                 return ListView.separated(
                   shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, i) => GestureDetector(
-                    onTap: () => Navigator.pushNamed(
-                      context,
-                      '/course',
-                      arguments: CourseScreenArguments(_courses[i]),
-                    ),
-                    child: CourseCard(
-                      course: _courses[i],
-                      maxWidth: constraints.maxWidth,
-                      maxHeight: constraints.maxHeight,
-                    ),
-                  ),
+                  itemBuilder: (context, i) => i == _courses.length
+                      ? SizedBox(
+                          width: constraints.maxWidth / 2,
+                          child: TextButton(
+                            onPressed: () => Navigator.pushNamed(
+                              context,
+                              '/all-courses',
+                              arguments:
+                                  AllCoursesScreenArguments(widget.subject),
+                            ),
+                            style: TextButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    ThemeConstants.borderRadiusLarge),
+                              ),
+                            ),
+                            child: const Text(
+                              "See All",
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ),
+                        )
+                      : InkWell(
+                          onTap: () => Navigator.pushNamed(
+                            context,
+                            '/course',
+                            arguments: CourseScreenArguments(_courses[i]),
+                          ),
+                          borderRadius: BorderRadius.circular(
+                              ThemeConstants.borderRadiusLarge),
+                          child: CourseCard(
+                            course: _courses[0],
+                            maxWidth: constraints.maxWidth,
+                            maxHeight: constraints.maxHeight,
+                          ),
+                        ),
                   separatorBuilder: (context, i) => const SizedBox(width: 10),
-                  itemCount: _courses.length,
+                  itemCount: _courses.length + 1,
                 );
               }),
             );
           })
-        : const Text("No Courses Have Been Added For This Subject");
+        : const Text(
+            "No courses have been featured for this subject yet.",
+          );
   }
 }

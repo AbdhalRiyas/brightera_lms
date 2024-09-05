@@ -1,5 +1,6 @@
 import 'package:app/app/screens/account_screen.dart';
-import 'package:app/app/screens/course_screen/course_screen.dart';
+import 'package:app/app/screens/courses/all_courses_screen.dart';
+import 'package:app/app/screens/courses/course_screen.dart';
 import 'package:app/app/screens/home_screen.dart';
 import 'package:app/app/screens/lectures_screen/lectures_screen.dart';
 import 'package:app/app/screens/login_screen/login_screen.dart';
@@ -20,6 +21,14 @@ Route<dynamic>? routes(RouteSettings settings) {
     case '/account':
       return MaterialPageRoute(
         builder: (context) => const AccountScreen(),
+      );
+
+    case '/all-courses':
+      final args = settings.arguments as AllCoursesScreenArguments?;
+      return MaterialPageRoute(
+        builder: (context) => AllCoursesScreen(
+          subject: args?.subject,
+        ),
       );
 
     case '/course':

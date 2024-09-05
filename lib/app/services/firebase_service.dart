@@ -137,19 +137,23 @@ class FirebaseService {
   }
 
   Future<QuerySnapshot<Map<String, dynamic>>?> getCoursesBySubject(
-      String subjectId) async {
+      String subjectId,
+      [bool isFeatured = false]) async {
     try {
       // Create a reference to the specific subject document
       DocumentReference subjectRef =
           _firestore.collection('subjects').doc(subjectId);
 
       // Query the courses collection where the subject field matches the subject reference
-      final coursesSnapshot = await _firestore
+      Query<Map<String, dynamic>> query = _firestore
           .collection('courses')
-          .where('subject', isEqualTo: subjectRef)
-          .get();
+          .where('subject', isEqualTo: subjectRef);
 
-      return coursesSnapshot;
+      if (isFeatured) {
+        query = query.where('isFeatured', isEqualTo: true);
+      }
+
+      return await query.get();
     } catch (e) {
       // Handle any errors here
       print('Error fetching courses by subject: $e');

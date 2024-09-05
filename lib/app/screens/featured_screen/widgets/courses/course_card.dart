@@ -41,8 +41,8 @@ class CourseCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(
-              ThemeConstants.paddingSmall,
+            padding: const EdgeInsets.symmetric(
+              vertical: ThemeConstants.paddingSmall,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
