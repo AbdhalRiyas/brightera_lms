@@ -8,6 +8,7 @@ class Lecture {
   final bool freePreview;
   final bool isLive;
   final int order;
+  final int durationInSeconds;
 
   const Lecture({
     required this.id,
@@ -15,6 +16,7 @@ class Lecture {
     required this.type,
     required this.source,
     required this.order,
+    required this.durationInSeconds,
     this.freePreview = false,
     this.isLive = false,
   });
@@ -28,6 +30,7 @@ class Lecture {
       freePreview: doc.data()?['free_preview'] ?? false,
       isLive: doc.data()?['is_live'] ?? false,
       order: doc.data()?['order'] ?? 1,
+      durationInSeconds: doc.data()?['durationInSeconds'] ?? 0,
     );
   }
 }

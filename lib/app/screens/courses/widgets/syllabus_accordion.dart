@@ -4,6 +4,8 @@ import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/models/course.dart';
 import 'package:app/app/models/section.dart';
 import 'package:app/app/repositories/course_repository.dart';
+import 'package:app/app/utils/int_extension.dart';
+import 'package:app/app/utils/string_extension.dart';
 import 'package:flutter/material.dart';
 
 class SyllabusAccordion extends StatefulWidget {
@@ -98,54 +100,30 @@ class _SyllabusAccordionState extends State<SyllabusAccordion> {
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-                            subtitle: const Text(
-                              "Video - 02:24 mins",
-                              style: TextStyle(fontSize: 11),
+                            subtitle: Text(
+                              "${_sections[i].lectures[j].type.capitalize()} - ${_sections[i].lectures[j].durationInSeconds.toMinutes()}",
+                              style: const TextStyle(fontSize: 11),
                             ),
                             contentPadding: const EdgeInsets.only(
                                 left: ThemeConstants.paddingLarge),
-                            trailing: Material(
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(
-                                    ThemeConstants.borderRadiusLarge),
-                                onTap: () {},
-                                child: const Icon(
-                                  Icons.play_circle_outline_sharp,
-                                  color: ThemeConstants.primaryButtonColor,
-                                ),
-                              ),
-                            ),
+                            trailing: _sections[i].lectures[j].freePreview
+                                ? Material(
+                                    child: InkWell(
+                                      borderRadius: BorderRadius.circular(
+                                          ThemeConstants.borderRadiusLarge),
+                                      onTap: () {},
+                                      child: const Icon(
+                                        Icons.play_circle_outline_sharp,
+                                        color:
+                                            ThemeConstants.primaryButtonColor,
+                                      ),
+                                    ),
+                                  )
+                                : null,
                           )),
                 ),
               ),
             ),
-            // [
-            //   AccordionSection(
-            //     contentVerticalPadding: ThemeConstants.paddingSmall,
-            //     header: const Text(
-            //       'Section 2 - Physics',
-            //       style: TextStyle(
-            //         fontSize: 13,
-            //         fontWeight: FontWeight.w500,
-            //       ),
-            //     ),
-            //     content: const Column(
-            //       crossAxisAlignment: CrossAxisAlignment.stretch,
-            //       children: [
-            //         ListTile(
-            //           leading: Text("1"),
-            //           title: Text(
-            //             "qdqwd",
-            //             style: TextStyle(
-            //               fontSize: 12,
-            //               fontWeight: FontWeight.w500,
-            //             ),
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ],
           );
   }
 }

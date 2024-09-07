@@ -25,6 +25,7 @@ class _LecturesScreenState extends State<LecturesScreen> {
     );
 
     // Add a listener to track fullscreen mode
+
     _controller.addListener(_playerListener);
   }
 
@@ -75,7 +76,7 @@ class _LecturesScreenState extends State<LecturesScreen> {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
-        items: [
+        items: const [
           BottomNavigationBarItem(icon: Icon(Icons.abc), label: 'dwdw'),
           BottomNavigationBarItem(icon: Icon(Icons.abc), label: 'dwdw'),
           BottomNavigationBarItem(icon: Icon(Icons.abc), label: 'dwdw'),
