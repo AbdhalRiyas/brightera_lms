@@ -162,6 +162,49 @@ class FirebaseService {
     }
   }
 
+  Future<QuerySnapshot<Map<String, dynamic>>?> getSectionsForCourse(
+      String courseId) async {
+    try {
+      // Reference to the specific course document
+      DocumentReference courseRef =
+          _firestore.collection('courses').doc(courseId);
+
+      // Query the sections sub-collection for the course
+      Query<Map<String, dynamic>> query =
+          courseRef.collection('sections').orderBy('order');
+
+      // Get the sections
+      return await query.get();
+    } catch (e) {
+      // Handle any errors
+      debugPrint('Error fetching sections for course: $e');
+      return null;
+    }
+  }
+
+  Future<QuerySnapshot<Map<String, dynamic>>?> getLecturesForSection(
+      String courseId, String sectionId) async {
+    try {
+      // Reference to the specific section document
+      DocumentReference sectionRef = _firestore
+          .collection('courses')
+          .doc(courseId)
+          .collection('sections')
+          .doc(sectionId);
+
+      // Query the lectures sub-collection for the section
+      Query<Map<String, dynamic>> query =
+          sectionRef.collection('lectures').orderBy('order');
+
+      // Get the lectures
+      return await query.get();
+    } catch (e) {
+      // Handle any errors
+      debugPrint('Error fetching lectures for section: $e');
+      return null;
+    }
+  }
+
   Future<Map<String, dynamic>?> getUserData(String id) async {
     // Fetch user data from Firebase Firestore
     final snapshot = await _firestore.collection('users').doc(id).get();

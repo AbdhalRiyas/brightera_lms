@@ -1,7 +1,6 @@
-import 'package:accordion/accordion.dart';
-import 'package:accordion/controllers.dart';
 import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/models/course.dart';
+import 'package:app/app/screens/courses/widgets/syllabus_accordion.dart';
 import 'package:app/app/utils/format_price.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -125,107 +124,7 @@ class CourseScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Accordion(
-              paddingListTop: 0,
-              contentVerticalPadding: ThemeConstants.paddingSmall,
-              disableScrolling: true,
-              rightIcon: const Icon(
-                Icons.keyboard_arrow_down,
-                color: Colors.black,
-                size: 22,
-              ),
-              headerBorderRadius: ThemeConstants.borderRadiusSmall,
-              headerBorderWidth: 0,
-              paddingListHorizontal: 0,
-              headerBorderColorOpened: Colors.transparent,
-              headerBackgroundColor: Colors.transparent,
-              headerBackgroundColorOpened: Colors.transparent,
-              contentBackgroundColor: Colors.transparent,
-              contentBorderWidth: 0,
-              contentHorizontalPadding: 0,
-              scaleWhenAnimating: false,
-              openAndCloseAnimation: true,
-              headerPadding: const EdgeInsets.symmetric(vertical: 7),
-              sectionOpeningHapticFeedback: SectionHapticFeedback.heavy,
-              sectionClosingHapticFeedback: SectionHapticFeedback.light,
-              maxOpenSections: 100,
-              children: [
-                AccordionSection(
-                  isOpen: true,
-                  contentVerticalPadding: ThemeConstants.paddingSmall,
-                  header: const Text(
-                    'Section 1 - Introduction',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  content: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      ListTile(
-                        leading: const Text(
-                          "1",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        title: const Text(
-                          "Had better (Learn)",
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        subtitle: const Text(
-                          "Video - 02:24 mins",
-                          style: TextStyle(fontSize: 11),
-                        ),
-                        contentPadding: const EdgeInsets.only(
-                            left: ThemeConstants.paddingLarge),
-                        trailing: Material(
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(
-                                ThemeConstants.borderRadiusLarge),
-                            onTap: () {},
-                            child: const Icon(
-                              Icons.play_circle_outline_sharp,
-                              color: ThemeConstants.primaryButtonColor,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                AccordionSection(
-                  contentVerticalPadding: ThemeConstants.paddingSmall,
-                  header: const Text(
-                    'Section 2 - Physics',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  content: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      ListTile(
-                        leading: Text("1"),
-                        title: Text(
-                          "qdqwd",
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            )
+            SyllabusAccordion(course: course)
           ],
         ),
       ),

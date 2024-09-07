@@ -1,15 +1,33 @@
-enum LectureType { video, article }
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Lecture {
-  final String id, title, source;
-  final bool isLive, freePreview;
-  final LectureType type;
+  final String id;
+  final String title;
+  final String type;
+  final String source;
+  final bool freePreview;
+  final bool isLive;
+  final int order;
 
-  const Lecture(
-      {required this.id,
-      required this.title,
-      required this.source,
-      required this.isLive,
-      required this.freePreview,
-      required this.type});
+  const Lecture({
+    required this.id,
+    required this.title,
+    required this.type,
+    required this.source,
+    required this.order,
+    this.freePreview = false,
+    this.isLive = false,
+  });
+
+  factory Lecture.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
+    return Lecture(
+      id: doc.id,
+      title: doc.data()?['title'] ?? '',
+      type: doc.data()?['type'] ?? 'video',
+      source: doc.data()?['source'] ?? '',
+      freePreview: doc.data()?['free_preview'] ?? false,
+      isLive: doc.data()?['is_live'] ?? false,
+      order: doc.data()?['order'] ?? 1,
+    );
+  }
 }
