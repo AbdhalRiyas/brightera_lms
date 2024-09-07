@@ -4,6 +4,7 @@ import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/models/course.dart';
 import 'package:app/app/models/section.dart';
 import 'package:app/app/repositories/course_repository.dart';
+import 'package:app/app/screens/courses/widgets/show_free_preview.dart';
 import 'package:app/app/utils/int_extension.dart';
 import 'package:app/app/utils/string_extension.dart';
 import 'package:flutter/material.dart';
@@ -72,7 +73,8 @@ class _SyllabusAccordionState extends State<SyllabusAccordion> {
             children: List.generate(
               _sections.length,
               (i) => AccordionSection(
-                isOpen: true,
+                key: Key(_sections[i].id),
+                isOpen: i == 0,
                 contentVerticalPadding: ThemeConstants.paddingSmall,
                 header: Text(
                   _sections[i].title,
@@ -111,7 +113,8 @@ class _SyllabusAccordionState extends State<SyllabusAccordion> {
                                     child: InkWell(
                                       borderRadius: BorderRadius.circular(
                                           ThemeConstants.borderRadiusLarge),
-                                      onTap: () {},
+                                      onTap: () => showFreePreview(context,
+                                          _sections[i].lectures[j].source),
                                       child: const Icon(
                                         Icons.play_circle_outline_sharp,
                                         color:
