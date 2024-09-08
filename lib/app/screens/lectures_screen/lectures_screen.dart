@@ -98,39 +98,45 @@ class _LecturesScreenState extends State<LecturesScreen> {
       body: SafeArea(
         right: !_isFullScreen,
         left: !_isFullScreen,
-        child: Column(
-          children: [
-            Flexible(
-              flex: 4,
-              child: YoutubePlayerWidget(
-                controller: _controller,
-                onReplayBackward: _replayBackward,
-                onSkipForward: _skipForward,
+        child: LayoutBuilder(builder: (context, constraints) {
+          return Column(
+            children: [
+              Flexible(
+                flex: 8,
+                child: YoutubePlayerWidget(
+                  controller: _controller,
+                  onReplayBackward: _replayBackward,
+                  onSkipForward: _skipForward,
+                ),
               ),
-            ),
-            Flexible(
-              flex: _isFullScreen ? 0 : 8,
-              child: Visibility(
-                visible: !_isFullScreen,
-                maintainState: true,
-                child: Padding(
-                  padding: const EdgeInsets.all(ThemeConstants.paddingSmall),
-                  child: ListView(
-                    controller: _syllabusScrollController,
-                    shrinkWrap: true,
-                    children: [
-                      SyllabusAccordion(
-                        key: _syllabusKey,
-                        course: widget.course,
-                        youtubePlayerController: _controller,
-                      ),
-                    ],
+              Flexible(
+                flex: _isFullScreen
+                    ? 0
+                    : constraints.maxHeight < 540
+                        ? 1
+                        : 16,
+                child: Visibility(
+                  visible: !_isFullScreen,
+                  maintainState: true,
+                  child: Padding(
+                    padding: const EdgeInsets.all(ThemeConstants.paddingSmall),
+                    child: ListView(
+                      controller: _syllabusScrollController,
+                      shrinkWrap: true,
+                      children: [
+                        SyllabusAccordion(
+                          key: _syllabusKey,
+                          course: widget.course,
+                          youtubePlayerController: _controller,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
+            ],
+          );
+        }),
       ),
     );
   }
