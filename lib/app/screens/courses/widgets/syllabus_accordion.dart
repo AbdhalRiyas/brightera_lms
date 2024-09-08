@@ -13,24 +13,35 @@ class SyllabusAccordion extends StatefulWidget {
   const SyllabusAccordion({
     super.key,
     required this.course,
+    this.sections,
   });
 
   final Course course;
+  final List<Section>? sections;
 
   @override
   State<SyllabusAccordion> createState() => _SyllabusAccordionState();
 }
 
-class _SyllabusAccordionState extends State<SyllabusAccordion> {
+class _SyllabusAccordionState extends State<SyllabusAccordion>
+    with AutomaticKeepAliveClientMixin {
   final CourseRepository _repository = CourseRepository();
   bool _isLoading = true;
   List<Section> _sections = [];
 
   @override
   void initState() {
-    if (_isLoading) {
-      _fetchSectionsAndLectures();
+    if (widget.sections != null) {
+      _sections = widget.sections!;
+      _isLoading = false;
+    } else {
+      if (_isLoading) {
+        print("re create");
+
+        _fetchSectionsAndLectures();
+      }
     }
+
     super.initState();
   }
 
@@ -44,6 +55,7 @@ class _SyllabusAccordionState extends State<SyllabusAccordion> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return _isLoading
         ? const Center(child: CircularProgressIndicator.adaptive())
         : Accordion(
@@ -87,46 +99,46 @@ class _SyllabusAccordionState extends State<SyllabusAccordion> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: List.generate(
                       _sections[i].lectures.length,
-                      (j) => ListTile(
-                            leading: Text(
-                              (j + 1).toString(),
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
+                      (j) => Material(
+                            child: ListTile(
+                              leading: Text(
+                                (j + 1).toString(),
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                            ),
-                            title: Text(
-                              _sections[i].lectures[j].title,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
+                              title: Text(
+                                _sections[i].lectures[j].title,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
+                              subtitle: Text(
+                                "${_sections[i].lectures[j].type.capitalize()} - ${_sections[i].lectures[j].durationInSeconds.toMinutes()}",
+                                style: const TextStyle(fontSize: 11),
+                              ),
+                              contentPadding: const EdgeInsets.only(
+                                  left: ThemeConstants.paddingLarge),
+                              trailing: _sections[i].lectures[j].freePreview
+                                  ? const Icon(
+                                      Icons.play_circle_outline_sharp,
+                                      color: ThemeConstants.primaryButtonColor,
+                                    )
+                                  : null,
+                              onTap: _sections[i].lectures[j].freePreview
+                                  ? () => showFreePreview(
+                                      context, _sections[i].lectures[j].source)
+                                  : null,
                             ),
-                            subtitle: Text(
-                              "${_sections[i].lectures[j].type.capitalize()} - ${_sections[i].lectures[j].durationInSeconds.toMinutes()}",
-                              style: const TextStyle(fontSize: 11),
-                            ),
-                            contentPadding: const EdgeInsets.only(
-                                left: ThemeConstants.paddingLarge),
-                            trailing: _sections[i].lectures[j].freePreview
-                                ? Material(
-                                    child: InkWell(
-                                      borderRadius: BorderRadius.circular(
-                                          ThemeConstants.borderRadiusLarge),
-                                      onTap: () => showFreePreview(context,
-                                          _sections[i].lectures[j].source),
-                                      child: const Icon(
-                                        Icons.play_circle_outline_sharp,
-                                        color:
-                                            ThemeConstants.primaryButtonColor,
-                                      ),
-                                    ),
-                                  )
-                                : null,
                           )),
                 ),
               ),
             ),
           );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

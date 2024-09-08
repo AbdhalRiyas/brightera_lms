@@ -13,10 +13,10 @@ void showFreePreview(BuildContext context, String source) {
           controller: YoutubePlayerController(
               initialVideoId: YoutubePlayer.convertUrlToId(source) ?? ''),
           showVideoProgressIndicator: true,
-          progressIndicatorColor: Colors.amber,
+          progressIndicatorColor: ThemeConstants.primaryColor,
           progressColors: const ProgressBarColors(
-            playedColor: Colors.amber,
-            handleColor: Colors.amberAccent,
+            playedColor: ThemeConstants.accentColor,
+            handleColor: ThemeConstants.primaryColor,
           ),
         ),
       ),

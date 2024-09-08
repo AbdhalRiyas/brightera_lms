@@ -38,8 +38,9 @@ Route<dynamic>? routes(RouteSettings settings) {
       );
 
     case '/lectures':
+      final args = settings.arguments as LecturesArguments;
       return MaterialPageRoute(
-        builder: (context) => const LecturesScreen(),
+        builder: (context) => LecturesScreen(course: args.course),
       );
 
     default:

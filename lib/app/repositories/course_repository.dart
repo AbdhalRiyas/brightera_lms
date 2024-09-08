@@ -18,16 +18,7 @@ class CourseRepository {
     if (data != null) {
       for (var doc in data.docs) {
         // Create a Subject object from each document
-        courses.add(Course(
-          id: doc.id,
-          image: doc['image'],
-          title: doc['title'],
-          description: doc['description'],
-          salePrice: doc['salePrice'],
-          regularPrice: doc['regularPrice'],
-          subject: doc['subject'],
-          durationInHours: doc['durationInHours'],
-        ));
+        courses.add(Course.fromFirestore(doc));
       }
     }
     return courses;

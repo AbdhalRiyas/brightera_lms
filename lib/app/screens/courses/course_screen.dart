@@ -1,10 +1,10 @@
 import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/models/course.dart';
+import 'package:app/app/screens/courses/widgets/course_cover.dart';
 import 'package:app/app/screens/courses/widgets/syllabus_accordion.dart';
+import 'package:app/app/screens/lectures_screen/lectures_screen.dart';
 import 'package:app/app/utils/format_price.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class CourseScreen extends StatelessWidget {
   const CourseScreen({super.key, required this.course});
@@ -13,68 +13,14 @@ class CourseScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool hasActiveSubscription = true;
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
         padding: const EdgeInsets.all(ThemeConstants.paddingSmall),
         child: ListView(
           children: [
-            InkWell(
-              borderRadius:
-                  BorderRadius.circular(ThemeConstants.borderRadiusMedium),
-              onTap: () {
-                print('wdwd');
-              },
-              child: ClipRRect(
-                borderRadius:
-                    BorderRadius.circular(ThemeConstants.borderRadiusMedium),
-                child: Stack(
-                  children: [
-                    CachedNetworkImage(
-                      imageUrl: course.image,
-                      width: double.maxFinite,
-                      fit: BoxFit.fill,
-                    ),
-                    Positioned.fill(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.3),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icons/play-filled.svg',
-                              height: 50,
-                              colorFilter: const ColorFilter.mode(
-                                Colors.white,
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                            const SizedBox(
-                                height: ThemeConstants.paddingMedium),
-                            Text(
-                              "Preview this course",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  shadows: [
-                                    BoxShadow(
-                                        offset: const Offset(1, 1),
-                                        blurRadius: 10,
-                                        spreadRadius: 10,
-                                        color: Colors.grey.shade500),
-                                  ]),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
+            CourseCover(course: course),
             const SizedBox(height: ThemeConstants.paddingSmall),
             Text(
               course.title,
@@ -101,15 +47,16 @@ class CourseScreen extends StatelessWidget {
             ),
             const SizedBox(height: ThemeConstants.paddingSmall),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () => Navigator.pushNamed(context, '/lectures',
+                  arguments: LecturesArguments(course: course)),
               style: ElevatedButton.styleFrom(
                 overlayColor: ThemeConstants.accentColor,
                 backgroundColor: ThemeConstants.primaryButtonColor,
                 elevation: 0,
               ),
-              child: const Text(
-                "Buy Now",
-                style: TextStyle(
+              child: Text(
+                hasActiveSubscription == true ? "Go to lectures" : "Buy Now",
+                style: const TextStyle(
                   fontSize: 16,
                   color: ThemeConstants.primaryButtonTextColor,
                   fontWeight: FontWeight.bold,
