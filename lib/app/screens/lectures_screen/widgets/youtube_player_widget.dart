@@ -73,21 +73,45 @@ class _YoutubePlayerWidgetState extends State<YoutubePlayerWidget> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  IconButton(
-                    onPressed: () => widget.onReplayBackward(),
-                    icon: const Icon(
-                      Icons.replay_10,
-                      size: 48,
-                      color: Colors.white,
-                    ),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () => widget.onReplayBackward(),
+                        icon: const Icon(
+                          Icons.skip_next,
+                          size: 48,
+                          color: Colors.white,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => widget.onReplayBackward(),
+                        icon: const Icon(
+                          Icons.replay_10,
+                          size: 48,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
-                  IconButton(
-                    onPressed: () => widget.onSkipForward(),
-                    icon: const Icon(
-                      Icons.forward_10,
-                      color: Colors.white,
-                      size: 48,
-                    ),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () => widget.onSkipForward(),
+                        icon: const Icon(
+                          Icons.forward_10,
+                          color: Colors.white,
+                          size: 48,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => widget.onReplayBackward(),
+                        icon: const Icon(
+                          Icons.skip_next,
+                          size: 48,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
