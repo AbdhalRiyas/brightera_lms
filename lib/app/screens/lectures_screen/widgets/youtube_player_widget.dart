@@ -34,6 +34,12 @@ class _YoutubePlayerWidgetState extends State<YoutubePlayerWidget> {
           _isFullScreen = widget.controller.value.isFullScreen;
         });
       }
+
+      if (widget.controller.value.isControlsVisible != _isControlsVisible) {
+        setState(() {
+          _isControlsVisible = !_isControlsVisible;
+        });
+      }
     }
   }
 
