@@ -17,19 +17,24 @@ class LecturesScreen extends StatefulWidget {
 class _LecturesScreenState extends State<LecturesScreen> {
   late YoutubePlayerController _controller;
   bool _isFullScreen = false;
+  final PageStorageKey _syllabusKey = const PageStorageKey('syllabus_key');
+  final ScrollController _syllabusScrollController = ScrollController();
+  double _syllabusScrollViewOffset = 0.00;
 
   @override
   void initState() {
     super.initState();
     _controller = YoutubePlayerController(
-      initialVideoId: 'iLnmTe5Q2Qw',
+      initialVideoId:
+          YoutubePlayer.convertUrlToId(widget.course.previewVideo) ?? '',
       flags: const YoutubePlayerFlags(
-        autoPlay: true,
+        autoPlay: false,
         mute: false,
       ),
     );
 
     _controller.addListener(_ytPlayerListener);
+    _syllabusScrollController.addListener(_syllabusScrollListener);
   }
 
   void _ytPlayerListener() {
@@ -38,8 +43,20 @@ class _LecturesScreenState extends State<LecturesScreen> {
         setState(() {
           _isFullScreen = _controller.value.isFullScreen;
         });
+
+        if (!_controller.value.isFullScreen) {
+          _syllabusScrollController.animateTo(
+            _syllabusScrollViewOffset,
+            curve: Curves.bounceIn,
+            duration: const Duration(milliseconds: 500),
+          );
+        }
       }
     }
+  }
+
+  void _syllabusScrollListener() {
+    _syllabusScrollViewOffset = _syllabusScrollController.offset;
   }
 
   @override
@@ -84,22 +101,31 @@ class _LecturesScreenState extends State<LecturesScreen> {
         child: Column(
           children: [
             Flexible(
+              flex: 4,
               child: YoutubePlayerWidget(
                 controller: _controller,
                 onReplayBackward: _replayBackward,
                 onSkipForward: _skipForward,
               ),
             ),
-            Visibility(
-              visible: !_isFullScreen,
-              maintainState: true,
-              child: Padding(
-                padding: const EdgeInsets.all(ThemeConstants.paddingSmall),
-                child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    SyllabusAccordion(course: widget.course),
-                  ],
+            Flexible(
+              flex: _isFullScreen ? 0 : 8,
+              child: Visibility(
+                visible: !_isFullScreen,
+                maintainState: true,
+                child: Padding(
+                  padding: const EdgeInsets.all(ThemeConstants.paddingSmall),
+                  child: ListView(
+                    controller: _syllabusScrollController,
+                    shrinkWrap: true,
+                    children: [
+                      SyllabusAccordion(
+                        key: _syllabusKey,
+                        course: widget.course,
+                        youtubePlayerController: _controller,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
