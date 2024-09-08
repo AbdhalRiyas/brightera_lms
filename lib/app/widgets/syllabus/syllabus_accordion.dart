@@ -13,10 +13,12 @@ class SyllabusAccordion extends StatefulWidget {
     super.key,
     required this.course,
     this.youtubePlayerController,
+    this.activeLessonVideoId,
   });
 
   final Course course;
   final YoutubePlayerController? youtubePlayerController;
+  final ValueNotifier<String>? activeLessonVideoId;
 
   @override
   State<SyllabusAccordion> createState() => _SyllabusAccordionState();
@@ -25,7 +27,6 @@ class SyllabusAccordion extends StatefulWidget {
 class _SyllabusAccordionState extends State<SyllabusAccordion>
     with AutomaticKeepAliveClientMixin {
   final CourseRepository _repository = CourseRepository();
-  final ValueNotifier<String> _activeLessonVideoId = ValueNotifier('');
 
   List<Section> _sections = [];
   bool _isLoading = true;
@@ -33,7 +34,7 @@ class _SyllabusAccordionState extends State<SyllabusAccordion>
 
   @override
   void initState() {
-    _activeLessonVideoId.value =
+    widget.activeLessonVideoId?.value =
         widget.youtubePlayerController?.initialVideoId ?? '';
     if (_isLoading) {
       _fetchSectionsAndLectures();
@@ -61,7 +62,6 @@ class _SyllabusAccordionState extends State<SyllabusAccordion>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    if (_activeLessonVideoId.value.isEmpty) {}
     return _isLoading
         ? const Center(child: CircularProgressIndicator.adaptive())
         : Accordion(
@@ -110,19 +110,28 @@ class _SyllabusAccordionState extends State<SyllabusAccordion>
                   children: List.generate(
                     _sections[i].lectures.length,
                     (j) => Material(
-                      child: ValueListenableBuilder<String>(
-                        valueListenable: _activeLessonVideoId,
-                        builder: (BuildContext context, String value,
-                                Widget? child) =>
-                            SyllabusLesson(
-                          key: Key(_sections[i].lectures[j].id),
-                          index: j,
-                          lecture: _sections[i].lectures[j],
-                          activeLessonVideoId: _activeLessonVideoId,
-                          youtubePlayerController:
-                              widget.youtubePlayerController,
-                        ),
-                      ),
+                      child: widget.activeLessonVideoId != null
+                          ? ValueListenableBuilder<String>(
+                              valueListenable: widget.activeLessonVideoId!,
+                              builder: (BuildContext context, String value,
+                                      Widget? child) =>
+                                  SyllabusLesson(
+                                key: Key(_sections[i].lectures[j].id),
+                                index: j,
+                                lecture: _sections[i].lectures[j],
+                                activeLessonVideoId: widget.activeLessonVideoId,
+                                youtubePlayerController:
+                                    widget.youtubePlayerController,
+                              ),
+                            )
+                          : SyllabusLesson(
+                              key: Key(_sections[i].lectures[j].id),
+                              index: j,
+                              lecture: _sections[i].lectures[j],
+                              activeLessonVideoId: widget.activeLessonVideoId,
+                              youtubePlayerController:
+                                  widget.youtubePlayerController,
+                            ),
                     ),
                   ),
                 ),

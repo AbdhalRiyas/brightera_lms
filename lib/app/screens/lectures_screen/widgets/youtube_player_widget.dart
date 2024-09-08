@@ -3,14 +3,11 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class YoutubePlayerWidget extends StatefulWidget {
   final YoutubePlayerController controller;
-  final Function onSkipForward;
-  final Function onReplayBackward;
 
-  const YoutubePlayerWidget(
-      {super.key,
-      required this.controller,
-      required this.onSkipForward,
-      required this.onReplayBackward});
+  const YoutubePlayerWidget({
+    super.key,
+    required this.controller,
+  });
 
   @override
   State<YoutubePlayerWidget> createState() => _YoutubePlayerWidgetState();
@@ -25,6 +22,20 @@ class _YoutubePlayerWidgetState extends State<YoutubePlayerWidget> {
   void initState() {
     super.initState();
     widget.controller.addListener(_playerListener);
+  }
+
+  void _replayBackward() {
+    final currentPosition = widget.controller.value.position;
+    final newPosition = currentPosition - const Duration(seconds: 10);
+    widget.controller.seekTo(newPosition < const Duration(seconds: 0)
+        ? const Duration(seconds: 0)
+        : newPosition);
+  }
+
+  void _skipForward() {
+    final currentPosition = widget.controller.value.position;
+    final newPosition = currentPosition + const Duration(seconds: 10);
+    widget.controller.seekTo(newPosition);
   }
 
   void _playerListener() {
@@ -76,15 +87,7 @@ class _YoutubePlayerWidgetState extends State<YoutubePlayerWidget> {
                   Row(
                     children: [
                       IconButton(
-                        onPressed: () => widget.onReplayBackward(),
-                        icon: const Icon(
-                          Icons.skip_next,
-                          size: 48,
-                          color: Colors.white,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () => widget.onReplayBackward(),
+                        onPressed: _replayBackward,
                         icon: const Icon(
                           Icons.replay_10,
                           size: 48,
@@ -96,19 +99,11 @@ class _YoutubePlayerWidgetState extends State<YoutubePlayerWidget> {
                   Row(
                     children: [
                       IconButton(
-                        onPressed: () => widget.onSkipForward(),
+                        onPressed: _skipForward,
                         icon: const Icon(
                           Icons.forward_10,
                           color: Colors.white,
                           size: 48,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () => widget.onReplayBackward(),
-                        icon: const Icon(
-                          Icons.skip_next,
-                          size: 48,
-                          color: Colors.white,
                         ),
                       ),
                     ],

@@ -15,10 +15,11 @@ class LecturesScreen extends StatefulWidget {
 }
 
 class _LecturesScreenState extends State<LecturesScreen> {
-  late YoutubePlayerController _controller;
-  bool _isFullScreen = false;
   final PageStorageKey _syllabusKey = const PageStorageKey('syllabus_key');
   final ScrollController _syllabusScrollController = ScrollController();
+  final ValueNotifier<String> _activeLessonVideoId = ValueNotifier('');
+  late YoutubePlayerController _controller;
+  bool _isFullScreen = false;
   double _syllabusScrollViewOffset = 0.00;
 
   @override
@@ -27,10 +28,7 @@ class _LecturesScreenState extends State<LecturesScreen> {
     _controller = YoutubePlayerController(
       initialVideoId:
           YoutubePlayer.convertUrlToId(widget.course.previewVideo) ?? '',
-      flags: const YoutubePlayerFlags(
-        autoPlay: false,
-        mute: false,
-      ),
+      flags: const YoutubePlayerFlags(autoPlay: false, mute: false),
     );
 
     _controller.addListener(_ytPlayerListener);
@@ -66,20 +64,6 @@ class _LecturesScreenState extends State<LecturesScreen> {
     super.dispose();
   }
 
-  void _replayBackward() {
-    final currentPosition = _controller.value.position;
-    final newPosition = currentPosition - const Duration(seconds: 10);
-    _controller.seekTo(newPosition < const Duration(seconds: 0)
-        ? const Duration(seconds: 0)
-        : newPosition);
-  }
-
-  void _skipForward() {
-    final currentPosition = _controller.value.position;
-    final newPosition = currentPosition + const Duration(seconds: 10);
-    _controller.seekTo(newPosition);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,11 +87,7 @@ class _LecturesScreenState extends State<LecturesScreen> {
             children: [
               Flexible(
                 flex: 8,
-                child: YoutubePlayerWidget(
-                  controller: _controller,
-                  onReplayBackward: _replayBackward,
-                  onSkipForward: _skipForward,
-                ),
+                child: YoutubePlayerWidget(controller: _controller),
               ),
               Flexible(
                 flex: _isFullScreen
@@ -128,6 +108,7 @@ class _LecturesScreenState extends State<LecturesScreen> {
                           key: _syllabusKey,
                           course: widget.course,
                           youtubePlayerController: _controller,
+                          activeLessonVideoId: _activeLessonVideoId,
                         ),
                       ],
                     ),
