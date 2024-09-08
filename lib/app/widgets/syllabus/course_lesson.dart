@@ -9,21 +9,24 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 class SyllabusLesson extends StatelessWidget {
   final Lecture lecture;
   final YoutubePlayerController? youtubePlayerController;
-  final ValueNotifier<String>? activeLessonVideoId;
+  final ValueNotifier<Map<String, dynamic>>? activeLessonVideoId;
   final int index;
+  final int sectionIndex;
 
-  const SyllabusLesson(
-      {super.key,
-      required this.lecture,
-      this.youtubePlayerController,
-      this.activeLessonVideoId,
-      required this.index});
+  const SyllabusLesson({
+    super.key,
+    required this.lecture,
+    this.youtubePlayerController,
+    this.activeLessonVideoId,
+    required this.index,
+    required this.sectionIndex,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       tileColor: YoutubePlayer.convertUrlToId(lecture.source) ==
-              activeLessonVideoId?.value
+              activeLessonVideoId?.value['source']
           ? ThemeConstants.lavenderMist
           : null,
       leading: Text(
@@ -58,7 +61,11 @@ class SyllabusLesson extends StatelessWidget {
                   String videoId =
                       YoutubePlayer.convertUrlToId(lecture.source) ?? '';
 
-                  activeLessonVideoId?.value = videoId;
+                  activeLessonVideoId?.value = {
+                    "source": videoId,
+                    "lecture": index,
+                    "section": sectionIndex,
+                  };
 
                   youtubePlayerController?.load(
                     videoId,

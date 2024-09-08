@@ -18,13 +18,13 @@ class SyllabusAccordion extends StatefulWidget {
 
   final Course course;
   final YoutubePlayerController? youtubePlayerController;
-  final ValueNotifier<String>? activeLessonVideoId;
+  final ValueNotifier<Map<String, dynamic>>? activeLessonVideoId;
 
   @override
-  State<SyllabusAccordion> createState() => _SyllabusAccordionState();
+  State<SyllabusAccordion> createState() => SyllabusAccordionState();
 }
 
-class _SyllabusAccordionState extends State<SyllabusAccordion>
+class SyllabusAccordionState extends State<SyllabusAccordion>
     with AutomaticKeepAliveClientMixin {
   final CourseRepository _repository = CourseRepository();
 
@@ -34,8 +34,11 @@ class _SyllabusAccordionState extends State<SyllabusAccordion>
 
   @override
   void initState() {
-    widget.activeLessonVideoId?.value =
-        widget.youtubePlayerController?.initialVideoId ?? '';
+    widget.activeLessonVideoId?.value = {
+      "section": 0,
+      "lecture": 0,
+      "source": YoutubePlayer.convertUrlToId(widget.course.previewVideo),
+    };
     if (_isLoading) {
       _fetchSectionsAndLectures();
     }
@@ -57,6 +60,31 @@ class _SyllabusAccordionState extends State<SyllabusAccordion>
     setState(() {
       _isLoading = false;
     });
+  }
+
+  void nextLesson() {
+    Map<String, dynamic> activeLesson = widget.activeLessonVideoId!.value;
+    int currentSection = activeLesson['section'];
+    int currentLecture = activeLesson['lecture'];
+
+    if (_sections[currentSection].lectures.length > currentLecture) {
+      currentLecture += 1;
+    } else {
+      if (_sections.length > currentSection) {
+        currentSection += 1;
+        currentLecture = 0;
+      }
+    }
+
+    widget.activeLessonVideoId!.value = {
+      'section': currentSection,
+      'lecture': currentLecture,
+      'source': YoutubePlayer.convertUrlToId(
+          _sections[currentSection].lectures[currentLecture].source),
+    };
+
+    widget.youtubePlayerController
+        ?.load(widget.activeLessonVideoId!.value['source']);
   }
 
   @override
@@ -111,13 +139,15 @@ class _SyllabusAccordionState extends State<SyllabusAccordion>
                     _sections[i].lectures.length,
                     (j) => Material(
                       child: widget.activeLessonVideoId != null
-                          ? ValueListenableBuilder<String>(
+                          ? ValueListenableBuilder<Map<String, dynamic>>(
                               valueListenable: widget.activeLessonVideoId!,
-                              builder: (BuildContext context, String value,
+                              builder: (BuildContext context,
+                                      Map<String, dynamic> value,
                                       Widget? child) =>
                                   SyllabusLesson(
                                 key: Key(_sections[i].lectures[j].id),
                                 index: j,
+                                sectionIndex: i,
                                 lecture: _sections[i].lectures[j],
                                 activeLessonVideoId: widget.activeLessonVideoId,
                                 youtubePlayerController:
@@ -127,6 +157,7 @@ class _SyllabusAccordionState extends State<SyllabusAccordion>
                           : SyllabusLesson(
                               key: Key(_sections[i].lectures[j].id),
                               index: j,
+                              sectionIndex: i,
                               lecture: _sections[i].lectures[j],
                               activeLessonVideoId: widget.activeLessonVideoId,
                               youtubePlayerController:

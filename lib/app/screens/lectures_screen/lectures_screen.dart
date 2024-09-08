@@ -15,9 +15,11 @@ class LecturesScreen extends StatefulWidget {
 }
 
 class _LecturesScreenState extends State<LecturesScreen> {
-  final PageStorageKey _syllabusKey = const PageStorageKey('syllabus_key');
+  final GlobalKey<SyllabusAccordionState> _syllabusKey =
+      GlobalKey<SyllabusAccordionState>();
   final ScrollController _syllabusScrollController = ScrollController();
-  final ValueNotifier<String> _activeLessonVideoId = ValueNotifier('');
+  final ValueNotifier<Map<String, dynamic>> _activeLessonVideoId =
+      ValueNotifier({});
   late YoutubePlayerController _controller;
   bool _isFullScreen = false;
   double _syllabusScrollViewOffset = 0.00;
@@ -89,7 +91,12 @@ class _LecturesScreenState extends State<LecturesScreen> {
             children: [
               Flexible(
                 flex: 8,
-                child: YoutubePlayerWidget(controller: _controller),
+                child: YoutubePlayerWidget(
+                  controller: _controller,
+                  nextVideo: () {
+                    _syllabusKey.currentState?.nextLesson();
+                  },
+                ),
               ),
               Flexible(
                 flex: _isFullScreen
