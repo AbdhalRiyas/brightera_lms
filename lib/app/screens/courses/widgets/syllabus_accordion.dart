@@ -13,33 +13,25 @@ class SyllabusAccordion extends StatefulWidget {
   const SyllabusAccordion({
     super.key,
     required this.course,
-    this.sections,
   });
 
   final Course course;
-  final List<Section>? sections;
 
   @override
   State<SyllabusAccordion> createState() => _SyllabusAccordionState();
 }
 
-class _SyllabusAccordionState extends State<SyllabusAccordion>
-    with AutomaticKeepAliveClientMixin {
+class _SyllabusAccordionState extends State<SyllabusAccordion> {
   final CourseRepository _repository = CourseRepository();
-  bool _isLoading = true;
   List<Section> _sections = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
-    if (widget.sections != null) {
-      _sections = widget.sections!;
-      _isLoading = false;
-    } else {
-      if (_isLoading) {
-        print("re create");
+    print("re create");
 
-        _fetchSectionsAndLectures();
-      }
+    if (_isLoading) {
+      _fetchSectionsAndLectures();
     }
 
     super.initState();
@@ -55,7 +47,6 @@ class _SyllabusAccordionState extends State<SyllabusAccordion>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return _isLoading
         ? const Center(child: CircularProgressIndicator.adaptive())
         : Accordion(
@@ -138,7 +129,4 @@ class _SyllabusAccordionState extends State<SyllabusAccordion>
             ),
           );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

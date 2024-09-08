@@ -26,7 +26,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'EdPi',
+      title: 'Brightera',
       debugShowCheckedModeBanner: false,
       theme: ThemeConstants.lightTheme,
       onGenerateRoute: routes,
