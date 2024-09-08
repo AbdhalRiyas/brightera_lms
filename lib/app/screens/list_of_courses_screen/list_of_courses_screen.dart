@@ -41,14 +41,16 @@ class ListOfCoursesScreenState extends State<ListOfCoursesScreen> {
         ? _courses.isNotEmpty
             ? Builder(builder: (context) {
                 return SizedBox(
-                  height: 200,
+                  height: 250,
                   child: LayoutBuilder(builder: (context, constraints) {
                     return ListView.separated(
                       shrinkWrap: true,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, i) => i == _courses.length
                           ? SizedBox(
-                              width: constraints.maxWidth / 2,
+                              width: constraints.maxWidth <= 400
+                                  ? constraints.maxWidth / 2
+                                  : 250,
                               child: TextButton(
                                 onPressed: () => Navigator.pushNamed(
                                   context,
@@ -70,8 +72,8 @@ class ListOfCoursesScreenState extends State<ListOfCoursesScreen> {
                             )
                           : CourseCard(
                               course: _courses[0],
-                              maxWidth: constraints.maxWidth,
-                              maxHeight: constraints.maxHeight,
+                              maxWidth: 450,
+                              maxHeight: 250,
                               onTap: () =>
                                   Navigator.pushNamed(context, '/lectures'),
                               // onTap: () => Navigator.pushNamed(

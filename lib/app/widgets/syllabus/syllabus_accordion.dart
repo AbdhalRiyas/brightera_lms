@@ -90,6 +90,7 @@ class _SyllabusAccordionState extends State<SyllabusAccordion>
             children: List.generate(
               _sections.length,
               (i) => AccordionSection(
+                contentBackgroundColor: ThemeConstants.backgroundColor,
                 onOpenSection: () {
                   _changeOpenedIndex(i);
                 },

@@ -15,7 +15,7 @@ class ThemeConstants {
   static const Color primaryColor = Color(0xFF830182);
   static const Color accentColor = Color(0xFFf300fe);
   static const Color borderColor = Color.fromARGB(255, 221, 220, 221);
-  static const Color backgroundColor = Colors.white;
+  static const Color backgroundColor = Color(0xFFF4F4F4);
   static const Color almondMilk = Color(0xFFF1EDE9);
   static const Color lavenderMist = Color(0xFFE6DFF1);
   static const Color aqua = Color(0xFFC0DEDB);

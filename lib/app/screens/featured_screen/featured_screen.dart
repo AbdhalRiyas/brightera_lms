@@ -20,26 +20,28 @@ class _FeaturedScreenState extends State<FeaturedScreen>
       appBar: AppBar(
         title: const CustomAppBar(),
       ),
-      body: const SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Carousel(),
-            Padding(
-              padding: EdgeInsets.all(ThemeConstants.paddingSmall),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Featured Courses",
-                    style: ThemeConstants.headingStyle,
-                  ),
-                  SizedBox(height: 10),
-                  FeaturedCourses(),
-                ],
+      body: const SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Carousel(),
+              Padding(
+                padding: EdgeInsets.all(ThemeConstants.paddingSmall),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Featured Courses",
+                      style: ThemeConstants.headingStyle,
+                    ),
+                    SizedBox(height: 10),
+                    FeaturedCourses(),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
