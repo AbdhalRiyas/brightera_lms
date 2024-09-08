@@ -67,24 +67,32 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
     int currentSection = activeLesson['section'];
     int currentLecture = activeLesson['lecture'];
 
-    if (_sections[currentSection].lectures.length > currentLecture) {
+    bool isChangesMade = false;
+
+    if (_sections[currentSection].lectures.length - 1 > currentLecture) {
       currentLecture += 1;
+      isChangesMade = true;
     } else {
-      if (_sections.length > currentSection) {
+      if (_sections.length - 1 > currentSection) {
         currentSection += 1;
-        currentLecture = 0;
+        if (_sections[currentSection].lectures.isNotEmpty) {
+          currentLecture = 0;
+          isChangesMade = true;
+        }
       }
     }
 
-    widget.activeLessonVideoId!.value = {
-      'section': currentSection,
-      'lecture': currentLecture,
-      'source': YoutubePlayer.convertUrlToId(
-          _sections[currentSection].lectures[currentLecture].source),
-    };
+    if (isChangesMade) {
+      widget.activeLessonVideoId!.value = {
+        'section': currentSection,
+        'lecture': currentLecture,
+        'source': YoutubePlayer.convertUrlToId(
+            _sections[currentSection].lectures[currentLecture].source),
+      };
 
-    widget.youtubePlayerController
-        ?.load(widget.activeLessonVideoId!.value['source']);
+      widget.youtubePlayerController
+          ?.load(widget.activeLessonVideoId!.value['source']);
+    }
   }
 
   @override
