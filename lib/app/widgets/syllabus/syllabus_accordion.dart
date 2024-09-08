@@ -4,7 +4,7 @@ import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/models/course.dart';
 import 'package:app/app/models/section.dart';
 import 'package:app/app/repositories/course_repository.dart';
-import 'package:app/app/screens/courses/widgets/course_lesson.dart';
+import 'package:app/app/widgets/syllabus/course_lesson.dart';
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -113,7 +113,7 @@ class _SyllabusAccordionState extends State<SyllabusAccordion>
                         valueListenable: _activeLessonVideoId,
                         builder: (BuildContext context, String value,
                                 Widget? child) =>
-                            CourseLesson(
+                            SyllabusLesson(
                           key: Key(_sections[i].lectures[j].id),
                           index: j,
                           lecture: _sections[i].lectures[j],

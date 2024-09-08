@@ -1,7 +1,7 @@
 import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/models/course.dart';
 import 'package:app/app/screens/courses/widgets/course_cover.dart';
-import 'package:app/app/screens/courses/widgets/syllabus_accordion.dart';
+import 'package:app/app/widgets/syllabus/syllabus_accordion.dart';
 import 'package:app/app/screens/lectures_screen/lectures_screen.dart';
 import 'package:app/app/utils/format_price.dart';
 import 'package:flutter/material.dart';

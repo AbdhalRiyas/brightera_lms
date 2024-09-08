@@ -6,13 +6,13 @@ import 'package:app/app/utils/string_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-class CourseLesson extends StatelessWidget {
+class SyllabusLesson extends StatelessWidget {
   final Lecture lecture;
   final YoutubePlayerController? youtubePlayerController;
   final ValueNotifier<String>? activeLessonVideoId;
   final int index;
 
-  const CourseLesson(
+  const SyllabusLesson(
       {super.key,
       required this.lecture,
       this.youtubePlayerController,

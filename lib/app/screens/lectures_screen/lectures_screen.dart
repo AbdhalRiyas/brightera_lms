@@ -1,6 +1,6 @@
 import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/models/course.dart';
-import 'package:app/app/screens/courses/widgets/syllabus_accordion.dart';
+import 'package:app/app/widgets/syllabus/syllabus_accordion.dart';
 import 'package:app/app/screens/lectures_screen/widgets/youtube_player_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
