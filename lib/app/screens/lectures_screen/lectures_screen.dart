@@ -82,6 +82,8 @@ class _LecturesScreenState extends State<LecturesScreen> {
       body: SafeArea(
         right: !_isFullScreen,
         left: !_isFullScreen,
+        bottom: !_isFullScreen,
+        top: !_isFullScreen,
         child: LayoutBuilder(builder: (context, constraints) {
           return Column(
             children: [
