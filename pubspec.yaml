@@ -45,6 +45,7 @@ dependencies:
   url_launcher: ^6.3.0
   firebase_auth: ^5.2.0
   accordion: ^2.6.0
+  syncfusion_flutter_pdfviewer: ^26.2.14
 
 dev_dependencies:
   flutter_test:

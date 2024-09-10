@@ -1,10 +1,10 @@
 import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/models/course.dart';
+import 'package:app/app/screens/lectures_screen/widgets/lecture_notes_tab.dart';
 import 'package:app/app/widgets/bottom_navigation_icon.dart';
 import 'package:app/app/widgets/syllabus/syllabus_accordion.dart';
 import 'package:app/app/screens/lectures_screen/widgets/youtube_player_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class LecturesScreen extends StatefulWidget {
@@ -23,7 +23,6 @@ class _LecturesScreenState extends State<LecturesScreen> {
   final ValueNotifier<Map<String, dynamic>> _activeLessonVideoId =
       ValueNotifier({});
   final ValueNotifier<int> _selectedIndex = ValueNotifier(0);
-
   final PageController _pageController = PageController();
 
   late YoutubePlayerController _controller;
@@ -83,6 +82,70 @@ class _LecturesScreenState extends State<LecturesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      body: SafeArea(
+        right: !_isFullScreen,
+        left: !_isFullScreen,
+        bottom: !_isFullScreen,
+        top: !_isFullScreen,
+        child: LayoutBuilder(builder: (context, constraints) {
+          return Column(
+            children: [
+              Flexible(
+                flex: 8,
+                child: YoutubePlayerWidget(
+                  controller: _controller,
+                  nextVideo: () {
+                    _syllabusKey.currentState?.nextLesson();
+                  },
+                ),
+              ),
+              Flexible(
+                flex: _isFullScreen
+                    ? 0
+                    : constraints.maxHeight < 540
+                        ? 1
+                        : 16,
+                child: Visibility(
+                  visible: !_isFullScreen,
+                  maintainState: true,
+                  child: Padding(
+                    padding: const EdgeInsets.all(ThemeConstants.paddingSmall),
+                    child: ValueListenableBuilder<int>(
+                        valueListenable: _selectedIndex,
+                        builder: (context, selectedIndex, child) {
+                          return SizedBox(
+                            height: MediaQuery.of(context).size.height,
+                            child: PageView(
+                              controller: _pageController,
+                              physics: const NeverScrollableScrollPhysics(),
+                              children: [
+                                ListView(
+                                  controller: _syllabusScrollController,
+                                  children: [
+                                    SyllabusAccordion(
+                                      key: _syllabusKey,
+                                      course: widget.course,
+                                      youtubePlayerController: _controller,
+                                      activeLessonVideoId: _activeLessonVideoId,
+                                    ),
+                                  ],
+                                ),
+                                const LectureNotesTab(
+                                  pdfUrl:
+                                      'https://cdn.syncfusion.com/content/PDFViewer/flutter-succinctly.pdf',
+                                ),
+                                const Text("Downloads"),
+                              ],
+                            ),
+                          );
+                        }),
+                  ),
+                ),
+              ),
+            ],
+          );
+        }),
+      ),
       bottomNavigationBar: Visibility(
         visible: !_isFullScreen,
         maintainState: true,
@@ -123,64 +186,6 @@ class _LecturesScreenState extends State<LecturesScreen> {
                 ],
               );
             }),
-      ),
-      body: SafeArea(
-        right: !_isFullScreen,
-        left: !_isFullScreen,
-        bottom: !_isFullScreen,
-        top: !_isFullScreen,
-        child: LayoutBuilder(builder: (context, constraints) {
-          return Column(
-            children: [
-              Flexible(
-                flex: 8,
-                child: YoutubePlayerWidget(
-                  controller: _controller,
-                  nextVideo: () {
-                    _syllabusKey.currentState?.nextLesson();
-                  },
-                ),
-              ),
-              Flexible(
-                flex: _isFullScreen
-                    ? 0
-                    : constraints.maxHeight < 540
-                        ? 1
-                        : 16,
-                child: Visibility(
-                  visible: !_isFullScreen,
-                  maintainState: true,
-                  child: Padding(
-                    padding: const EdgeInsets.all(ThemeConstants.paddingSmall),
-                    child: ValueListenableBuilder<int>(
-                        valueListenable: _selectedIndex,
-                        builder: (context, selectedIndex, child) {
-                          return PageView(
-                            controller: _pageController,
-                            physics: const NeverScrollableScrollPhysics(),
-                            children: [
-                              ListView(
-                                controller: _syllabusScrollController,
-                                children: [
-                                  SyllabusAccordion(
-                                    key: _syllabusKey,
-                                    course: widget.course,
-                                    youtubePlayerController: _controller,
-                                    activeLessonVideoId: _activeLessonVideoId,
-                                  ),
-                                ],
-                              ),
-                              Text("Notes"),
-                              Text("Downloads"),
-                            ],
-                          );
-                        }),
-                  ),
-                ),
-              ),
-            ],
-          );
-        }),
       ),
     );
   }

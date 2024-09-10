@@ -3,7 +3,6 @@ import 'package:app/app/screens/account_screen.dart';
 import 'package:app/app/screens/featured_screen/featured_screen.dart';
 import 'package:app/app/widgets/bottom_navigation_icon.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.title});
