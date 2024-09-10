@@ -1,6 +1,7 @@
 import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/screens/account_screen.dart';
 import 'package:app/app/screens/featured_screen/featured_screen.dart';
+import 'package:app/app/widgets/bottom_navigation_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -74,25 +75,5 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onTappedBar(int value) {
     _selectedIndex.value = value;
     _pageController.jumpToPage(value);
-  }
-}
-
-class BottomNavigationIcon extends StatelessWidget {
-  final String path;
-  final bool isActive;
-
-  const BottomNavigationIcon({
-    super.key,
-    required this.path,
-    required this.isActive,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SvgPicture.asset(
-      path,
-      colorFilter: ColorFilter.mode(
-          isActive ? Colors.black : Colors.black54, BlendMode.srcIn),
-    );
   }
 }

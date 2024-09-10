@@ -1,8 +1,10 @@
 import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/models/course.dart';
+import 'package:app/app/widgets/bottom_navigation_icon.dart';
 import 'package:app/app/widgets/syllabus/syllabus_accordion.dart';
 import 'package:app/app/screens/lectures_screen/widgets/youtube_player_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class LecturesScreen extends StatefulWidget {
@@ -20,6 +22,10 @@ class _LecturesScreenState extends State<LecturesScreen> {
   final ScrollController _syllabusScrollController = ScrollController();
   final ValueNotifier<Map<String, dynamic>> _activeLessonVideoId =
       ValueNotifier({});
+  final ValueNotifier<int> _selectedIndex = ValueNotifier(0);
+
+  final PageController _pageController = PageController();
+
   late YoutubePlayerController _controller;
   bool _isFullScreen = false;
   double _syllabusScrollViewOffset = 0.00;
@@ -59,6 +65,14 @@ class _LecturesScreenState extends State<LecturesScreen> {
     _syllabusScrollViewOffset = _syllabusScrollController.offset;
   }
 
+  void _switchTab(int index) {
+    if (index != _selectedIndex.value) {
+      _selectedIndex.value = index;
+
+      _pageController.jumpToPage(index);
+    }
+  }
+
   @override
   void dispose() {
     _controller.removeListener(_ytPlayerListener);
@@ -72,14 +86,43 @@ class _LecturesScreenState extends State<LecturesScreen> {
       bottomNavigationBar: Visibility(
         visible: !_isFullScreen,
         maintainState: true,
-        child: BottomNavigationBar(
-          currentIndex: 0,
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.abc), label: 'Tab 1'),
-            BottomNavigationBarItem(icon: Icon(Icons.abc), label: 'Tab 2'),
-            BottomNavigationBarItem(icon: Icon(Icons.abc), label: 'Tab 3'),
-          ],
-        ),
+        child: ValueListenableBuilder<int>(
+            valueListenable: _selectedIndex,
+            builder: (context, selectedIndex, child) {
+              return BottomNavigationBar(
+                useLegacyColorScheme: false,
+                selectedLabelStyle: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 12,
+                ),
+                backgroundColor: ThemeConstants.backgroundColor,
+                elevation: 0,
+                type: BottomNavigationBarType.fixed,
+                currentIndex: selectedIndex,
+                onTap: (value) => _switchTab(value),
+                items: [
+                  BottomNavigationBarItem(
+                    icon: BottomNavigationIcon(
+                      path: "assets/icons/play.svg",
+                      isActive: selectedIndex == 0,
+                    ),
+                    label: 'Lectures',
+                  ),
+                  BottomNavigationBarItem(
+                      icon: BottomNavigationIcon(
+                        path: "assets/icons/notes.svg",
+                        isActive: selectedIndex == 1,
+                      ),
+                      label: 'Notes'),
+                  BottomNavigationBarItem(
+                      icon: BottomNavigationIcon(
+                        path: "assets/icons/downloads.svg",
+                        isActive: selectedIndex == 2,
+                      ),
+                      label: 'Downloads'),
+                ],
+              );
+            }),
       ),
       body: SafeArea(
         right: !_isFullScreen,
@@ -109,18 +152,29 @@ class _LecturesScreenState extends State<LecturesScreen> {
                   maintainState: true,
                   child: Padding(
                     padding: const EdgeInsets.all(ThemeConstants.paddingSmall),
-                    child: ListView(
-                      controller: _syllabusScrollController,
-                      shrinkWrap: true,
-                      children: [
-                        SyllabusAccordion(
-                          key: _syllabusKey,
-                          course: widget.course,
-                          youtubePlayerController: _controller,
-                          activeLessonVideoId: _activeLessonVideoId,
-                        ),
-                      ],
-                    ),
+                    child: ValueListenableBuilder<int>(
+                        valueListenable: _selectedIndex,
+                        builder: (context, selectedIndex, child) {
+                          return PageView(
+                            controller: _pageController,
+                            physics: const NeverScrollableScrollPhysics(),
+                            children: [
+                              ListView(
+                                controller: _syllabusScrollController,
+                                children: [
+                                  SyllabusAccordion(
+                                    key: _syllabusKey,
+                                    course: widget.course,
+                                    youtubePlayerController: _controller,
+                                    activeLessonVideoId: _activeLessonVideoId,
+                                  ),
+                                ],
+                              ),
+                              Text("Notes"),
+                              Text("Downloads"),
+                            ],
+                          );
+                        }),
                   ),
                 ),
               ),
