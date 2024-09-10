@@ -14,74 +14,65 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
+  final ValueNotifier<int> _selectedIndex = ValueNotifier(0);
   final PageController _pageController = PageController();
   final List<Widget> _tabs = const [
     FeaturedScreen(),
     Text('My Learning'),
-    Text('Wishlist'),
     AccountScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        useLegacyColorScheme: false,
-        selectedLabelStyle: const TextStyle(
-          color: Colors.black,
-          fontSize: 12,
-        ),
-        backgroundColor: ThemeConstants.backgroundColor,
-        elevation: 0,
-        type: BottomNavigationBarType.fixed,
-        items: [
-          BottomNavigationBarItem(
-              icon: BottomNavigationIcon(
-                path: 'assets/icons/favourite.svg',
-                isActive: _selectedIndex == 0,
+    return ValueListenableBuilder(
+        valueListenable: _selectedIndex,
+        builder: (context, selectedIndex, child) => Scaffold(
+              bottomNavigationBar: BottomNavigationBar(
+                useLegacyColorScheme: false,
+                selectedLabelStyle: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 12,
+                ),
+                backgroundColor: ThemeConstants.backgroundColor,
+                elevation: 0,
+                type: BottomNavigationBarType.fixed,
+                items: [
+                  BottomNavigationBarItem(
+                      icon: BottomNavigationIcon(
+                        path: 'assets/icons/favourite.svg',
+                        isActive: selectedIndex == 0,
+                      ),
+                      label: 'Featured'),
+                  BottomNavigationBarItem(
+                      icon: BottomNavigationIcon(
+                        path: 'assets/icons/play.svg',
+                        isActive: selectedIndex == 1,
+                      ),
+                      label: 'My Learning'),
+                  BottomNavigationBarItem(
+                      icon: BottomNavigationIcon(
+                        path: 'assets/icons/user.svg',
+                        isActive: selectedIndex == 2,
+                      ),
+                      label: 'Account'),
+                ],
+                onTap: _onTappedBar,
+                currentIndex: selectedIndex,
               ),
-              label: 'Featured'),
-          BottomNavigationBarItem(
-              icon: BottomNavigationIcon(
-                path: 'assets/icons/play.svg',
-                isActive: _selectedIndex == 1,
+              backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
+              body: PageView(
+                physics: const NeverScrollableScrollPhysics(),
+                controller: _pageController,
+                children: _tabs,
+                onPageChanged: (page) {
+                  _selectedIndex.value = page;
+                },
               ),
-              label: 'My Learning'),
-          BottomNavigationBarItem(
-              icon: BottomNavigationIcon(
-                path: 'assets/icons/favourite.svg',
-                isActive: _selectedIndex == 2,
-              ),
-              label: 'Wishlist'),
-          BottomNavigationBarItem(
-              icon: BottomNavigationIcon(
-                path: 'assets/icons/user.svg',
-                isActive: _selectedIndex == 3,
-              ),
-              label: 'Account'),
-        ],
-        onTap: _onTappedBar,
-        currentIndex: _selectedIndex,
-      ),
-      backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
-      body: PageView(
-        physics: const NeverScrollableScrollPhysics(),
-        controller: _pageController,
-        children: _tabs,
-        onPageChanged: (page) {
-          setState(() {
-            _selectedIndex = page;
-          });
-        },
-      ),
-    );
+            ));
   }
 
   void _onTappedBar(int value) {
-    setState(() {
-      _selectedIndex = value;
-    });
+    _selectedIndex.value = value;
     _pageController.jumpToPage(value);
   }
 }

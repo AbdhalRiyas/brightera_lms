@@ -72,8 +72,8 @@ class _YoutubePlayerWidgetState extends State<YoutubePlayerWidget> {
           controller: widget.controller,
           showVideoProgressIndicator: true,
           progressColors: const ProgressBarColors(
-            handleColor: ThemeConstants.primaryColor,
-            playedColor: ThemeConstants.primaryColor,
+            handleColor: Colors.white,
+            playedColor: Colors.white,
           ),
         ),
         if (_isControlsVisible)

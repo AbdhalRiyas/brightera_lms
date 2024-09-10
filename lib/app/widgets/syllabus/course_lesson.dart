@@ -24,11 +24,10 @@ class SyllabusLesson extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isActive = YoutubePlayer.convertUrlToId(lecture.source) ==
+        activeLessonVideoId?.value['source'];
     return ListTile(
-      tileColor: YoutubePlayer.convertUrlToId(lecture.source) ==
-              activeLessonVideoId?.value['source']
-          ? ThemeConstants.lavenderMist
-          : null,
+      tileColor: isActive ? ThemeConstants.lavenderMist : null,
       leading: Text(
         (index + 1).toString(),
         style: const TextStyle(
@@ -44,7 +43,9 @@ class SyllabusLesson extends StatelessWidget {
         ),
       ),
       subtitle: Text(
-        "${lecture.type.capitalize()} - ${lecture.durationInSeconds.toMinutes()}",
+        lecture.isLive
+            ? "Live video"
+            : "${lecture.type.capitalize()} - ${lecture.durationInSeconds.toMinutes()}",
         style: const TextStyle(fontSize: 11),
       ),
       contentPadding: const EdgeInsets.only(left: ThemeConstants.paddingLarge),
@@ -54,25 +55,27 @@ class SyllabusLesson extends StatelessWidget {
               color: ThemeConstants.primaryButtonColor,
             )
           : null,
-      onTap: youtubePlayerController == null && lecture.freePreview
-          ? () => showFreePreview(context, lecture.source)
-          : youtubePlayerController != null
-              ? () {
-                  String videoId =
-                      YoutubePlayer.convertUrlToId(lecture.source) ?? '';
+      onTap: isActive
+          ? null
+          : youtubePlayerController == null && lecture.freePreview
+              ? () => showFreePreview(context, lecture.source)
+              : youtubePlayerController != null
+                  ? () {
+                      String videoId =
+                          YoutubePlayer.convertUrlToId(lecture.source) ?? '';
 
-                  activeLessonVideoId?.value = {
-                    "source": videoId,
-                    "lecture": index,
-                    "section": sectionIndex,
-                  };
+                      activeLessonVideoId?.value = {
+                        "source": videoId,
+                        "lecture": index,
+                        "section": sectionIndex,
+                      };
 
-                  youtubePlayerController?.load(
-                    videoId,
-                    startAt: 0,
-                  );
-                }
-              : null,
+                      youtubePlayerController?.load(
+                        videoId,
+                        startAt: 0,
+                      );
+                    }
+                  : null,
     );
   }
 }

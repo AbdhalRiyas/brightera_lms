@@ -57,8 +57,22 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
   void _fetchSectionsAndLectures() async {
     _sections = await _repository.fetchSectionsForCourse(widget.course.id);
 
+    String videoId =
+        YoutubePlayer.convertUrlToId(_sections.first.lectures.first.source) ??
+            '';
+
+    widget.activeLessonVideoId?.value = {
+      "section": 0,
+      "lecture": 0,
+      "source": YoutubePlayer.convertUrlToId(videoId),
+    };
+
     setState(() {
       _isLoading = false;
+    });
+
+    Future.delayed(const Duration(milliseconds: 2000), () {
+      widget.youtubePlayerController?.cue(videoId);
     });
   }
 
