@@ -21,8 +21,8 @@ class _LecturesScreenState extends State<LecturesScreen> {
   final GlobalKey<SyllabusAccordionState> _syllabusKey =
       GlobalKey<SyllabusAccordionState>();
   final ScrollController _syllabusScrollController = ScrollController();
-  final ValueNotifier<ActiveLesson> _activeLessonVideoId =
-      ValueNotifier(const ActiveLesson());
+  final ValueNotifier<ActiveLesson> _activeLessonVideoId = ValueNotifier(
+      const ActiveLesson(section: 0, lecture: 0, source: '', notes: ''));
   final ValueNotifier<int> _selectedIndex = ValueNotifier(0);
   final PageController _pageController = PageController();
 
@@ -92,7 +92,10 @@ class _LecturesScreenState extends State<LecturesScreen> {
           return Column(
             children: [
               Flexible(
-                flex: 8,
+                flex: _isFullScreen
+                    ? int.parse((constraints.maxHeight).toStringAsFixed(0))
+                    : int.parse(
+                        (constraints.maxHeight * 0.8).toStringAsFixed(0)),
                 child: YoutubePlayerWidget(
                   controller: _controller,
                   nextVideo: () {
@@ -104,8 +107,10 @@ class _LecturesScreenState extends State<LecturesScreen> {
                 flex: _isFullScreen
                     ? 0
                     : constraints.maxHeight < 540
-                        ? 1
-                        : 16,
+                        ? int.parse(
+                            (constraints.maxHeight * 1).toStringAsFixed(0))
+                        : int.parse(
+                            (constraints.maxHeight * 1.6).toStringAsFixed(0)),
                 child: Visibility(
                   visible: !_isFullScreen,
                   maintainState: true,

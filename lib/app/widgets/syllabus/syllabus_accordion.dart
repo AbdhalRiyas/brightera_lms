@@ -35,11 +35,6 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
 
   @override
   void initState() {
-    widget.activeLessonVideoId?.value = ActiveLesson(
-        section: 0,
-        lecture: 0,
-        source: YoutubePlayer.convertUrlToId(widget.course.previewVideo) ?? '',
-        notes: '');
     if (_isLoading) {
       _fetchSectionsAndLectures();
     }
