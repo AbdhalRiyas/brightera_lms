@@ -1,4 +1,5 @@
 import 'package:app/app/config/theme_constants.dart';
+import 'package:app/app/models/active_lesson.dart';
 import 'package:app/app/models/lecture.dart';
 import 'package:app/app/screens/courses/widgets/show_free_preview.dart';
 import 'package:app/app/utils/int_extension.dart';
@@ -9,7 +10,7 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 class SyllabusLesson extends StatelessWidget {
   final Lecture lecture;
   final YoutubePlayerController? youtubePlayerController;
-  final ValueNotifier<Map<String, dynamic>>? activeLessonVideoId;
+  final ValueNotifier<ActiveLesson>? activeLessonVideoId;
   final int index;
   final int sectionIndex;
 
@@ -25,7 +26,7 @@ class SyllabusLesson extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isActive = YoutubePlayer.convertUrlToId(lecture.source) ==
-        activeLessonVideoId?.value['source'];
+        activeLessonVideoId?.value.source;
     return ListTile(
       tileColor: isActive ? ThemeConstants.lavenderMist : null,
       leading: Text(
@@ -64,11 +65,12 @@ class SyllabusLesson extends StatelessWidget {
                       String videoId =
                           YoutubePlayer.convertUrlToId(lecture.source) ?? '';
 
-                      activeLessonVideoId?.value = {
+                      activeLessonVideoId?.value = ActiveLesson.fromJson({
                         "source": videoId,
                         "lecture": index,
                         "section": sectionIndex,
-                      };
+                        'notes': lecture.pdfNotes,
+                      });
 
                       youtubePlayerController?.load(
                         videoId,

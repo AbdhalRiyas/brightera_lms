@@ -1,16 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Lecture {
-  final String id;
-  final String title;
-  final String type;
-  final String source;
-  final bool freePreview;
-  final bool isLive;
-  final int order;
-  final int durationInSeconds;
+  final String id, title, type, source, pdfNotes;
+  final bool freePreview, isLive;
+  final int order, durationInSeconds;
+  final List<dynamic> downloads;
 
-  const Lecture({
+  Lecture({
     required this.id,
     required this.title,
     required this.type,
@@ -19,6 +15,8 @@ class Lecture {
     required this.durationInSeconds,
     this.freePreview = false,
     this.isLive = false,
+    this.pdfNotes = '',
+    this.downloads = const [],
   });
 
   factory Lecture.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
@@ -31,6 +29,8 @@ class Lecture {
       isLive: doc.data()?['is_live'] ?? false,
       order: doc.data()?['order'] ?? 1,
       durationInSeconds: doc.data()?['durationInSeconds'] ?? 0,
+      pdfNotes: doc.data()?['pdfNotes'] ?? '',
+      downloads: doc.data()?['downloads'] ?? [],
     );
   }
 }

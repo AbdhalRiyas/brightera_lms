@@ -1,4 +1,5 @@
 import 'package:app/app/config/theme_constants.dart';
+import 'package:app/app/models/active_lesson.dart';
 import 'package:app/app/models/course.dart';
 import 'package:app/app/screens/lectures_screen/widgets/lecture_notes_tab.dart';
 import 'package:app/app/widgets/bottom_navigation_icon.dart';
@@ -20,8 +21,8 @@ class _LecturesScreenState extends State<LecturesScreen> {
   final GlobalKey<SyllabusAccordionState> _syllabusKey =
       GlobalKey<SyllabusAccordionState>();
   final ScrollController _syllabusScrollController = ScrollController();
-  final ValueNotifier<Map<String, dynamic>> _activeLessonVideoId =
-      ValueNotifier({});
+  final ValueNotifier<ActiveLesson> _activeLessonVideoId =
+      ValueNotifier(const ActiveLesson());
   final ValueNotifier<int> _selectedIndex = ValueNotifier(0);
   final PageController _pageController = PageController();
 
@@ -130,10 +131,13 @@ class _LecturesScreenState extends State<LecturesScreen> {
                                     ),
                                   ],
                                 ),
-                                const LectureNotesTab(
-                                  pdfUrl:
-                                      'https://cdn.syncfusion.com/content/PDFViewer/flutter-succinctly.pdf',
-                                ),
+                                ValueListenableBuilder<ActiveLesson>(
+                                    valueListenable: _activeLessonVideoId,
+                                    builder: (context, value, ch) {
+                                      return LectureNotesTab(
+                                        pdfUrl: value.notes,
+                                      );
+                                    }),
                                 const Text("Downloads"),
                               ],
                             ),
@@ -172,10 +176,15 @@ class _LecturesScreenState extends State<LecturesScreen> {
                     label: 'Lectures',
                   ),
                   BottomNavigationBarItem(
-                      icon: BottomNavigationIcon(
-                        path: "assets/icons/notes.svg",
-                        isActive: selectedIndex == 1,
-                      ),
+                      icon: ValueListenableBuilder<ActiveLesson>(
+                          valueListenable: _activeLessonVideoId,
+                          builder: (context, value, ch) {
+                            return BottomNavigationIcon(
+                              hasNotes: value.notes.isNotEmpty,
+                              path: "assets/icons/notes.svg",
+                              isActive: selectedIndex == 1,
+                            );
+                          }),
                       label: 'Notes'),
                   BottomNavigationBarItem(
                       icon: BottomNavigationIcon(

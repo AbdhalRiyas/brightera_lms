@@ -1,6 +1,7 @@
 import 'package:accordion/accordion.dart';
 import 'package:accordion/controllers.dart';
 import 'package:app/app/config/theme_constants.dart';
+import 'package:app/app/models/active_lesson.dart';
 import 'package:app/app/models/course.dart';
 import 'package:app/app/models/section.dart';
 import 'package:app/app/repositories/course_repository.dart';
@@ -18,7 +19,7 @@ class SyllabusAccordion extends StatefulWidget {
 
   final Course course;
   final YoutubePlayerController? youtubePlayerController;
-  final ValueNotifier<Map<String, dynamic>>? activeLessonVideoId;
+  final ValueNotifier<ActiveLesson>? activeLessonVideoId;
 
   @override
   State<SyllabusAccordion> createState() => SyllabusAccordionState();
@@ -34,11 +35,11 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
 
   @override
   void initState() {
-    widget.activeLessonVideoId?.value = {
-      "section": 0,
-      "lecture": 0,
-      "source": YoutubePlayer.convertUrlToId(widget.course.previewVideo),
-    };
+    widget.activeLessonVideoId?.value = ActiveLesson(
+        section: 0,
+        lecture: 0,
+        source: YoutubePlayer.convertUrlToId(widget.course.previewVideo) ?? '',
+        notes: '');
     if (_isLoading) {
       _fetchSectionsAndLectures();
     }
@@ -61,11 +62,12 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
         YoutubePlayer.convertUrlToId(_sections.first.lectures.first.source) ??
             '';
 
-    widget.activeLessonVideoId?.value = {
+    widget.activeLessonVideoId?.value = ActiveLesson.fromJson({
       "section": 0,
       "lecture": 0,
       "source": YoutubePlayer.convertUrlToId(videoId),
-    };
+      "notes": _sections.first.lectures.first.pdfNotes,
+    });
 
     setState(() {
       _isLoading = false;
@@ -77,9 +79,9 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
   }
 
   void nextLesson() {
-    Map<String, dynamic> activeLesson = widget.activeLessonVideoId!.value;
-    int currentSection = activeLesson['section'];
-    int currentLecture = activeLesson['lecture'];
+    ActiveLesson activeLesson = widget.activeLessonVideoId!.value;
+    int currentSection = activeLesson.section;
+    int currentLecture = activeLesson.lecture;
 
     bool isChangesMade = false;
 
@@ -97,15 +99,16 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
     }
 
     if (isChangesMade) {
-      widget.activeLessonVideoId!.value = {
+      widget.activeLessonVideoId!.value = ActiveLesson.fromJson({
         'section': currentSection,
         'lecture': currentLecture,
         'source': YoutubePlayer.convertUrlToId(
             _sections[currentSection].lectures[currentLecture].source),
-      };
+        'notes': _sections[currentSection].lectures[currentLecture].pdfNotes,
+      });
 
       widget.youtubePlayerController
-          ?.load(widget.activeLessonVideoId!.value['source']);
+          ?.load(widget.activeLessonVideoId!.value.source);
     }
   }
 
@@ -161,11 +164,10 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
                     _sections[i].lectures.length,
                     (j) => Material(
                       child: widget.activeLessonVideoId != null
-                          ? ValueListenableBuilder<Map<String, dynamic>>(
+                          ? ValueListenableBuilder<ActiveLesson>(
                               valueListenable: widget.activeLessonVideoId!,
                               builder: (BuildContext context,
-                                      Map<String, dynamic> value,
-                                      Widget? child) =>
+                                      ActiveLesson value, Widget? child) =>
                                   SyllabusLesson(
                                 key: Key(_sections[i].lectures[j].id),
                                 index: j,
