@@ -20,7 +20,7 @@ class _LectureNotesTabState extends State<LectureNotesTab>
     super.build(context);
     return widget.pdfUrl.isEmpty
         ? const Center(
-            child: Text("There are no notes available for this lesson."),
+            child: Text("There are no notes available for this lecture."),
           )
         : SfPdfViewer.network(
             widget.pdfUrl,
