@@ -5,8 +5,10 @@ import 'package:app/app/models/active_lesson.dart';
 import 'package:app/app/models/course.dart';
 import 'package:app/app/models/section.dart';
 import 'package:app/app/repositories/course_repository.dart';
+import 'package:app/app/services/firebase_service.dart';
 import 'package:app/app/widgets/syllabus/syllabus_lesson.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class SyllabusAccordion extends StatefulWidget {
@@ -27,7 +29,9 @@ class SyllabusAccordion extends StatefulWidget {
 
 class SyllabusAccordionState extends State<SyllabusAccordion>
     with AutomaticKeepAliveClientMixin {
+  final _firebaseService = FirebaseService();
   final CourseRepository _repository = CourseRepository();
+  late final String _boxName;
 
   List<Section> _sections = [];
   bool _isLoading = true;
@@ -35,6 +39,8 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
 
   @override
   void initState() {
+    _boxName = "${_firebaseService.currentUser?.uid}_${widget.course.id}";
+
     if (_isLoading) {
       _fetchSectionsAndLectures();
     }
@@ -53,16 +59,33 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
   void _fetchSectionsAndLectures() async {
     _sections = await _repository.fetchSectionsForCourse(widget.course.id);
 
-    String videoId =
-        YoutubePlayer.convertUrlToId(_sections.first.lectures.first.source) ??
-            '';
+    Box? courseBox;
+
+    if (Hive.isBoxOpen(_boxName)) {
+      courseBox = Hive.box(_boxName);
+    } else {
+      courseBox = await Hive.openBox(_boxName);
+    }
+
+    Map<dynamic, dynamic>? lastLectureDetail = courseBox.get("lastLecture");
+
+    int lastSection =
+        lastLectureDetail == null ? 0 : lastLectureDetail['section'];
+    int lastLecture =
+        lastLectureDetail == null ? 0 : lastLectureDetail['lecture'];
+
+    String videoId = YoutubePlayer.convertUrlToId(
+            _sections[lastSection].lectures[lastLecture].source) ??
+        '';
+
+    _openedSection = lastSection;
 
     widget.activeLessonVideoId?.value = ActiveLesson.fromJson({
-      "section": 0,
-      "lecture": 0,
+      "section": lastSection,
+      "lecture": lastLecture,
       "source": YoutubePlayer.convertUrlToId(videoId),
-      "notes": _sections.first.lectures.first.pdfNotes,
-      "downloads": _sections.first.lectures.first.downloads,
+      "notes": _sections[lastSection].lectures[lastLecture].pdfNotes,
+      "downloads": _sections[lastSection].lectures[lastLecture].downloads,
     });
 
     setState(() {
@@ -187,6 +210,7 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
                                       ActiveLesson value, Widget? child) =>
                                   SyllabusLesson(
                                 key: Key(_sections[i].lectures[j].id),
+                                boxName: _boxName,
                                 course: widget.course,
                                 index: j,
                                 sectionIndex: i,
@@ -198,6 +222,7 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
                             )
                           : SyllabusLesson(
                               key: Key(_sections[i].lectures[j].id),
+                              boxName: _boxName,
                               course: widget.course,
                               index: j,
                               sectionIndex: i,

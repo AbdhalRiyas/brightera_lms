@@ -17,6 +17,7 @@ class SyllabusLesson extends StatefulWidget {
   final ValueNotifier<ActiveLesson>? activeLessonVideoId;
   final int index;
   final int sectionIndex;
+  final String? boxName;
 
   const SyllabusLesson({
     super.key,
@@ -24,6 +25,7 @@ class SyllabusLesson extends StatefulWidget {
     this.course,
     this.youtubePlayerController,
     this.activeLessonVideoId,
+    this.boxName = '',
     required this.index,
     required this.sectionIndex,
   });
@@ -34,11 +36,9 @@ class SyllabusLesson extends StatefulWidget {
 
 class _SyllabusLessonState extends State<SyllabusLesson> {
   final _firebaseService = FirebaseService();
-  late final String _boxName;
 
   @override
   void initState() {
-    _boxName = "${_firebaseService.currentUser?.uid}_${widget.course?.id}";
     super.initState();
   }
 
@@ -79,7 +79,7 @@ class _SyllabusLessonState extends State<SyllabusLesson> {
                       widget.youtubePlayerController == null
                   ? null
                   : ValueListenableBuilder(
-                      valueListenable: Hive.box(_boxName).listenable(),
+                      valueListenable: Hive.box(widget.boxName!).listenable(),
                       builder: (context, box, ch) {
                         final isChecked = box.get(widget.lecture.id) ?? false;
 
@@ -103,7 +103,7 @@ class _SyllabusLessonState extends State<SyllabusLesson> {
           : widget.youtubePlayerController == null && widget.lecture.freePreview
               ? () => showFreePreview(context, widget.lecture.source)
               : widget.youtubePlayerController != null
-                  ? () {
+                  ? () async {
                       String videoId =
                           YoutubePlayer.convertUrlToId(widget.lecture.source) ??
                               '';
@@ -120,6 +120,22 @@ class _SyllabusLessonState extends State<SyllabusLesson> {
                       widget.youtubePlayerController?.load(
                         videoId,
                         startAt: 0,
+                      );
+
+                      Box? courseBox;
+
+                      if (Hive.isBoxOpen(widget.boxName!)) {
+                        courseBox = Hive.box(widget.boxName!);
+                      } else {
+                        courseBox = await Hive.openBox(widget.boxName!);
+                      }
+
+                      courseBox.put(
+                        "lastLecture",
+                        {
+                          "section": widget.sectionIndex,
+                          "lecture": widget.index,
+                        },
                       );
                     }
                   : null,
