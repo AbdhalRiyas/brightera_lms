@@ -15,7 +15,7 @@ class Course {
   final num regularPrice;
   final num? durationInHours;
   final List<Section>? sections;
-  final User? instructorInfo; // Add this field
+  final User? instructorInfo;
 
   Course({
     required this.id,
@@ -30,7 +30,7 @@ class Course {
     this.durationInHours,
     required this.salePrice,
     this.sections,
-    this.instructorInfo, // Initialize the field
+    this.instructorInfo,
   });
 
   factory Course.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc,
