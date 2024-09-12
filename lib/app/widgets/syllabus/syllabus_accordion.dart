@@ -74,40 +74,59 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
     });
   }
 
-  void nextLesson() {
+  void _changeLesson(int sectionDelta, int lectureDelta) {
     ActiveLesson activeLesson = widget.activeLessonVideoId!.value;
     int currentSection = activeLesson.section;
     int currentLecture = activeLesson.lecture;
 
     bool isChangesMade = false;
 
-    if (_sections[currentSection].lectures.length - 1 > currentLecture) {
-      currentLecture += 1;
-      isChangesMade = true;
-    } else {
-      if (_sections.length - 1 > currentSection) {
-        currentSection += 1;
-        if (_sections[currentSection].lectures.isNotEmpty) {
-          currentLecture = 0;
-          isChangesMade = true;
-        }
+    int newLecture = currentLecture + lectureDelta;
+    int newSection = currentSection;
+
+    if (newLecture < 0) {
+      newSection -= 1;
+      if (newSection >= 0 && _sections[newSection].lectures.isNotEmpty) {
+        newLecture = _sections[newSection].lectures.length - 1;
+        isChangesMade = true;
       }
+    } else if (newLecture >= _sections[currentSection].lectures.length) {
+      newSection += 1;
+      if (newSection < _sections.length &&
+          _sections[newSection].lectures.isNotEmpty) {
+        newLecture = 0;
+        isChangesMade = true;
+      }
+    } else {
+      newLecture = currentLecture + lectureDelta;
+      isChangesMade = true;
     }
 
     if (isChangesMade) {
       widget.activeLessonVideoId!.value = ActiveLesson.fromJson({
-        'section': currentSection,
-        'lecture': currentLecture,
+        'section': newSection,
+        'lecture': newLecture,
         'source': YoutubePlayer.convertUrlToId(
-            _sections[currentSection].lectures[currentLecture].source),
-        'notes': _sections[currentSection].lectures[currentLecture].pdfNotes,
-        'downloads':
-            _sections[currentSection].lectures[currentLecture].downloads,
+            _sections[newSection].lectures[newLecture].source),
+        'notes': _sections[newSection].lectures[newLecture].pdfNotes,
+        'downloads': _sections[newSection].lectures[newLecture].downloads,
       });
+
+      if (currentSection != newSection) {
+        _changeOpenedIndex(newSection);
+      }
 
       widget.youtubePlayerController
           ?.load(widget.activeLessonVideoId!.value.source);
     }
+  }
+
+  void prevLesson() {
+    _changeLesson(-1, -1);
+  }
+
+  void nextLesson() {
+    _changeLesson(1, 1);
   }
 
   @override

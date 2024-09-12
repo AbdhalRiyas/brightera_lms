@@ -120,9 +120,10 @@ class _LecturesScreenState extends State<LecturesScreen> {
                                     .toStringAsFixed(0)),
                             child: YoutubePlayerWidget(
                               controller: _controller,
-                              nextVideo: () {
-                                _syllabusKey.currentState?.nextLesson();
-                              },
+                              prevVideo: () =>
+                                  _syllabusKey.currentState?.prevLesson(),
+                              nextVideo: () =>
+                                  _syllabusKey.currentState?.nextLesson(),
                             ),
                           ),
                           Flexible(

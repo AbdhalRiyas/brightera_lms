@@ -8,8 +8,10 @@ class YoutubePlayerWidget extends StatefulWidget {
     super.key,
     required this.controller,
     required this.nextVideo,
+    required this.prevVideo,
   });
 
+  final VoidCallback prevVideo;
   final VoidCallback nextVideo;
 
   @override
@@ -94,9 +96,9 @@ class _YoutubePlayerWidgetState extends State<YoutubePlayerWidget> {
                   Row(
                     children: [
                       IconButton(
-                        onPressed: _replayBackward,
+                        onPressed: widget.prevVideo,
                         icon: const Icon(
-                          Icons.skip_next,
+                          Icons.skip_previous,
                           size: 48,
                           color: Colors.white,
                         ),
