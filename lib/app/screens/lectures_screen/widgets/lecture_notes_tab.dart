@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
 
 class LectureNotesTab extends StatefulWidget {
   const LectureNotesTab({
@@ -22,8 +22,10 @@ class _LectureNotesTabState extends State<LectureNotesTab>
         ? const Center(
             child: Text("There are no notes available for this lecture."),
           )
-        : SfPdfViewer.network(
+        : const PDF().cachedFromUrl(
             widget.pdfUrl,
+            placeholder: (progress) => Center(child: Text('$progress %')),
+            errorWidget: (error) => Center(child: Text(error.toString())),
           );
   }
 
