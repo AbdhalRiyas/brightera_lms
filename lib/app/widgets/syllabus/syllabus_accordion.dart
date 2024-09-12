@@ -74,7 +74,7 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
     });
   }
 
-  void _changeLesson(int sectionDelta, int lectureDelta) {
+  void _changeLesson(int lectureDelta) {
     ActiveLesson activeLesson = widget.activeLessonVideoId!.value;
     int currentSection = activeLesson.section;
     int currentLecture = activeLesson.lecture;
@@ -122,11 +122,11 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
   }
 
   void prevLesson() {
-    _changeLesson(-1, -1);
+    _changeLesson(-1);
   }
 
   void nextLesson() {
-    _changeLesson(1, 1);
+    _changeLesson(1);
   }
 
   @override
