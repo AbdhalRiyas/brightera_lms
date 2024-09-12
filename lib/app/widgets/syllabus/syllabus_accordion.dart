@@ -62,6 +62,7 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
       "lecture": 0,
       "source": YoutubePlayer.convertUrlToId(videoId),
       "notes": _sections.first.lectures.first.pdfNotes,
+      "downloads": _sections.first.lectures.first.downloads,
     });
 
     setState(() {
@@ -100,6 +101,8 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
         'source': YoutubePlayer.convertUrlToId(
             _sections[currentSection].lectures[currentLecture].source),
         'notes': _sections[currentSection].lectures[currentLecture].pdfNotes,
+        'downloads':
+            _sections[currentSection].lectures[currentLecture].downloads,
       });
 
       widget.youtubePlayerController

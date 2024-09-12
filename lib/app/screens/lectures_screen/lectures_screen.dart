@@ -1,6 +1,7 @@
 import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/models/active_lesson.dart';
 import 'package:app/app/models/course.dart';
+import 'package:app/app/screens/lectures_screen/widgets/downloads_tab.dart';
 import 'package:app/app/screens/lectures_screen/widgets/lecture_notes_tab.dart';
 import 'package:app/app/widgets/bottom_navigation_icon.dart';
 import 'package:app/app/widgets/syllabus/syllabus_accordion.dart';
@@ -21,8 +22,8 @@ class _LecturesScreenState extends State<LecturesScreen> {
   final GlobalKey<SyllabusAccordionState> _syllabusKey =
       GlobalKey<SyllabusAccordionState>();
   final ScrollController _syllabusScrollController = ScrollController();
-  final ValueNotifier<ActiveLesson> _activeLessonVideoId = ValueNotifier(
-      const ActiveLesson(section: 0, lecture: 0, source: '', notes: ''));
+  final ValueNotifier<ActiveLesson> _activeLessonVideoId =
+      ValueNotifier(const ActiveLesson());
   final ValueNotifier<int> _selectedIndex = ValueNotifier(0);
   final PageController _pageController = PageController();
 
@@ -143,7 +144,13 @@ class _LecturesScreenState extends State<LecturesScreen> {
                                         pdfUrl: value.notes,
                                       );
                                     }),
-                                const Text("Downloads"),
+                                ValueListenableBuilder<ActiveLesson>(
+                                    valueListenable: _activeLessonVideoId,
+                                    builder: (context, value, ch) {
+                                      return DownloadsTab(
+                                        downloads: value.downloads,
+                                      );
+                                    }),
                               ],
                             ),
                           );
@@ -192,10 +199,15 @@ class _LecturesScreenState extends State<LecturesScreen> {
                           }),
                       label: 'Notes'),
                   BottomNavigationBarItem(
-                      icon: BottomNavigationIcon(
-                        path: "assets/icons/downloads.svg",
-                        isActive: selectedIndex == 2,
-                      ),
+                      icon: ValueListenableBuilder<ActiveLesson>(
+                          valueListenable: _activeLessonVideoId,
+                          builder: (context, value, ch) {
+                            return BottomNavigationIcon(
+                              hasNotes: value.downloads.isNotEmpty,
+                              path: "assets/icons/downloads.svg",
+                              isActive: selectedIndex == 2,
+                            );
+                          }),
                       label: 'Downloads'),
                 ],
               );

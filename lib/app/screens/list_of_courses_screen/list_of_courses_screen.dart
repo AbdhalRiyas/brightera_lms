@@ -74,8 +74,11 @@ class ListOfCoursesScreenState extends State<ListOfCoursesScreen> {
                               course: _courses[0],
                               maxWidth: 450,
                               maxHeight: 250,
-                              onTap: () =>
-                                  Navigator.pushNamed(context, '/lectures'),
+                              onTap: () => Navigator.pushNamed(
+                                context,
+                                '/course',
+                                arguments: CourseScreenArguments(_courses[i]),
+                              ),
                               // onTap: () => Navigator.pushNamed(
                               //   context,
                               //   '/course',

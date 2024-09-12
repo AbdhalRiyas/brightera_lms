@@ -69,7 +69,8 @@ class SyllabusLesson extends StatelessWidget {
                         "source": videoId,
                         "lecture": index,
                         "section": sectionIndex,
-                        'notes': lecture.pdfNotes,
+                        "notes": lecture.pdfNotes,
+                        "downloads": lecture.downloads,
                       });
 
                       youtubePlayerController?.load(
