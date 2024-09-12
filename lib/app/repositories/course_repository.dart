@@ -1,6 +1,9 @@
 import 'package:app/app/models/course.dart';
 import 'package:app/app/models/lecture.dart';
 import 'package:app/app/models/section.dart';
+import 'package:app/app/models/user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 import '../services/firebase_service.dart';
 
@@ -17,11 +20,25 @@ class CourseRepository {
     // Ensure data is not null and iterate through documents
     if (data != null) {
       for (var doc in data.docs) {
-        // Create a Subject object from each document
-        courses.add(Course.fromFirestore(doc));
+        // Create a Course object from the document
+        Course course = Course.fromFirestore(doc);
+
+        // Fetch the instructor data
+        if (course.instructor != null) {
+          User? instructor = await _getInstructorInfo(course.instructor!);
+          // Add instructor data to the course if needed
+          course = course.copyWith(instructorInfo: instructor);
+        }
+
+        courses.add(course);
       }
     }
     return courses;
+  }
+
+  Future<bool> checkActiveEnrollment(String courseId) async {
+    final enrollmentData = await _firebaseService.getCourseEnrollment(courseId);
+    return enrollmentData?.docs.isNotEmpty ?? false;
   }
 
   Future<List<Section>> fetchSectionsForCourse(String courseId) async {
@@ -52,5 +69,23 @@ class CourseRepository {
       }
     }
     return lectures;
+  }
+
+  Future<User?> _getInstructorInfo(DocumentReference instructorRef) async {
+    try {
+      // Fetch the document snapshot
+      DocumentSnapshot<Map<String, dynamic>> doc =
+          await instructorRef.get() as DocumentSnapshot<Map<String, dynamic>>;
+
+      if (doc.exists) {
+        return User.fromFirestore(doc);
+      } else {
+        debugPrint('Instructor document does not exist');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Error fetching instructor data: $e');
+      return null;
+    }
   }
 }

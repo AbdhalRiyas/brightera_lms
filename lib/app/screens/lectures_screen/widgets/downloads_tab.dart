@@ -65,7 +65,10 @@ class _DownloadsTabState extends State<DownloadsTab> {
                       }
                     }
                   },
-                  child: const Text("Open & Download via Browser"),
+                  child: const Text(
+                    "Open & Download via Browser",
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 TextButton(
                   onPressed: () => Navigator.pop(context),

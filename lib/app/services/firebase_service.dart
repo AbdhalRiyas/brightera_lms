@@ -182,6 +182,46 @@ class FirebaseService {
     }
   }
 
+  Future<QuerySnapshot<Map<String, dynamic>>?> getCourseEnrollment(
+      String courseId) async {
+    if (currentUser == null) {
+      // User is not signed in
+      return null;
+    }
+
+    try {
+      // Reference to the specific course document (if needed for queries)
+      DocumentReference courseRef =
+          _firestore.collection('courses').doc(courseId);
+
+      DocumentReference userRef =
+          _firestore.collection('users').doc(currentUser!.uid);
+
+      // Query the subscriptions collection
+      QuerySnapshot<Map<String, dynamic>> subscriptionSnapshot =
+          await _firestore
+              .collection('enrollments')
+              .where('userId',
+                  isEqualTo: userRef) // Use the user's UID directly
+              .where('courseId',
+                  isEqualTo: courseRef) // Compare course ID as a string
+              .where('endDate',
+                  isGreaterThan:
+                      Timestamp.now()) // Ensure subscription is active
+              .where('status', isEqualTo: 'active')
+              .limit(
+                  1) // Limit to one result as we only need to check existence
+              .get();
+
+      // Return the query snapshot
+      return subscriptionSnapshot;
+    } catch (e) {
+      // Handle any errors
+      debugPrint('Error checking subscription for course: $e');
+      return null;
+    }
+  }
+
   Future<QuerySnapshot<Map<String, dynamic>>?> getLecturesForSection(
       String courseId, String sectionId) async {
     try {

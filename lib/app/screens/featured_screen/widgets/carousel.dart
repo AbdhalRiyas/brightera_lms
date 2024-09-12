@@ -42,7 +42,7 @@ class _CarouselState extends State<Carousel> {
   @override
   Widget build(BuildContext context) {
     return _isLoading
-        ? const CircularProgressIndicator.adaptive()
+        ? const Center(child: CircularProgressIndicator.adaptive())
         : Column(
             children: [
               CarouselSlider.builder(
