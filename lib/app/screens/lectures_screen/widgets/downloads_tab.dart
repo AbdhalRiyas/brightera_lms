@@ -30,7 +30,7 @@ class _DownloadsTabState extends State<DownloadsTab> {
             itemBuilder: (_, i) => ListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(downloadObjects[i].name),
-              leading: Icon(_getFileIcon(downloadObjects[i].type)),
+              leading: const Icon(Icons.file_present),
               onTap: () => _showExternalDownloadAlert(downloadObjects[i].link),
               trailing: IconButton(
                   onPressed: () =>
@@ -74,17 +74,4 @@ class _DownloadsTabState extends State<DownloadsTab> {
               ],
             ),
           ));
-
-  IconData _getFileIcon(String type) {
-    try {
-      switch (type.toLowerCase()) {
-        case 'pdf':
-          return Icons.picture_as_pdf_outlined;
-        default:
-          return Icons.file_present;
-      }
-    } catch (e) {
-      return Icons.file_present;
-    }
-  }
 }
