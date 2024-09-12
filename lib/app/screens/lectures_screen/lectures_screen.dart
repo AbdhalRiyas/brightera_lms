@@ -3,10 +3,12 @@ import 'package:app/app/models/active_lesson.dart';
 import 'package:app/app/models/course.dart';
 import 'package:app/app/screens/lectures_screen/widgets/downloads_tab.dart';
 import 'package:app/app/screens/lectures_screen/widgets/lecture_notes_tab.dart';
+import 'package:app/app/services/firebase_service.dart';
 import 'package:app/app/widgets/bottom_navigation_icon.dart';
 import 'package:app/app/widgets/syllabus/syllabus_accordion.dart';
 import 'package:app/app/screens/lectures_screen/widgets/youtube_player_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class LecturesScreen extends StatefulWidget {
@@ -19,21 +21,32 @@ class LecturesScreen extends StatefulWidget {
 }
 
 class _LecturesScreenState extends State<LecturesScreen> {
+  final _firebaseService = FirebaseService();
   final GlobalKey<SyllabusAccordionState> _syllabusKey =
       GlobalKey<SyllabusAccordionState>();
+
   final ScrollController _syllabusScrollController = ScrollController();
+  final PageController _pageController = PageController();
+
   final ValueNotifier<ActiveLesson> _activeLessonVideoId =
       ValueNotifier(const ActiveLesson());
   final ValueNotifier<int> _selectedIndex = ValueNotifier(0);
-  final PageController _pageController = PageController();
 
-  late YoutubePlayerController _controller;
   bool _isFullScreen = false;
   double _syllabusScrollViewOffset = 0.00;
+
+  late YoutubePlayerController _controller;
+
+  late final String _boxName =
+      "${_firebaseService.currentUser?.uid}_${widget.course.id}";
+
+  Future<Box>? _courseProgressBox;
 
   @override
   void initState() {
     super.initState();
+    _courseProgressBox = Hive.openBox(_boxName);
+
     _controller = YoutubePlayerController(
       initialVideoId:
           YoutubePlayer.convertUrlToId(widget.course.previewVideo) ?? '',
@@ -89,78 +102,97 @@ class _LecturesScreenState extends State<LecturesScreen> {
         left: !_isFullScreen,
         bottom: !_isFullScreen,
         top: !_isFullScreen,
-        child: LayoutBuilder(builder: (context, constraints) {
-          return Column(
-            children: [
-              Flexible(
-                flex: _isFullScreen
-                    ? int.parse((constraints.maxHeight).toStringAsFixed(0))
-                    : int.parse(
-                        (constraints.maxHeight * 0.8).toStringAsFixed(0)),
-                child: YoutubePlayerWidget(
-                  controller: _controller,
-                  nextVideo: () {
-                    _syllabusKey.currentState?.nextLesson();
-                  },
-                ),
-              ),
-              Flexible(
-                flex: _isFullScreen
-                    ? 0
-                    : constraints.maxHeight < 540
-                        ? int.parse(
-                            (constraints.maxHeight * 1).toStringAsFixed(0))
-                        : int.parse(
-                            (constraints.maxHeight * 1.6).toStringAsFixed(0)),
-                child: Visibility(
-                  visible: !_isFullScreen,
-                  maintainState: true,
-                  child: Padding(
-                    padding: const EdgeInsets.all(ThemeConstants.paddingSmall),
-                    child: ValueListenableBuilder<int>(
-                        valueListenable: _selectedIndex,
-                        builder: (context, selectedIndex, child) {
-                          return SizedBox(
-                            height: MediaQuery.of(context).size.height,
-                            child: PageView(
-                              controller: _pageController,
-                              physics: const NeverScrollableScrollPhysics(),
-                              children: [
-                                ListView(
-                                  controller: _syllabusScrollController,
-                                  children: [
-                                    SyllabusAccordion(
-                                      key: _syllabusKey,
-                                      course: widget.course,
-                                      youtubePlayerController: _controller,
-                                      activeLessonVideoId: _activeLessonVideoId,
-                                    ),
-                                  ],
-                                ),
-                                ValueListenableBuilder<ActiveLesson>(
-                                    valueListenable: _activeLessonVideoId,
-                                    builder: (context, value, ch) {
-                                      return LectureNotesTab(
-                                        pdfUrl: value.notes,
-                                      );
-                                    }),
-                                ValueListenableBuilder<ActiveLesson>(
-                                    valueListenable: _activeLessonVideoId,
-                                    builder: (context, value, ch) {
-                                      return DownloadsTab(
-                                        downloads: value.downloads,
-                                      );
-                                    }),
-                              ],
+        child: FutureBuilder(
+            future: _courseProgressBox,
+            builder: (context, snapshot) {
+              return !snapshot.hasData
+                  ? const Center(
+                      child: CircularProgressIndicator.adaptive(),
+                    )
+                  : LayoutBuilder(builder: (context, constraints) {
+                      return Column(
+                        children: [
+                          Flexible(
+                            flex: _isFullScreen
+                                ? int.parse(
+                                    (constraints.maxHeight).toStringAsFixed(0))
+                                : int.parse((constraints.maxHeight * 0.8)
+                                    .toStringAsFixed(0)),
+                            child: YoutubePlayerWidget(
+                              controller: _controller,
+                              nextVideo: () {
+                                _syllabusKey.currentState?.nextLesson();
+                              },
                             ),
-                          );
-                        }),
-                  ),
-                ),
-              ),
-            ],
-          );
-        }),
+                          ),
+                          Flexible(
+                            flex: _isFullScreen
+                                ? 0
+                                : constraints.maxHeight < 540
+                                    ? int.parse((constraints.maxHeight * 1)
+                                        .toStringAsFixed(0))
+                                    : int.parse((constraints.maxHeight * 1.6)
+                                        .toStringAsFixed(0)),
+                            child: Visibility(
+                              visible: !_isFullScreen,
+                              maintainState: true,
+                              child: Padding(
+                                padding: const EdgeInsets.all(
+                                    ThemeConstants.paddingSmall),
+                                child: ValueListenableBuilder<int>(
+                                    valueListenable: _selectedIndex,
+                                    builder: (context, selectedIndex, child) {
+                                      return SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height,
+                                        child: PageView(
+                                          controller: _pageController,
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          children: [
+                                            ListView(
+                                              controller:
+                                                  _syllabusScrollController,
+                                              children: [
+                                                SyllabusAccordion(
+                                                  key: _syllabusKey,
+                                                  course: widget.course,
+                                                  youtubePlayerController:
+                                                      _controller,
+                                                  activeLessonVideoId:
+                                                      _activeLessonVideoId,
+                                                ),
+                                              ],
+                                            ),
+                                            ValueListenableBuilder<
+                                                    ActiveLesson>(
+                                                valueListenable:
+                                                    _activeLessonVideoId,
+                                                builder: (context, value, ch) {
+                                                  return LectureNotesTab(
+                                                    pdfUrl: value.notes,
+                                                  );
+                                                }),
+                                            ValueListenableBuilder<
+                                                    ActiveLesson>(
+                                                valueListenable:
+                                                    _activeLessonVideoId,
+                                                builder: (context, value, ch) {
+                                                  return DownloadsTab(
+                                                    downloads: value.downloads,
+                                                  );
+                                                }),
+                                          ],
+                                        ),
+                                      );
+                                    }),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    });
+            }),
       ),
       bottomNavigationBar: Visibility(
         visible: !_isFullScreen,

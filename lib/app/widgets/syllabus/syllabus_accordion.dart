@@ -5,7 +5,7 @@ import 'package:app/app/models/active_lesson.dart';
 import 'package:app/app/models/course.dart';
 import 'package:app/app/models/section.dart';
 import 'package:app/app/repositories/course_repository.dart';
-import 'package:app/app/widgets/syllabus/course_lesson.dart';
+import 'package:app/app/widgets/syllabus/syllabus_lesson.dart';
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -168,6 +168,7 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
                                       ActiveLesson value, Widget? child) =>
                                   SyllabusLesson(
                                 key: Key(_sections[i].lectures[j].id),
+                                course: widget.course,
                                 index: j,
                                 sectionIndex: i,
                                 lecture: _sections[i].lectures[j],
@@ -178,6 +179,7 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
                             )
                           : SyllabusLesson(
                               key: Key(_sections[i].lectures[j].id),
+                              course: widget.course,
                               index: j,
                               sectionIndex: i,
                               lecture: _sections[i].lectures[j],
