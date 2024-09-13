@@ -41,19 +41,16 @@ class _LecturesScreenState extends State<LecturesScreen> {
   bool _isFullScreen = false;
   double _syllabusScrollViewOffset = 0.00;
 
-  late YoutubePlayerController _controller;
-
-  late final String _boxName;
-
   Future<Box>? _courseProgressBox;
+
+  late YoutubePlayerController _controller;
 
   @override
   void initState() {
     super.initState();
-    _boxName = "${_firebaseService.currentUser?.uid}_${widget.course.id}";
 
-    _courseProgressBox =
-        Hive.openBox(_boxName); // used to store student's progress locally
+    _courseProgressBox = Hive.openBox(
+        "${_firebaseService.currentUser?.uid}_${widget.course.id}"); // used to store student's progress locally
 
     _controller = YoutubePlayerController(
       initialVideoId:
