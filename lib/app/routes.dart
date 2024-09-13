@@ -2,7 +2,7 @@ import 'package:app/app/screens/account_screen.dart';
 import 'package:app/app/screens/courses/course_screen.dart';
 import 'package:app/app/screens/home_screen.dart';
 import 'package:app/app/screens/lectures_screen/lectures_screen.dart';
-import 'package:app/app/screens/list_of_courses_screen/list_of_courses_screen.dart';
+import 'package:app/app/screens/list_of_courses_screen.dart';
 import 'package:app/app/screens/login_screen/login_screen.dart';
 import 'package:app/app/services/firebase_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';

@@ -1,6 +1,6 @@
 import 'package:app/app/models/subject.dart';
 import 'package:app/app/repositories/subject_repository.dart';
-import 'package:app/app/screens/list_of_courses_screen/list_of_courses_screen.dart';
+import 'package:app/app/screens/list_of_courses_screen.dart';
 import 'package:app/app/screens/featured_screen/widgets/courses/subject_button.dart';
 import 'package:flutter/material.dart';
 

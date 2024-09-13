@@ -79,11 +79,6 @@ class ListOfCoursesScreenState extends State<ListOfCoursesScreen> {
                                 '/course',
                                 arguments: CourseScreenArguments(_courses[i]),
                               ),
-                              // onTap: () => Navigator.pushNamed(
-                              //   context,
-                              //   '/course',
-                              //   arguments: CourseScreenArguments(_courses[i]),
-                              // ),
                             ),
                       separatorBuilder: (context, i) =>
                           const SizedBox(width: 10),
