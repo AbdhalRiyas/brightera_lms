@@ -237,5 +237,11 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
   }
 
   @override
+  void dispose() {
+    widget.courseProgressBox?.close();
+    super.dispose();
+  }
+
+  @override
   bool get wantKeepAlive => true;
 }
