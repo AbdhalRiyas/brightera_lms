@@ -5,7 +5,6 @@ import 'package:app/app/models/active_lesson.dart';
 import 'package:app/app/models/course.dart';
 import 'package:app/app/models/section.dart';
 import 'package:app/app/repositories/course_repository.dart';
-import 'package:app/app/services/firebase_service.dart';
 import 'package:app/app/widgets/syllabus/syllabus_lesson.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -16,12 +15,16 @@ class SyllabusAccordion extends StatefulWidget {
     super.key,
     required this.course,
     this.youtubePlayerController,
-    this.activeLessonVideoId,
+    this.activeLesson,
+    this.courseProgressBox,
+    this.syllabusScrollController,
   });
 
   final Course course;
   final YoutubePlayerController? youtubePlayerController;
-  final ValueNotifier<ActiveLesson>? activeLessonVideoId;
+  final ValueNotifier<ActiveLesson>? activeLesson;
+  final Box? courseProgressBox;
+  final ScrollController? syllabusScrollController;
 
   @override
   State<SyllabusAccordion> createState() => SyllabusAccordionState();
@@ -29,9 +32,7 @@ class SyllabusAccordion extends StatefulWidget {
 
 class SyllabusAccordionState extends State<SyllabusAccordion>
     with AutomaticKeepAliveClientMixin {
-  final _firebaseService = FirebaseService();
   final CourseRepository _repository = CourseRepository();
-  late final String _boxName;
 
   List<Section> _sections = [];
   bool _isLoading = true;
@@ -39,8 +40,6 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
 
   @override
   void initState() {
-    _boxName = "${_firebaseService.currentUser?.uid}_${widget.course.id}";
-
     if (_isLoading) {
       _fetchSectionsAndLectures();
     }
@@ -59,15 +58,8 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
   void _fetchSectionsAndLectures() async {
     _sections = await _repository.fetchSectionsForCourse(widget.course.id);
 
-    Box? courseBox;
-
-    if (Hive.isBoxOpen(_boxName)) {
-      courseBox = Hive.box(_boxName);
-    } else {
-      courseBox = await Hive.openBox(_boxName);
-    }
-
-    Map<dynamic, dynamic>? lastLectureDetail = courseBox.get("lastLecture");
+    Map<dynamic, dynamic>? lastLectureDetail =
+        widget.courseProgressBox?.get("lastLecture");
 
     int lastSection =
         lastLectureDetail == null ? 0 : lastLectureDetail['section'];
@@ -80,7 +72,7 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
 
     _openedSection = lastSection;
 
-    widget.activeLessonVideoId?.value = ActiveLesson.fromJson({
+    widget.activeLesson?.value = ActiveLesson.fromJson({
       "section": lastSection,
       "lecture": lastLecture,
       "source": YoutubePlayer.convertUrlToId(videoId),
@@ -98,7 +90,7 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
   }
 
   void _changeLesson(int lectureDelta) {
-    ActiveLesson activeLesson = widget.activeLessonVideoId!.value;
+    ActiveLesson activeLesson = widget.activeLesson!.value;
     int currentSection = activeLesson.section;
     int currentLecture = activeLesson.lecture;
 
@@ -126,7 +118,7 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
     }
 
     if (isChangesMade) {
-      widget.activeLessonVideoId!.value = ActiveLesson.fromJson({
+      widget.activeLesson!.value = ActiveLesson.fromJson({
         'section': newSection,
         'lecture': newLecture,
         'source': YoutubePlayer.convertUrlToId(
@@ -139,8 +131,7 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
         _changeOpenedIndex(newSection);
       }
 
-      widget.youtubePlayerController
-          ?.load(widget.activeLessonVideoId!.value.source);
+      widget.youtubePlayerController?.load(widget.activeLesson!.value.source);
     }
   }
 
@@ -155,88 +146,94 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return _isLoading
-        ? const Center(child: CircularProgressIndicator.adaptive())
-        : Accordion(
-            paddingListTop: 0,
-            contentVerticalPadding: ThemeConstants.paddingSmall,
-            disableScrolling: true,
-            rightIcon: const Icon(
-              Icons.keyboard_arrow_down,
-              color: Colors.black,
-              size: 22,
-            ),
-            headerBorderRadius: ThemeConstants.borderRadiusSmall,
-            headerBorderWidth: 0,
-            paddingListHorizontal: 0,
-            headerBorderColorOpened: Colors.transparent,
-            headerBackgroundColor: Colors.transparent,
-            headerBackgroundColorOpened: Colors.transparent,
-            contentBackgroundColor: Colors.transparent,
-            contentBorderWidth: 0,
-            contentHorizontalPadding: 0,
-            scaleWhenAnimating: false,
-            openAndCloseAnimation: true,
-            headerPadding: const EdgeInsets.symmetric(vertical: 7),
-            sectionOpeningHapticFeedback: SectionHapticFeedback.heavy,
-            sectionClosingHapticFeedback: SectionHapticFeedback.light,
-            children: List.generate(
-              _sections.length,
-              (i) => AccordionSection(
-                contentBackgroundColor: ThemeConstants.backgroundColor,
-                onOpenSection: () {
-                  _changeOpenedIndex(i);
-                },
-                key: Key(_sections[i].id),
-                isOpen: i == _openedSection,
+    return ListView(
+      shrinkWrap: true,
+      controller: widget.syllabusScrollController,
+      children: [
+        _isLoading
+            ? const Center(child: CircularProgressIndicator.adaptive())
+            : Accordion(
+                paddingListTop: 0,
                 contentVerticalPadding: ThemeConstants.paddingSmall,
-                header: Text(
-                  _sections[i].title,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                  ),
+                disableScrolling: true,
+                rightIcon: const Icon(
+                  Icons.keyboard_arrow_down,
+                  color: Colors.black,
+                  size: 22,
                 ),
-                content: ListView(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  children: List.generate(
-                    _sections[i].lectures.length,
-                    (j) => Material(
-                      child: widget.activeLessonVideoId != null
-                          ? ValueListenableBuilder<ActiveLesson>(
-                              valueListenable: widget.activeLessonVideoId!,
-                              builder: (BuildContext context,
-                                      ActiveLesson value, Widget? child) =>
-                                  SyllabusLesson(
-                                key: Key(_sections[i].lectures[j].id),
-                                boxName: _boxName,
-                                course: widget.course,
-                                index: j,
-                                sectionIndex: i,
-                                lecture: _sections[i].lectures[j],
-                                activeLessonVideoId: widget.activeLessonVideoId,
-                                youtubePlayerController:
-                                    widget.youtubePlayerController,
-                              ),
-                            )
-                          : SyllabusLesson(
-                              key: Key(_sections[i].lectures[j].id),
-                              boxName: _boxName,
-                              course: widget.course,
-                              index: j,
-                              sectionIndex: i,
-                              lecture: _sections[i].lectures[j],
-                              activeLessonVideoId: widget.activeLessonVideoId,
-                              youtubePlayerController:
-                                  widget.youtubePlayerController,
-                            ),
+                headerBorderRadius: ThemeConstants.borderRadiusSmall,
+                headerBorderWidth: 0,
+                paddingListHorizontal: 0,
+                headerBorderColorOpened: Colors.transparent,
+                headerBackgroundColor: Colors.transparent,
+                headerBackgroundColorOpened: Colors.transparent,
+                contentBackgroundColor: Colors.transparent,
+                contentBorderWidth: 0,
+                contentHorizontalPadding: 0,
+                scaleWhenAnimating: false,
+                openAndCloseAnimation: true,
+                headerPadding: const EdgeInsets.symmetric(vertical: 7),
+                sectionOpeningHapticFeedback: SectionHapticFeedback.heavy,
+                sectionClosingHapticFeedback: SectionHapticFeedback.light,
+                children: List.generate(
+                  _sections.length,
+                  (i) => AccordionSection(
+                    contentBackgroundColor: ThemeConstants.backgroundColor,
+                    onOpenSection: () {
+                      _changeOpenedIndex(i);
+                    },
+                    key: Key(_sections[i].id),
+                    isOpen: i == _openedSection,
+                    contentVerticalPadding: ThemeConstants.paddingSmall,
+                    header: Text(
+                      _sections[i].title,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    content: ListView(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      children: List.generate(
+                        _sections[i].lectures.length,
+                        (j) => Material(
+                          child: widget.activeLesson != null
+                              ? ValueListenableBuilder<ActiveLesson>(
+                                  valueListenable: widget.activeLesson!,
+                                  builder: (BuildContext context,
+                                          ActiveLesson value, Widget? child) =>
+                                      SyllabusLesson(
+                                    key: Key(_sections[i].lectures[j].id),
+                                    courseProgressBox: widget.courseProgressBox,
+                                    course: widget.course,
+                                    index: j,
+                                    sectionIndex: i,
+                                    lecture: _sections[i].lectures[j],
+                                    activeLesson: widget.activeLesson,
+                                    youtubePlayerController:
+                                        widget.youtubePlayerController,
+                                  ),
+                                )
+                              : SyllabusLesson(
+                                  key: Key(_sections[i].lectures[j].id),
+                                  courseProgressBox: widget.courseProgressBox,
+                                  course: widget.course,
+                                  index: j,
+                                  sectionIndex: i,
+                                  lecture: _sections[i].lectures[j],
+                                  activeLesson: widget.activeLesson,
+                                  youtubePlayerController:
+                                      widget.youtubePlayerController,
+                                ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          );
+      ],
+    );
   }
 
   @override

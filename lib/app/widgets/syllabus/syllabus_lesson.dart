@@ -14,18 +14,18 @@ class SyllabusLesson extends StatefulWidget {
   final Course? course;
   final Lecture lecture;
   final YoutubePlayerController? youtubePlayerController;
-  final ValueNotifier<ActiveLesson>? activeLessonVideoId;
+  final ValueNotifier<ActiveLesson>? activeLesson;
   final int index;
   final int sectionIndex;
-  final String? boxName;
+  final Box? courseProgressBox;
 
   const SyllabusLesson({
     super.key,
     required this.lecture,
     this.course,
     this.youtubePlayerController,
-    this.activeLessonVideoId,
-    this.boxName = '',
+    this.activeLesson,
+    this.courseProgressBox,
     required this.index,
     required this.sectionIndex,
   });
@@ -45,7 +45,7 @@ class _SyllabusLessonState extends State<SyllabusLesson> {
   @override
   Widget build(BuildContext context) {
     bool isActive = YoutubePlayer.convertUrlToId(widget.lecture.source) ==
-        widget.activeLessonVideoId?.value.source;
+        widget.activeLesson?.value.source;
     return ListTile(
       tileColor: isActive ? ThemeConstants.lavenderMist : null,
       leading: Text(
@@ -79,7 +79,7 @@ class _SyllabusLessonState extends State<SyllabusLesson> {
                       widget.youtubePlayerController == null
                   ? null
                   : ValueListenableBuilder(
-                      valueListenable: Hive.box(widget.boxName!).listenable(),
+                      valueListenable: widget.courseProgressBox!.listenable(),
                       builder: (context, box, ch) {
                         final isChecked = box.get(widget.lecture.id) ?? false;
 
@@ -108,8 +108,7 @@ class _SyllabusLessonState extends State<SyllabusLesson> {
                           YoutubePlayer.convertUrlToId(widget.lecture.source) ??
                               '';
 
-                      widget.activeLessonVideoId?.value =
-                          ActiveLesson.fromJson({
+                      widget.activeLesson?.value = ActiveLesson.fromJson({
                         "source": videoId,
                         "lecture": widget.index,
                         "section": widget.sectionIndex,
@@ -122,15 +121,7 @@ class _SyllabusLessonState extends State<SyllabusLesson> {
                         startAt: 0,
                       );
 
-                      Box? courseBox;
-
-                      if (Hive.isBoxOpen(widget.boxName!)) {
-                        courseBox = Hive.box(widget.boxName!);
-                      } else {
-                        courseBox = await Hive.openBox(widget.boxName!);
-                      }
-
-                      courseBox.put(
+                      widget.courseProgressBox?.put(
                         "lastLecture",
                         {
                           "section": widget.sectionIndex,

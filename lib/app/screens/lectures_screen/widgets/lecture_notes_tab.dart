@@ -1,13 +1,15 @@
+import 'package:app/app/models/active_lesson.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
 
 class LectureNotesTab extends StatefulWidget {
   const LectureNotesTab({
     super.key,
-    this.pdfUrl = '',
+    required this.activeLesson,
   });
 
-  final String pdfUrl;
+  final ValueListenable<ActiveLesson> activeLesson;
 
   @override
   State<LectureNotesTab> createState() => _LectureNotesTabState();
@@ -18,15 +20,19 @@ class _LectureNotesTabState extends State<LectureNotesTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return widget.pdfUrl.isEmpty
-        ? const Center(
-            child: Text("There are no notes available for this lecture."),
-          )
-        : const PDF().cachedFromUrl(
-            widget.pdfUrl,
-            placeholder: (progress) => Center(child: Text('$progress %')),
-            errorWidget: (error) => Center(child: Text(error.toString())),
-          );
+    return ValueListenableBuilder<ActiveLesson>(
+        valueListenable: widget.activeLesson,
+        builder: (context, value, ch) {
+          return value.notes.isEmpty
+              ? const Center(
+                  child: Text("There are no notes available for this lecture."),
+                )
+              : const PDF().cachedFromUrl(
+                  value.notes,
+                  placeholder: (progress) => Center(child: Text('$progress %')),
+                  errorWidget: (error) => Center(child: Text(error.toString())),
+                );
+        });
   }
 
   @override
