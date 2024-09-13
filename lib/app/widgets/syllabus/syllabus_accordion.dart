@@ -238,7 +238,8 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
 
   @override
   void dispose() {
-    widget.courseProgressBox?.close();
+    widget.courseProgressBox
+        ?.close(); // close the box when the lecture screen closes
     super.dispose();
   }
 
