@@ -29,13 +29,24 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
       allowedExtensions: ['svg'], // Restrict to SVG files
     );
 
-    if (result != null && result.files.single.extension == 'svg') {
-      // Process the picked .svg file (display, upload, etc.)
-      final pickedFile = result.files.single;
-      print('SVG file path: ${pickedFile.path}');
+    if ((result == null || result.files.single.extension != 'svg') && mounted) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No .svg icon selected.'),
+          backgroundColor: Colors.red,
+        ),
+      );
     } else {
-      // Handle invalid file type or no file selected
-      print('No .svg file selected or invalid file type.');
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('New icon has been selected.'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
     }
 
     return result;
