@@ -20,7 +20,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final PageController _pageController = PageController();
   final List<Widget> _tabs = const [
     LmsScreen(),
-    Text('Students'),
     AccountScreen(isInstructorView: true),
   ];
 
@@ -57,14 +56,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       label: 'LMS'),
                   BottomNavigationBarItem(
                       icon: BottomNavigationIcon(
-                        path: 'assets/icons/play.svg',
-                        isActive: selectedIndex == 1,
-                      ),
-                      label: 'Students'),
-                  BottomNavigationBarItem(
-                      icon: BottomNavigationIcon(
                         path: 'assets/icons/user.svg',
-                        isActive: selectedIndex == 2,
+                        isActive: selectedIndex == 1,
                       ),
                       label: 'Account'),
                 ],

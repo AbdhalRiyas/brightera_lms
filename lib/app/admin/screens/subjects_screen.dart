@@ -84,7 +84,10 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                     setState(() =>
                         iconPath = svgFile?.files.single.path ?? subject.icon);
                   },
-                  child: const Text("Change Icon"),
+                  child: const Text(
+                    "Change Icon",
+                    style: TextStyle(fontSize: 10),
+                  ),
                 ),
                 TextFormField(
                   controller: nameController,
