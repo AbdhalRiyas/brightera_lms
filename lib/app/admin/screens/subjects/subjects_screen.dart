@@ -1,6 +1,5 @@
 import 'package:app/app/models/subject.dart';
 import 'package:app/app/repositories/subject_repository.dart';
-import 'package:app/app/widgets/seperator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 

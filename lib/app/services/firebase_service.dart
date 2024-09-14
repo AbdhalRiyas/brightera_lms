@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:app/app/models/course.dart';
-import 'package:app/app/models/subject.dart';
 import 'package:app/app/models/user.dart' as usermodal;
 import 'package:app/app/services/auth_manager.dart';
 import 'package:app/app/utils/result.dart';
