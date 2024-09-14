@@ -1,4 +1,4 @@
-import 'package:app/app/admin/screens/courses/courses_screen.dart';
+import 'package:app/app/admin/screens/lms/lms_screen.dart';
 import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/models/user.dart';
 import 'package:app/app/screens/account_screen.dart';
@@ -19,9 +19,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final ValueNotifier<int> _selectedIndex = ValueNotifier(0);
   final PageController _pageController = PageController();
   final List<Widget> _tabs = const [
-    CoursesScreen(),
-    Text('My Learning'),
-    AccountScreen(),
+    LmsScreen(),
+    Text('Students'),
+    AccountScreen(isInstructorView: true),
   ];
 
   UserRole _userRole = UserRole.instructor;
@@ -54,13 +54,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         path: 'assets/icons/favourite.svg',
                         isActive: selectedIndex == 0,
                       ),
-                      label: 'Courses'),
+                      label: 'LMS'),
                   BottomNavigationBarItem(
                       icon: BottomNavigationIcon(
                         path: 'assets/icons/play.svg',
                         isActive: selectedIndex == 1,
                       ),
-                      label: 'My Learning'),
+                      label: 'Students'),
                   BottomNavigationBarItem(
                       icon: BottomNavigationIcon(
                         path: 'assets/icons/user.svg',

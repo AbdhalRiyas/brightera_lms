@@ -18,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final PageController _pageController = PageController();
   final List<Widget> _tabs = const [
     FeaturedScreen(),
-    Text('My Learning'),
+    // Text('My Learning'),
     AccountScreen(),
   ];
 
@@ -43,16 +43,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         isActive: selectedIndex == 0,
                       ),
                       label: 'Featured'),
-                  BottomNavigationBarItem(
-                      icon: BottomNavigationIcon(
-                        path: 'assets/icons/play.svg',
-                        isActive: selectedIndex == 1,
-                      ),
-                      label: 'My Learning'),
+                  // BottomNavigationBarItem(
+                  //     icon: BottomNavigationIcon(
+                  //       path: 'assets/icons/play.svg',
+                  //       isActive: selectedIndex == 1,
+                  //     ),
+                  //     label: 'My Learning'),
                   BottomNavigationBarItem(
                       icon: BottomNavigationIcon(
                         path: 'assets/icons/user.svg',
-                        isActive: selectedIndex == 2,
+                        isActive: selectedIndex == 1,
                       ),
                       label: 'Account'),
                 ],

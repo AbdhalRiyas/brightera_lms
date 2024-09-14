@@ -5,7 +5,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AccountScreen extends StatefulWidget {
-  const AccountScreen({super.key});
+  const AccountScreen({super.key, this.isInstructorView = false});
+
+  final bool isInstructorView;
 
   @override
   State<AccountScreen> createState() => _AccountScreenState();
@@ -59,10 +61,13 @@ class _AccountScreenState extends State<AccountScreen> {
                                 UserRole.student.name)
                               TextButton(
                                 onPressed: () => Navigator.pushReplacementNamed(
-                                    context, '/dashboard'),
-                                child: const Text(
-                                  "Switch to instructor view",
-                                  style: TextStyle(
+                                    context,
+                                    widget.isInstructorView
+                                        ? '/'
+                                        : '/dashboard'),
+                                child: Text(
+                                  "Switch to ${widget.isInstructorView ? 'student' : 'instructor'} view",
+                                  style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
