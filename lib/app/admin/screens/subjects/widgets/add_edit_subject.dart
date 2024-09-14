@@ -12,14 +12,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'pick_subject_icon.dart';
 
-void editSubject(
-    BuildContext context, SubjectRepository respository, Subject subject) {
+void addEditSubject(BuildContext context, SubjectRepository respository,
+    [Subject? subject]) {
   final nameController = TextEditingController();
-  bool isActive = subject.isActive;
-  bool isHidden = subject.isHidden;
-  nameController.text = subject.name;
+  bool isActive = subject?.isActive ?? false;
+  nameController.text = subject?.name ?? '';
   String name = nameController.text;
-  String iconPath = subject.icon;
+  String iconPath = subject?.icon ?? '';
   FilePickerResult? svgFile;
   showDialog(
     context: context,
@@ -39,26 +38,27 @@ void editSubject(
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: ThemeConstants.paddingLarge),
-              Center(
-                child: iconPath.startsWith('http')
-                    ? SvgPicture.network(
-                        iconPath,
-                        height: 28,
-                      )
-                    : SvgPicture.file(
-                        File(iconPath),
-                        // height: 28,
-                      ),
-              ),
+              if (iconPath.isNotEmpty)
+                Center(
+                  child: iconPath.startsWith('http')
+                      ? SvgPicture.network(
+                          iconPath,
+                          height: 28,
+                        )
+                      : SvgPicture.file(
+                          File(iconPath),
+                          height: 28,
+                        ),
+                ),
               TextButton(
                 onPressed: () async {
                   svgFile = await pickSubjectIcon(context);
-                  setState(() =>
-                      iconPath = svgFile?.files.single.path ?? subject.icon);
+                  setState(
+                      () => iconPath = svgFile?.files.single.path ?? iconPath);
                 },
-                child: const Text(
-                  "Change Icon",
-                  style: TextStyle(fontSize: 10),
+                child: Text(
+                  iconPath.isEmpty ? "Add Icon" : "Change Icon",
+                  style: const TextStyle(fontSize: 10),
                 ),
               ),
               TextFormField(
@@ -80,20 +80,9 @@ void editSubject(
                       );
                     }),
               ),
-              ListTile(
-                title: const Text("Hide"),
-                contentPadding: EdgeInsets.zero,
-                trailing: Switch.adaptive(
-                    value: isHidden,
-                    onChanged: (value) {
-                      setState(
-                        () => isHidden = !isHidden,
-                      );
-                    }),
-              ),
               const SizedBox(height: ThemeConstants.paddingMedium),
-              buildSaveChangesButton(subject, isActive, isHidden, name,
-                  iconPath, respository, setState, context),
+              buildSaveChangesButton(subject, isActive, name, iconPath,
+                  respository, setState, context),
               TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: const Text("Cancel")),

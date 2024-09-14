@@ -12,11 +12,27 @@ class SubjectRepository {
         'icons/${generateUniqueFileName('svg')}', filePath);
   }
 
+  Future<Result> createSubject(Subject subject) async {
+    return await _firebaseService.addDocument(
+      collection: 'subjects',
+      data: subject.toFirestoreJson(),
+    );
+  }
+
   Future<Result> updateSubject(Subject subject) async {
     return await _firebaseService.updateDocument(
         collection: 'subjects',
         documentId: subject.id,
         data: subject.toFirestoreJson());
+  }
+
+  Future<Result> deleteSubject(String subjectId) async {
+    return await _firebaseService.deleteDocument(
+      collection: 'subjects',
+      documentId: subjectId,
+      referenceCollection: 'courses',
+      referenceField: 'subject',
+    );
   }
 
   Future<List<Subject>> getAllSubjects() async {

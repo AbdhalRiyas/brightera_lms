@@ -287,6 +287,24 @@ class FirebaseService {
     await _firestore.collection('users').doc(id).delete();
   }
 
+  Future<Result<String>> addDocument({
+    required String collection,
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      // Add the document to Firestore and get a reference to the added document
+      DocumentReference docRef =
+          await _firestore.collection(collection).add(data);
+
+      // Return the document ID or any other info inside Result
+      return Result(data: docRef.id);
+    } on FirebaseException catch (e) {
+      return Result(error: "Failed to add document: ${e.message}");
+    } catch (e) {
+      return Result(error: "An unexpected error occurred: $e");
+    }
+  }
+
   Future<Result<String>> updateDocument(
       {required String collection,
       required String documentId,
@@ -298,6 +316,44 @@ class FirebaseService {
       return Result(data: "Updated successfully!");
     } on FirebaseException catch (e) {
       return Result(error: "Failed to update: ${e.message}");
+    } catch (e) {
+      return Result(error: "An unexpected error occurred: $e");
+    }
+  }
+
+  Future<Result<String>> deleteDocument({
+    required String collection,
+    required String documentId,
+    String? referenceCollection, // The collection to check for references
+    String?
+        referenceField, // The field in the reference collection that holds the DocumentReference
+  }) async {
+    try {
+      // Create the DocumentReference for the document we want to delete
+      if (referenceCollection != null && referenceField != null) {
+        DocumentReference docRef =
+            _firestore.collection(collection).doc(documentId);
+
+        // Check if the DocumentReference is used in the reference collection
+        QuerySnapshot querySnapshot = await _firestore
+            .collection(referenceCollection)
+            .where(referenceField, isEqualTo: docRef)
+            .get();
+
+        if (querySnapshot.docs.isNotEmpty) {
+          // The document is being referenced in another collection, prevent deletion
+          return Result(
+              error:
+                  "Cannot delete: Some $referenceCollection belongs to this $referenceField.");
+        }
+      }
+
+      // If not referenced, delete the document from Firestore
+      await _firestore.collection(collection).doc(documentId).delete();
+
+      return Result(data: "Deleted successfully!");
+    } on FirebaseException catch (e) {
+      return Result(error: "Failed to delete: ${e.message}");
     } catch (e) {
       return Result(error: "An unexpected error occurred: $e");
     }

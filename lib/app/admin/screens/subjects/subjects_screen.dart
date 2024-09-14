@@ -1,9 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:app/app/models/subject.dart';
 import 'package:app/app/repositories/subject_repository.dart';
+import 'package:app/app/utils/result.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'widgets/edit_subject.dart';
+import 'widgets/add_edit_subject.dart';
 
 class SubjectsScreen extends StatefulWidget {
   const SubjectsScreen({super.key});
@@ -21,9 +24,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
       appBar: AppBar(title: const Text("Subjects")),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: () {
-          // Add new subject logic
-        },
+        onPressed: () => addEditSubject(context, _repository),
       ),
       body: StreamBuilder<List<Subject>>(
         stream: _repository.getSubjectsStream(),
@@ -39,14 +40,43 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
           if (snapshot.hasData) {
             final subjects = snapshot.data!;
             return ListView.separated(
-              itemBuilder: (context, i) => ListTile(
-                leading: SvgPicture.network(
-                  subjects[i].icon,
-                  height: 18,
-                ),
-                title: Text(subjects[i].name),
-                onTap: () => editSubject(context, _repository, subjects[i]),
-              ),
+              itemBuilder: (context, i) {
+                final subject = subjects[i];
+
+                return Dismissible(
+                  key: Key(subject
+                      .id), // Ensure each item has a unique key (e.g., the item's ID)
+                  direction:
+                      DismissDirection.endToStart, // Swipe from right to left
+                  confirmDismiss: (direction) async {
+                    Result result = await _repository.deleteSubject(subject.id);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(result.data ?? result.error),
+                        backgroundColor:
+                            result.isSuccess ? Colors.green : Colors.red,
+                      ),
+                    );
+
+                    return result.isSuccess;
+                  },
+                  background: Container(
+                    color: Colors.red,
+                    padding: const EdgeInsets.only(right: 20),
+                    alignment: Alignment.centerRight,
+                    child: const Icon(Icons.delete, color: Colors.white),
+                  ),
+                  child: ListTile(
+                    leading: SvgPicture.network(
+                      subject.icon,
+                      height: 18,
+                    ),
+                    title: Text(subject.name),
+                    onTap: () => addEditSubject(context, _repository, subject),
+                  ),
+                );
+              },
               separatorBuilder: (context, i) => const Divider(),
               itemCount: subjects.length,
             );

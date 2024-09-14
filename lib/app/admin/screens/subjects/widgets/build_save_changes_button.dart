@@ -7,30 +7,29 @@ import 'package:app/app/utils/result.dart';
 import 'package:flutter/material.dart';
 
 ElevatedButton buildSaveChangesButton(
-    Subject subject,
+    Subject? subject,
     bool isActive,
-    bool isHidden,
     String name,
     String iconPath,
     SubjectRepository respository,
     void Function(void Function()) setState,
     BuildContext context) {
   return ElevatedButton(
-    onPressed: (subject.isActive == isActive &&
-            subject.isHidden == isHidden &&
-            name == subject.name &&
-            subject.icon == iconPath)
+    onPressed: ((subject?.isActive == isActive &&
+                name == subject?.name &&
+                subject?.icon == iconPath) ||
+            (iconPath.isEmpty || name.isEmpty))
         ? null
         : () async {
             bool canUpdate = true;
 
-            if (iconPath != subject.icon) {
+            if (iconPath != subject?.icon) {
               Result result = await respository.uploadIcon(iconPath);
 
               if (result.isSuccess) {
                 iconPath = result.data;
               } else {
-                setState(() => iconPath = subject.icon);
+                setState(() => iconPath = iconPath);
                 canUpdate = false;
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -41,13 +40,22 @@ ElevatedButton buildSaveChangesButton(
             }
 
             if (canUpdate) {
-              Subject newSubject = subject.copyWith(
-                name: name,
-                icon: iconPath,
-                isActive: isActive,
-                isHidden: isHidden,
-              );
-              Result result = await respository.updateSubject(newSubject);
+              Subject newSubject = subject == null
+                  ? Subject(
+                      id: '',
+                      name: name,
+                      isActive: isActive,
+                      icon: iconPath,
+                    )
+                  : subject.copyWith(
+                      name: name,
+                      icon: iconPath,
+                      isActive: isActive,
+                    );
+
+              Result result = subject == null
+                  ? await respository.createSubject(newSubject)
+                  : await respository.updateSubject(newSubject);
 
               if (result.isSuccess) {
                 Navigator.pop(context);
@@ -65,6 +73,6 @@ ElevatedButton buildSaveChangesButton(
       foregroundColor: ThemeConstants.primaryButtonTextColor,
       backgroundColor: ThemeConstants.primaryButtonColor,
     ),
-    child: const Text("Save Changes"),
+    child: Text(subject == null ? "Add Subject" : "Save Changes"),
   );
 }
