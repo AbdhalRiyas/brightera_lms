@@ -11,7 +11,7 @@ class Subject {
       required this.isActive,
       this.icon = ''});
 
-  static Subject fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
+  factory Subject.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
     return Subject(
       id: doc.id,

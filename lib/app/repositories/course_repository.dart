@@ -2,6 +2,7 @@ import 'package:app/app/models/course.dart';
 import 'package:app/app/models/lecture.dart';
 import 'package:app/app/models/section.dart';
 import 'package:app/app/models/user.dart';
+import 'package:app/app/services/auth_manager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
@@ -34,6 +35,20 @@ class CourseRepository {
       }
     }
     return courses;
+  }
+
+  Stream<List<Course>> getCoursesStream() {
+    final userDetails = AuthManager().userDetails;
+    return _firebaseService.getCollectionStream(
+      collection: 'courses',
+      fromFirestore: Course.fromFirestore,
+      comparisonField:
+          userDetails?['userRole'] != UserRole.admin ? 'instructor' : null,
+      referenceCollection: 'users',
+      referenceId: userDetails?['userRole'] != UserRole.admin
+          ? _firebaseService.currentUser?.uid
+          : null,
+    );
   }
 
   Future<bool> checkActiveEnrollment(String courseId) async {

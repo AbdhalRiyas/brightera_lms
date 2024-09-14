@@ -139,10 +139,26 @@ class FirebaseService {
   Stream<List<T>> getCollectionStream<T>({
     required String collection,
     required T Function(DocumentSnapshot<Map<String, dynamic>>) fromFirestore,
+    String? comparisonField,
+    String? comparisonValue,
+    String? referenceCollection,
+    String? referenceId,
   }) {
-    return _firestore.collection(collection).snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) => fromFirestore(doc)).toList();
-    });
+    Query<Map<String, dynamic>> query = _firestore.collection(collection);
+
+    if (comparisonField != null) {
+      if (referenceCollection != null && referenceId != null) {
+        DocumentReference? docRef =
+            _firestore.collection(referenceCollection).doc(referenceId);
+
+        query = query.where(comparisonField, isEqualTo: docRef);
+      } else {
+        query = query.where(comparisonField, isEqualTo: comparisonValue);
+      }
+    }
+
+    return query.snapshots().map(
+        (snapshot) => snapshot.docs.map((doc) => fromFirestore(doc)).toList());
   }
 
   Future<QuerySnapshot<Map<String, dynamic>>?> getCollection(

@@ -1,4 +1,4 @@
-import 'package:app/app/admin/screens/lms/lms_screen.dart';
+import 'package:app/app/admin/screens/lms_screen.dart';
 import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/models/user.dart';
 import 'package:app/app/screens/account_screen.dart';
