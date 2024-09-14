@@ -1,4 +1,4 @@
-import 'package:app/app/admin/screens/subjects_screen.dart';
+import 'package:app/app/admin/screens/subjects/subjects_screen.dart';
 import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/widgets/custom_app_bar.dart';
 import 'package:app/app/widgets/seperator.dart';

@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:app/app/models/course.dart';
+import 'package:app/app/models/subject.dart';
 import 'package:app/app/models/user.dart' as usermodal;
 import 'package:app/app/services/auth_manager.dart';
 import 'package:app/app/utils/result.dart';
@@ -20,7 +23,7 @@ class FirebaseService {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
+  final Reference _firebaseStorageRef = FirebaseStorage.instance.ref();
   final FirebaseFunctions _functions = FirebaseFunctions.instance;
 
   User? get currentUser => _auth.currentUser;
@@ -134,8 +137,18 @@ class FirebaseService {
   }
   // Banners Collection End ========================= **
 
-  Future<QuerySnapshot<Map<String, dynamic>>?> getAllSubjects() async {
-    final snapshot = await _firestore.collection('subjects').get();
+  Stream<List<T>> getCollectionStream<T>({
+    required String collection,
+    required T Function(DocumentSnapshot<Map<String, dynamic>>) fromFirestore,
+  }) {
+    return _firestore.collection(collection).snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) => fromFirestore(doc)).toList();
+    });
+  }
+
+  Future<QuerySnapshot<Map<String, dynamic>>?> getCollection(
+      String collection) async {
+    final snapshot = await _firestore.collection(collection).get();
     return snapshot;
   }
 
@@ -275,6 +288,22 @@ class FirebaseService {
     await _firestore.collection('users').doc(id).delete();
   }
 
+  Future<Result<String>> updateDocument(
+      {required String collection,
+      required String documentId,
+      required Map<String, dynamic> data}) async {
+    try {
+      // Update the document in Firestore
+      await _firestore.collection(collection).doc(documentId).update(data);
+
+      return Result(data: "Updated successfully!");
+    } on FirebaseException catch (e) {
+      return Result(error: "Failed to update: ${e.message}");
+    } catch (e) {
+      return Result(error: "An unexpected error occurred: $e");
+    }
+  }
+
   Future<List<Map<String, dynamic>>> getCourses() async {
     // Fetch all courses from Firestore
     final snapshot = await _firestore.collection('courses').get();
@@ -307,5 +336,19 @@ class FirebaseService {
   Future<void> deleteCourse(String id) async {
     // Delete a course from Firestore
     await _firestore.collection('courses').doc(id).delete();
+  }
+
+  Future<Result> uploadFile(String fbStoragePath, String filePath) async {
+    final fileRef = _firebaseStorageRef.child(fbStoragePath);
+
+    File file = File(filePath);
+
+    try {
+      await fileRef.putFile(file);
+      return Result(data: await fileRef.getDownloadURL());
+    } on FirebaseException catch (e) {
+      debugPrint(e.message);
+      return Result(error: e.message);
+    }
   }
 }
