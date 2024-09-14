@@ -1,3 +1,4 @@
+import 'package:app/app/models/user.dart' show UserRole;
 import 'package:app/app/services/auth_manager.dart';
 import 'package:app/app/services/firebase_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -54,9 +55,11 @@ class _AccountScreenState extends State<AccountScreen> {
                                 ),
                               ],
                             ),
-                            if (snapshot.data?['userRole'] == "instructor")
+                            if (snapshot.data?['userRole'] !=
+                                UserRole.student.name)
                               TextButton(
-                                onPressed: () {},
+                                onPressed: () => Navigator.pushReplacementNamed(
+                                    context, '/dashboard'),
                                 child: const Text(
                                   "Switch to instructor view",
                                   style: TextStyle(

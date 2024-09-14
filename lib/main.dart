@@ -1,3 +1,4 @@
+import 'package:app/app/config/app_contants.dart';
 import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -15,6 +16,9 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  await Hive.openBox(
+      AppContants.appStateBox); // this will hold app initial states
+
   runApp(const MyApp());
 }
 
@@ -27,12 +31,19 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   @override
+  void dispose() {
+    final box = Hive.box(AppContants.appStateBox);
+    box.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Brightera',
       debugShowCheckedModeBanner: false,
       theme: ThemeConstants.lightTheme,
-      onGenerateRoute: routes,
+      onGenerateRoute: RouteManager.generateRoute,
     );
   }
 }
