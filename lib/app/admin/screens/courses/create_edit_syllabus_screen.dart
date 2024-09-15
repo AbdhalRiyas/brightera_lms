@@ -5,7 +5,6 @@ import 'package:app/app/models/section.dart';
 import 'package:app/app/repositories/course_repository.dart';
 import 'package:app/app/utils/int_extension.dart';
 import 'package:app/app/utils/string_extension.dart';
-import 'package:app/app/widgets/syllabus/syllabus_accordion.dart';
 import 'package:flutter/material.dart';
 
 class CreateEditSyllabusScreen extends StatelessWidget {
