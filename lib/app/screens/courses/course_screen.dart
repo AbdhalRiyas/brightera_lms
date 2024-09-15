@@ -101,11 +101,6 @@ class _CourseScreenState extends State<CourseScreen> {
                                       LecturesArguments(course: widget.course))
                               : enrollNow(
                                   context, widget.course, currentUser?.uid),
-                          style: ElevatedButton.styleFrom(
-                            overlayColor: ThemeConstants.accentColor,
-                            backgroundColor: ThemeConstants.primaryButtonColor,
-                            elevation: 0,
-                          ),
                           child: Text(
                             hasEnrolled ? "Go to lectures" : "Enroll Now",
                             style: const TextStyle(

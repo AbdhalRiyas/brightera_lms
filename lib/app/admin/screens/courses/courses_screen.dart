@@ -88,7 +88,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
                           ),
                         ),
                       ],
-                      icon: Icon(Icons.more_vert), // Vertical dots icon
+                      icon: const Icon(Icons.more_vert), // Vertical dots icon
                     ),
                     onTap: () => Navigator.push(
                       context,
