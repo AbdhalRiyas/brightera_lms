@@ -3,7 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Lecture {
   final String id, title, type, source, pdfNotes;
   final bool freePreview, isLive;
-  final int order, durationInSeconds;
+  int order;
+  final int durationInSeconds;
   final List<dynamic> downloads;
 
   Lecture({

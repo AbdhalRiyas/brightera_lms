@@ -1,7 +1,10 @@
 import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/models/course.dart';
+import 'package:app/app/models/lecture.dart';
 import 'package:app/app/models/section.dart';
 import 'package:app/app/repositories/course_repository.dart';
+import 'package:app/app/utils/int_extension.dart';
+import 'package:app/app/utils/string_extension.dart';
 import 'package:app/app/widgets/syllabus/syllabus_accordion.dart';
 import 'package:flutter/material.dart';
 
@@ -24,13 +27,15 @@ class CreateEditSyllabusScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(ThemeConstants.paddingSmall),
-        child: Column(
+        child: ListView(
+          shrinkWrap: true,
           children: [
             FutureBuilder(
                 future: _courseRepository.fetchSectionsForCourse(_course.id),
                 builder: (_, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(
+                        child: CircularProgressIndicator.adaptive());
                   }
                   if (snapshot.hasData) {
                     List<Section> sections = snapshot.data ?? [];
@@ -40,24 +45,73 @@ class CreateEditSyllabusScreen extends StatelessWidget {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: sections.length,
-                        itemBuilder: (_, i) => ListTile(
-                          leading: ReorderableDragStartListener(
-                            index: i,
-                            child: const Icon(Icons.drag_handle),
-                          ),
-                          key: Key(sections[i].id),
-                          title: Text(
-                            sections[i].title,
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                          trailing: IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.add),
-                          ),
-                          onTap: () {
-                            print("wwqd");
-                          },
-                        ),
+                        itemBuilder: (_, i) {
+                          List<Lecture> lectures =
+                              snapshot.data?[i].lectures ?? [];
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            key: Key(sections[i].id),
+                            children: [
+                              ListTile(
+                                leading: ReorderableDragStartListener(
+                                  index: i,
+                                  child: const Icon(Icons.drag_handle),
+                                ),
+                                title: Text(
+                                  sections[i].title,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                trailing: IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(Icons.add),
+                                ),
+                                onTap: () {
+                                  print("wwqd");
+                                },
+                              ),
+                              ReorderableListView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemBuilder: (_, j) => ListTile(
+                                  contentPadding: const EdgeInsets.only(
+                                      left: ThemeConstants.paddingLarge * 2),
+                                  key: Key(lectures[j].id),
+                                  leading: Text("${lectures[j].order + 1}"),
+                                  title: Text(
+                                    lectures[j].title,
+                                    style: const TextStyle(fontSize: 11),
+                                  ),
+                                  subtitle: Text(
+                                    lectures[j].isLive
+                                        ? "Live video"
+                                        : "${lectures[j].type.capitalize()} - ${lectures[j].durationInSeconds.toMinutes()}",
+                                    style: const TextStyle(fontSize: 10),
+                                  ),
+                                ),
+                                itemCount: lectures.length,
+                                onReorder: (int oldSubIndex, int newSubIndex) {
+                                  setState(() {
+                                    if (oldSubIndex < newSubIndex) {
+                                      newSubIndex -= 1;
+                                    }
+                                    final Lecture movedLecture =
+                                        lectures.removeAt(oldSubIndex);
+
+                                    lectures.insert(newSubIndex, movedLecture);
+
+                                    for (int i = 0; i < sections.length; i++) {
+                                      lectures[i].order = i;
+                                    }
+                                  });
+                                },
+                              ),
+                            ],
+                          );
+                        },
                         onReorder: (int oldIndex, int newIndex) {
                           setState(() {
                             if (oldIndex < newIndex) {
@@ -79,11 +133,6 @@ class CreateEditSyllabusScreen extends StatelessWidget {
                     return const Text("No sections have been added yet!");
                   }
                 }),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.add),
-              onPressed: () {},
-              label: const Text("Add a Section"),
-            ),
           ],
         ),
       ),
