@@ -1,8 +1,6 @@
 import 'package:app/app/admin/screens/lms_screen.dart';
 import 'package:app/app/config/theme_constants.dart';
-import 'package:app/app/models/user.dart';
 import 'package:app/app/screens/account_screen.dart';
-import 'package:app/app/services/auth_manager.dart';
 import 'package:app/app/widgets/bottom_navigation_icon.dart';
 import 'package:flutter/material.dart';
 
@@ -23,13 +21,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     AccountScreen(isInstructorView: true),
   ];
 
-  UserRole _userRole = UserRole.instructor;
+  // UserRole _userRole = UserRole.instructor;
 
   @override
   void initState() {
-    if (AuthManager().userDetails?['userRole'] == "admin") {
-      _userRole = UserRole.admin;
-    }
+    // if (AuthManager().userDetails?['userRole'] == "admin") {
+    //   _userRole = UserRole.admin;
+    // }
     super.initState();
   }
 

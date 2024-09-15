@@ -13,12 +13,14 @@ class CourseCard extends StatelessWidget {
     this.maxHeight,
     this.listMode = false,
     this.onTap,
+    this.trailing,
   }) : _course = course;
 
   final double? maxWidth, maxHeight;
   final Course _course;
   final bool listMode;
   final VoidCallback? onTap;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +48,7 @@ class CourseCard extends StatelessWidget {
               ),
               title: CourseCardTitle(title: _course.title),
               subtitle: CourseCardSubtitle(course: _course),
+              trailing: trailing,
             )
           : InkWell(
               onTap: onTap,

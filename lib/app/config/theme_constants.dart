@@ -59,7 +59,29 @@ class ThemeConstants {
     // buttonTheme: const ButtonThemeData(buttonColor: Colors.blueAccent),
     fontFamily: 'Poppins',
     textTheme: const TextTheme(),
-    appBarTheme: const AppBarTheme(backgroundColor: backgroundColor),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: backgroundColor,
+      titleTextStyle: TextStyle(
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+        fontSize: 22,
+      ),
+    ),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      foregroundColor: primaryButtonTextColor,
+      backgroundColor: primaryButtonColor,
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+          backgroundColor: primaryButtonColor,
+          foregroundColor: primaryButtonTextColor,
+          minimumSize: const Size.fromHeight(50),
+          textStyle: const TextStyle(
+            fontWeight: FontWeight.w600,
+          ),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(borderRadiusMedium))),
+    ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       elevation: 0,
       backgroundColor: backgroundColor,

@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Section {
   final String id;
   final String title;
-  final int order;
+  int order;
   List<Lecture> lectures;
 
   Section({

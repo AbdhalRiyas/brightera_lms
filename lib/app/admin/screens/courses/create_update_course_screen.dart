@@ -70,7 +70,9 @@ class _CreateUpdateCourseScreenState extends State<CreateUpdateCourseScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text(widget.course != null ? "Edit Course" : "Create a Course"),
+      ),
       body: GestureDetector(
         onTap: FocusManager.instance.primaryFocus?.unfocus,
         child: StreamBuilder<User?>(
