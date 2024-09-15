@@ -1,6 +1,5 @@
 import 'package:app/app/utils/result.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import '../models/user.dart' as usermodal;
 import '../services/firebase_service.dart';

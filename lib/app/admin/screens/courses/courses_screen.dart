@@ -44,42 +44,14 @@ class _CoursesScreenState extends State<CoursesScreen> {
                 itemBuilder: (context, i) {
                   final course = courses[i];
 
-                  return Dismissible(
-                    key: Key(course
-                        .id), // Ensure each item has a unique key (e.g., the item's ID)
-                    direction:
-                        DismissDirection.endToStart, // Swipe from right to left
-                    confirmDismiss: (direction) async {
-                      return null;
-
-                      // Result result =
-                      //     await _repository.deleteSubject(subject.id);
-
-                      // ScaffoldMessenger.of(context).showSnackBar(
-                      //   SnackBar(
-                      //     content: Text(result.data ?? result.error),
-                      //     backgroundColor:
-                      //         result.isSuccess ? Colors.green : Colors.red,
-                      //   ),
-                      // );
-
-                      // return result.isSuccess;
-                    },
-                    background: Container(
-                      color: Colors.red,
-                      padding: const EdgeInsets.only(right: 20),
-                      alignment: Alignment.centerRight,
-                      child: const Icon(Icons.delete, color: Colors.white),
-                    ),
-                    child: CourseCard(
-                      course: course,
-                      listMode: true,
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              CreateUpdateCourseScreen(course: course),
-                        ),
+                  return CourseCard(
+                    course: course,
+                    listMode: true,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            CreateUpdateCourseScreen(course: course),
                       ),
                     ),
                   );

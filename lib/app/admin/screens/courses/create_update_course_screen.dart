@@ -3,6 +3,7 @@
 import 'package:app/app/config/app_contants.dart';
 import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/models/course.dart';
+import 'package:app/app/models/subject.dart';
 import 'package:app/app/repositories/course_repository.dart';
 import 'package:app/app/repositories/subject_repository.dart';
 import 'package:app/app/repositories/user_repository.dart';
@@ -13,7 +14,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'widgets/build_cover_image.dart';
-import 'widgets/pick_course_cover.dart';
+import 'widgets/form/course_duration_field.dart';
+import 'widgets/form/cover_image_field.dart';
+import 'widgets/form/description_field.dart';
+import 'widgets/form/featured_published_field.dart';
+import 'widgets/form/language_selector_field.dart';
+import 'widgets/form/preview_video_field.dart';
+import 'widgets/form/price_field.dart';
+import 'widgets/form/subject_field.dart';
+import 'widgets/form/submit_button.dart';
+import 'widgets/form/title_field.dart';
 
 class CreateUpdateCourseScreen extends StatefulWidget {
   const CreateUpdateCourseScreen({super.key, this.course});
@@ -30,12 +40,14 @@ class _CreateUpdateCourseScreenState extends State<CreateUpdateCourseScreen> {
   final CourseRepository _repository = CourseRepository();
   final SubjectRepository _subjectRepository = SubjectRepository();
   final UserRepository _userRepository = UserRepository();
+
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _previewVideoController = TextEditingController();
   final TextEditingController _salePriceController = TextEditingController();
   final TextEditingController _regularPriceController = TextEditingController();
   final TextEditingController _durationController = TextEditingController();
+
   final ValueNotifier<bool> _isFeatured = ValueNotifier(false);
   final ValueNotifier<bool> _isPublished = ValueNotifier(false);
   final ValueNotifier<String> _coverPicture = ValueNotifier('');
@@ -78,384 +90,53 @@ class _CreateUpdateCourseScreenState extends State<CreateUpdateCourseScreen> {
                       key: _formKey,
                       child: Column(
                         children: [
-                          ValueListenableBuilder<String>(
-                              valueListenable: _coverPicture,
-                              builder: (_, value, ch) => Column(
-                                    children: [
-                                      buildCoverImage(context, value),
-                                      TextButton(
-                                        onPressed: () async {
-                                          final coverPic =
-                                              await pickCourseCover(context);
-                                          _coverPicture.value =
-                                              coverPic?.files.single.path ??
-                                                  _coverPicture.value;
-                                        },
-                                        child: Text(_coverPicture
-                                                    .value.isNotEmpty &&
-                                                _coverPicture.value !=
-                                                    AppContants
-                                                        .courseCoverPlaceHolder
-                                            ? "Change Course Cover"
-                                            : "Add a Course Cover"),
-                                      ),
-                                    ],
-                                  )),
+                          CoverImageField(coverPicture: _coverPicture),
                           const SizedBox(height: ThemeConstants.paddingSmall),
-                          TextFormField(
-                            controller: _titleController,
-                            maxLength: 70,
-                            decoration: const InputDecoration(
-                              labelText: "Course Title",
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter a Course Title';
-                              }
-                              return null;
-                            },
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                            ),
+                          TitleField(titleController: _titleController),
+                          const SizedBox(height: ThemeConstants.paddingSmall),
+                          DescriptionField(
+                              descriptionController: _descriptionController),
+                          PreviewVideoField(
+                              previewVideoController: _previewVideoController),
+                          CourseDurationField(
+                              durationController: _durationController),
+                          LanguageSelectorField(
+                              language: _language, course: widget.course),
+                          const SizedBox(height: ThemeConstants.paddingSmall),
+                          SubjectField(
+                            subjectRepository: _subjectRepository,
+                            subject: _subject,
+                            course: widget.course,
                           ),
                           const SizedBox(height: ThemeConstants.paddingSmall),
-                          TextFormField(
-                            controller: _descriptionController,
-                            maxLines: null,
-                            maxLength: 300,
-                            decoration:
-                                const InputDecoration(labelText: "Description"),
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          TextFormField(
-                            controller: _previewVideoController,
-                            maxLength: 60,
-                            decoration: const InputDecoration(
-                                labelText: "Preview Video (Youtube)"),
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                            ),
-                            validator: (value) {
-                              // Updated YouTube URL regex with optional www
-                              const urlPattern =
-                                  r'^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$';
-                              final regExp = RegExp(urlPattern);
-
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter a YouTube URL';
-                              } else if (!regExp.hasMatch(value)) {
-                                return 'Please enter a valid YouTube URL';
-                              }
-                              return null; // If valid, return null (no error)
-                            },
-                          ),
-                          TextFormField(
-                            controller: _durationController,
-                            maxLength: 6,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(RegExp(
-                                  r'^\d*\.?\d{0,2}')), // Allows numbers with up to 2 decimal places
-                            ],
-                            keyboardType: const TextInputType.numberWithOptions(
-                                decimal: true),
-                            decoration: const InputDecoration(
-                                labelText: "Duration (Hours)"),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter course duration';
-                              }
-                              return null;
-                            },
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          DropdownButtonFormField(
-                            items: const [
-                              DropdownMenuItem(
-                                value: "தமிழ்",
-                                child: Text("தமிழ்"),
-                              ),
-                              DropdownMenuItem(
-                                value: "English",
-                                child: Text("English"),
-                              ),
-                              DropdownMenuItem(
-                                value: "සිංහල",
-                                child: Text("සිංහල"),
-                              ),
-                            ],
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please choose the Course Language';
-                              }
-                              return null;
-                            },
-                            onChanged: (value) {
-                              _language.value = value;
-                            },
-                            value: widget.course?.language,
-                            decoration:
-                                const InputDecoration(labelText: "Language"),
-                            style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black),
+                          FeaturedPublishedField(
+                              isFeatured: _isFeatured,
+                              isPublished: _isPublished),
+                          PriceField(
+                            salePriceController: _salePriceController,
+                            regularPriceController: _regularPriceController,
                           ),
                           const SizedBox(height: ThemeConstants.paddingSmall),
-                          FutureBuilder(
-                              future: _subjectRepository.getAllSubjects(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const Center(
-                                      child:
-                                          CircularProgressIndicator.adaptive());
-                                }
-
-                                if (snapshot.hasData) {
-                                  return DropdownButtonFormField(
-                                    items: List.generate(
-                                      snapshot.data!.length,
-                                      (i) {
-                                        return DropdownMenuItem(
-                                          value:
-                                              "subjects/${snapshot.data?[i].id}",
-                                          child: Text(
-                                              snapshot.data?[i].name ?? ''),
-                                        );
-                                      },
-                                    ).toList(),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please choose the course subject';
-                                      }
-                                      return null;
-                                    },
-                                    onChanged: (value) {
-                                      // Handle value change
-                                      _subject.value = value;
-                                    },
-                                    value: widget.course?.subject?.path,
-                                    decoration: const InputDecoration(
-                                        labelText: "Subject"),
-                                    style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.black),
-                                  );
-                                } else {
-                                  return const Center(
-                                      child: Text("Couldn't fetch subjects"));
-                                }
-                              }),
-                          const SizedBox(height: ThemeConstants.paddingSmall),
-                          Row(
-                            children: [
-                              const Text("Featured"),
-                              Expanded(
-                                child: ValueListenableBuilder<bool>(
-                                    valueListenable: _isFeatured,
-                                    builder: (context, value, ch) {
-                                      return Switch.adaptive(
-                                        value: value,
-                                        onChanged: (bool value) {
-                                          _isFeatured.value = value;
-                                        },
-                                      );
-                                    }),
-                              ),
-                              const SizedBox(width: 10),
-                              const Text("Published"),
-                              Expanded(
-                                child: ValueListenableBuilder<bool>(
-                                    valueListenable: _isPublished,
-                                    builder: (context, value, ch) {
-                                      return Switch.adaptive(
-                                        value: value,
-                                        onChanged: (bool value) {
-                                          _isPublished.value = value;
-                                        },
-                                      );
-                                    }),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: TextFormField(
-                                  controller: _salePriceController,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.allow(RegExp(
-                                        r'^\d*\.?\d{0,2}')), // Allows numbers with up to 2 decimal places
-                                  ],
-                                  keyboardType:
-                                      const TextInputType.numberWithOptions(
-                                          decimal: true),
-                                  decoration: const InputDecoration(
-                                      labelText: "Sale Price"),
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter the sale price';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: TextFormField(
-                                  controller: _regularPriceController,
-                                  decoration: const InputDecoration(
-                                      labelText: "Regular Price"),
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.allow(RegExp(
-                                        r'^\d*\.?\d{0,2}')), // Allows numbers with up to 2 decimal places
-                                  ],
-                                  keyboardType:
-                                      const TextInputType.numberWithOptions(
-                                          decimal: true),
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: ThemeConstants.paddingSmall),
-                          ElevatedButton(
-                            onPressed: () async {
-                              if (_formKey.currentState!.validate()) {
-                                bool canUpdate = true;
-
-                                if (_coverPicture.value !=
-                                    widget.course?.image) {
-                                  Result result = await _repository
-                                      .uploadCourseCover(_coverPicture.value);
-
-                                  if (result.isSuccess) {
-                                    _coverPicture.value = result.data;
-                                  } else {
-                                    _coverPicture.value =
-                                        widget.course?.image ??
-                                            AppContants.courseCoverPlaceHolder;
-                                    canUpdate = false;
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(result.error ?? ''),
-                                      ),
-                                    );
-                                  }
-                                }
-
-                                if (canUpdate) {
-                                  Course newCourse = widget.course == null
-                                      ? Course(
-                                          id: '',
-                                          title: _titleController.text,
-                                          salePrice: num.parse(
-                                              _salePriceController.text),
-                                          regularPrice: num.parse(
-                                              _regularPriceController
-                                                      .text.isEmpty
-                                                  ? '0.00'
-                                                  : _regularPriceController
-                                                      .text),
-                                          isFeatured: _isFeatured.value,
-                                          isPublished: _isPublished.value,
-                                          description:
-                                              _descriptionController.text,
-                                          durationInHours: num.parse(
-                                              _durationController.text),
-                                          image: _coverPicture.value,
-                                          previewVideo:
-                                              _previewVideoController.text,
-                                          language: _language.value!,
-                                          subject: _subjectRepository
-                                              .getSubjectReference(_subject
-                                                  .value!
-                                                  .split('/')
-                                                  .last),
-                                          instructor: _userRepository
-                                              .getUserReference(_userRepository
-                                                  .currentUserUid),
-                                        )
-                                      : widget.course!.copyWith(
-                                          title: _titleController.text,
-                                          salePrice: num.parse(
-                                              _salePriceController.text),
-                                          regularPrice: num.parse(
-                                              _regularPriceController
-                                                      .text.isEmpty
-                                                  ? '0.00'
-                                                  : _regularPriceController
-                                                      .text),
-                                          isFeatured: _isFeatured.value,
-                                          isPublished: _isPublished.value,
-                                          description:
-                                              _descriptionController.text,
-                                          durationInHours: num.parse(
-                                              _durationController.text),
-                                          image: _coverPicture.value,
-                                          previewVideo:
-                                              _previewVideoController.text,
-                                          language: _language.value!,
-                                          subject: _subjectRepository
-                                              .getSubjectReference(_subject
-                                                  .value!
-                                                  .split('/')
-                                                  .last),
-                                          instructor: _userRepository
-                                              .getUserReference(_userRepository
-                                                  .currentUserUid),
-                                        );
-
-                                  Result result = widget.course == null
-                                      ? await _repository
-                                          .createCourse(newCourse)
-                                      : await _repository
-                                          .updateCourse(newCourse);
-
-                                  if (result.isSuccess) {
-                                    Navigator.pop(context);
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(result.error!),
-                                      ),
-                                    );
-                                    Navigator.pop(context);
-                                  }
-                                }
-                              }
-                            },
-                            child: Text(widget.course == null
-                                ? "Create Course"
-                                : "Save Changes"),
-                          ),
+                          SubmitButton(
+                              formKey: _formKey,
+                              coverPicture: _coverPicture,
+                              course: widget.course,
+                              repository: _repository,
+                              titleController: _titleController,
+                              salePriceController: _salePriceController,
+                              regularPriceController: _regularPriceController,
+                              isFeatured: _isFeatured,
+                              isPublished: _isPublished,
+                              descriptionController: _descriptionController,
+                              durationController: _durationController,
+                              previewVideoController: _previewVideoController,
+                              language: _language,
+                              subjectRepository: _subjectRepository,
+                              subject: _subject,
+                              userRepository: _userRepository),
                         ],
                       ),
                     ),
-                    // const Text(
-                    //   "Syllabus",
-                    //   style: TextStyle(
-                    //     fontSize: 18,
-                    //     fontWeight: FontWeight.bold,
-                    //   ),
-                    // ),
-                    // SyllabusAccordion(course: widget.course)
                   ],
                 ),
               );
