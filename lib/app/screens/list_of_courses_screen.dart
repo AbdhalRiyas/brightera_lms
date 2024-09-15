@@ -71,7 +71,7 @@ class ListOfCoursesScreenState extends State<ListOfCoursesScreen> {
                               ),
                             )
                           : CourseCard(
-                              course: _courses[0],
+                              course: _courses[i],
                               maxWidth: 450,
                               maxHeight: 250,
                               onTap: () => Navigator.pushNamed(

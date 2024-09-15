@@ -212,6 +212,11 @@ class FirebaseService {
     }
   }
 
+  DocumentReference<Map<String, dynamic>> getDocumentReference(
+      String collectionPath, String documentPath) {
+    return _firestore.collection(collectionPath).doc(documentPath);
+  }
+
   Future<QuerySnapshot<Map<String, dynamic>>?> getCourseEnrollment(
       String courseId) async {
     if (currentUser == null) {

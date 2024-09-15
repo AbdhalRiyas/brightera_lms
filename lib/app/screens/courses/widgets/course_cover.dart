@@ -24,10 +24,13 @@ class CourseCover extends StatelessWidget {
         borderRadius: BorderRadius.circular(ThemeConstants.borderRadiusMedium),
         child: Stack(
           children: [
-            CachedNetworkImage(
-              imageUrl: course.image,
-              width: double.maxFinite,
-              fit: BoxFit.fill,
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: CachedNetworkImage(
+                imageUrl: course.image,
+                width: double.maxFinite,
+                fit: BoxFit.cover,
+              ),
             ),
             if (course.previewVideo.isNotEmpty)
               Positioned.fill(

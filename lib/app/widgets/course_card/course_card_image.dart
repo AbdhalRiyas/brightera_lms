@@ -4,10 +4,15 @@ import 'package:flutter/material.dart';
 
 class CourseCardImage extends StatelessWidget {
   const CourseCardImage(
-      {super.key, this.maxWidth, this.maxHeight, this.listMode = false});
+      {super.key,
+      this.maxWidth,
+      this.maxHeight,
+      this.listMode = false,
+      required this.imageUrl});
 
   final double? maxWidth, maxHeight;
   final bool listMode;
+  final String imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +30,7 @@ class CourseCardImage extends StatelessWidget {
               ),
             ),
       child: CachedNetworkImage(
-        imageUrl: 'https://img-c.udemycdn.com/course/240x135/10971_da21_5.jpg',
+        imageUrl: imageUrl,
         fit: BoxFit.cover,
         width: maxWidth,
         height: maxHeight != null ? maxHeight! * 0.50 : null,

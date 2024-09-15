@@ -66,9 +66,12 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
     int lastLecture =
         lastLectureDetail == null ? 0 : lastLectureDetail['lecture'];
 
-    String videoId = YoutubePlayer.convertUrlToId(
-            _sections[lastSection].lectures[lastLecture].source) ??
-        '';
+    String videoId = (_sections.length > lastSection &&
+            _sections[lastSection].lectures.length > lastLecture)
+        ? YoutubePlayer.convertUrlToId(
+                _sections[lastSection].lectures[lastLecture].source) ??
+            ''
+        : '';
 
     _openedSection = lastSection;
 

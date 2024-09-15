@@ -1,4 +1,4 @@
-import 'package:app/app/admin/screens/courses/show_course_screen.dart';
+import 'package:app/app/admin/screens/courses/create_update_course_screen.dart';
 import 'package:app/app/models/course.dart';
 import 'package:app/app/repositories/course_repository.dart';
 import 'package:app/app/widgets/course_card/course_card.dart';
@@ -20,9 +20,12 @@ class _CoursesScreenState extends State<CoursesScreen> {
       appBar: AppBar(title: const Text("Courses")),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: () {
-          //addEditSubject(context, _repository)
-        },
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const CreateUpdateCourseScreen(),
+          ),
+        ),
       ),
       body: StreamBuilder<List<Course>>(
           stream: _repository.getCoursesStream(),
@@ -74,7 +77,8 @@ class _CoursesScreenState extends State<CoursesScreen> {
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => ShowCourseScreen(course: course),
+                          builder: (_) =>
+                              CreateUpdateCourseScreen(course: course),
                         ),
                       ),
                     ),

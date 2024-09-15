@@ -1,6 +1,8 @@
 import 'package:app/app/utils/result.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-import '../models/user.dart';
+import '../models/user.dart' as usermodal;
 import '../services/firebase_service.dart';
 
 class UserRepository {
@@ -19,13 +21,22 @@ class UserRepository {
   //   return null;
   // }
 
+  String get currentUserUid {
+    return _firebaseService.currentUser!.uid;
+  }
+
+  DocumentReference<Map<String, dynamic>> getUserReference(
+      String documentPath) {
+    return _firebaseService.getDocumentReference('users', documentPath);
+  }
+
   Future<Result<String>> login(String index, String password) async {
     // Create a new user in Firebase
     var result = await _firebaseService.signInWithCustomToken(index, password);
     return result;
   }
 
-  Future<void> createUser(User user, String password) async {
+  Future<void> createUser(usermodal.User user, String password) async {
     // Create a new user in Firebase
     await _firebaseService.createUser(user, password);
   }

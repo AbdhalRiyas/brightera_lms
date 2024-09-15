@@ -39,6 +39,7 @@ class CourseCard extends StatelessWidget {
           ? ListTile(
               onTap: onTap,
               leading: CourseCardImage(
+                imageUrl: _course.image,
                 maxHeight: listMode ? 100 : maxHeight,
                 maxWidth: listMode ? 50 : maxWidth,
                 listMode: true,
@@ -54,6 +55,7 @@ class CourseCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   CourseCardImage(
+                    imageUrl: _course.image,
                     maxHeight: maxHeight,
                     maxWidth: maxWidth,
                   ),

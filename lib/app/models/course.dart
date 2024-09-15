@@ -56,24 +56,55 @@ class Course {
     );
   }
 
-  Course copyWith({User? instructorInfo}) {
+  Map<String, dynamic> toFirestore() {
+    return {
+      'title': title,
+      'language': language,
+      'image': image,
+      'description': description,
+      'subject': subject,
+      'salePrice': salePrice,
+      'regularPrice': regularPrice,
+      'durationInHours': durationInHours,
+      'previewVideo': previewVideo,
+      'instructor': instructor,
+      'isFeatured': isFeatured,
+      'isPublished': isPublished,
+    };
+  }
+
+  Course copyWith({
+    String? id,
+    String? title,
+    String? image,
+    String? previewVideo,
+    String? description,
+    DocumentReference? subject,
+    DocumentReference? instructor,
+    num? salePrice,
+    num? regularPrice,
+    num? durationInHours,
+    String? language,
+    User? instructorInfo,
+    bool? isFeatured,
+    bool? isPublished,
+  }) {
     return Course(
-      id: id,
-      title: title,
-      image: image,
-      previewVideo: previewVideo,
-      description: description,
-      subject: subject,
-      instructor: instructor,
-      salePrice: salePrice,
-      regularPrice: regularPrice,
-      durationInHours: durationInHours,
+      id: id ?? this.id,
+      title: title ?? this.title,
+      image: image ?? this.image,
+      previewVideo: previewVideo ?? this.previewVideo,
+      description: description ?? this.description,
+      subject: subject ?? this.subject,
+      instructor: instructor ?? this.instructor,
+      salePrice: salePrice ?? this.salePrice,
+      regularPrice: regularPrice ?? this.regularPrice,
+      durationInHours: durationInHours ?? this.durationInHours,
       sections: sections,
-      language: language,
-      instructorInfo: instructorInfo ??
-          this.instructorInfo, // Update instructorInfo if provided
-      isFeatured: isFeatured,
-      isPublished: isPublished,
+      language: language ?? this.language,
+      instructorInfo: instructorInfo ?? this.instructorInfo,
+      isFeatured: isFeatured ?? this.isFeatured,
+      isPublished: isPublished ?? this.isPublished,
     );
   }
 }

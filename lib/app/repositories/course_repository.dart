@@ -3,6 +3,8 @@ import 'package:app/app/models/lecture.dart';
 import 'package:app/app/models/section.dart';
 import 'package:app/app/models/user.dart';
 import 'package:app/app/services/auth_manager.dart';
+import 'package:app/app/utils/generate_unique_file_name.dart';
+import 'package:app/app/utils/result.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
@@ -10,6 +12,25 @@ import '../services/firebase_service.dart';
 
 class CourseRepository {
   final FirebaseService _firebaseService = FirebaseService();
+
+  Future<Result> uploadCourseCover(String filePath) async {
+    return await _firebaseService.uploadFile(
+        'images/${generateUniqueFileName(filePath.split('.').last)}', filePath);
+  }
+
+  Future<Result> createCourse(Course course) async {
+    return await _firebaseService.addDocument(
+      collection: 'courses',
+      data: course.toFirestore(),
+    );
+  }
+
+  Future<Result> updateCourse(Course course) async {
+    return await _firebaseService.updateDocument(
+        collection: 'courses',
+        documentId: course.id,
+        data: course.toFirestore());
+  }
 
   Future<List<Course>> getCoursesBySubject(String subjectId,
       [bool onlyFeatured = false]) async {

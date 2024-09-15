@@ -1,11 +1,17 @@
 import 'package:app/app/models/subject.dart';
 import 'package:app/app/utils/generate_unique_file_name.dart';
 import 'package:app/app/utils/result.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../services/firebase_service.dart';
 
 class SubjectRepository {
   final FirebaseService _firebaseService = FirebaseService();
+
+  DocumentReference<Map<String, dynamic>> getSubjectReference(
+      String documentPath) {
+    return _firebaseService.getDocumentReference('subjects', documentPath);
+  }
 
   Future<Result> uploadIcon(String filePath) async {
     return await _firebaseService.uploadFile(
