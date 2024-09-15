@@ -1,3 +1,4 @@
+import 'package:app/app/admin/screens/courses/show_course_screen.dart';
 import 'package:app/app/models/course.dart';
 import 'package:app/app/repositories/course_repository.dart';
 import 'package:app/app/widgets/course_card/course_card.dart';
@@ -46,6 +47,8 @@ class _CoursesScreenState extends State<CoursesScreen> {
                     direction:
                         DismissDirection.endToStart, // Swipe from right to left
                     confirmDismiss: (direction) async {
+                      return null;
+
                       // Result result =
                       //     await _repository.deleteSubject(subject.id);
 
@@ -68,6 +71,12 @@ class _CoursesScreenState extends State<CoursesScreen> {
                     child: CourseCard(
                       course: course,
                       listMode: true,
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ShowCourseScreen(course: course),
+                        ),
+                      ),
                     ),
                   );
                 },

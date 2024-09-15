@@ -16,6 +16,7 @@ class Course {
   final num? durationInHours;
   final List<Section>? sections;
   final User? instructorInfo;
+  final bool isFeatured, isPublished;
 
   Course({
     required this.id,
@@ -31,6 +32,8 @@ class Course {
     required this.salePrice,
     this.sections,
     this.instructorInfo,
+    required this.isFeatured,
+    required this.isPublished,
   });
 
   factory Course.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc,
@@ -48,6 +51,8 @@ class Course {
       sections: sections,
       previewVideo: doc.data()?['previewVideo'] ?? '',
       instructor: doc.data()?['instructor'] ?? '',
+      isFeatured: doc.data()?['isFeatured'] ?? false,
+      isPublished: doc.data()?['isPublished'] ?? false,
     );
   }
 
@@ -67,6 +72,8 @@ class Course {
       language: language,
       instructorInfo: instructorInfo ??
           this.instructorInfo, // Update instructorInfo if provided
+      isFeatured: isFeatured,
+      isPublished: isPublished,
     );
   }
 }
