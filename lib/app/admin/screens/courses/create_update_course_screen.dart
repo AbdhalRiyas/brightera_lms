@@ -1,29 +1,23 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:app/app/config/app_contants.dart';
 import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/models/course.dart';
-import 'package:app/app/models/subject.dart';
 import 'package:app/app/repositories/course_repository.dart';
 import 'package:app/app/repositories/subject_repository.dart';
 import 'package:app/app/repositories/user_repository.dart';
 import 'package:app/app/services/firebase_service.dart';
-import 'package:app/app/utils/result.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
-import 'widgets/build_cover_image.dart';
-import 'widgets/form/course_duration_field.dart';
-import 'widgets/form/cover_image_field.dart';
-import 'widgets/form/description_field.dart';
-import 'widgets/form/featured_published_field.dart';
-import 'widgets/form/language_selector_field.dart';
-import 'widgets/form/preview_video_field.dart';
-import 'widgets/form/price_field.dart';
-import 'widgets/form/subject_field.dart';
-import 'widgets/form/submit_button.dart';
-import 'widgets/form/title_field.dart';
+import 'widgets/course_duration_field.dart';
+import 'widgets/cover_image_field.dart';
+import 'widgets/description_field.dart';
+import 'widgets/featured_published_field.dart';
+import 'widgets/language_selector_field.dart';
+import 'widgets/preview_video_field.dart';
+import 'widgets/price_field.dart';
+import 'widgets/subject_field.dart';
+import 'widgets/submit_button.dart';
+import 'widgets/title_field.dart';
 
 class CreateUpdateCourseScreen extends StatefulWidget {
   const CreateUpdateCourseScreen({super.key, this.course});
@@ -118,22 +112,23 @@ class _CreateUpdateCourseScreenState extends State<CreateUpdateCourseScreen> {
                           ),
                           const SizedBox(height: ThemeConstants.paddingSmall),
                           SubmitButton(
-                              formKey: _formKey,
-                              coverPicture: _coverPicture,
-                              course: widget.course,
-                              repository: _repository,
-                              titleController: _titleController,
-                              salePriceController: _salePriceController,
-                              regularPriceController: _regularPriceController,
-                              isFeatured: _isFeatured,
-                              isPublished: _isPublished,
-                              descriptionController: _descriptionController,
-                              durationController: _durationController,
-                              previewVideoController: _previewVideoController,
-                              language: _language,
-                              subjectRepository: _subjectRepository,
-                              subject: _subject,
-                              userRepository: _userRepository),
+                            formKey: _formKey,
+                            coverPicture: _coverPicture,
+                            course: widget.course,
+                            repository: _repository,
+                            titleController: _titleController,
+                            salePriceController: _salePriceController,
+                            regularPriceController: _regularPriceController,
+                            isFeatured: _isFeatured,
+                            isPublished: _isPublished,
+                            descriptionController: _descriptionController,
+                            durationController: _durationController,
+                            previewVideoController: _previewVideoController,
+                            language: _language,
+                            subjectRepository: _subjectRepository,
+                            subject: _subject,
+                            userRepository: _userRepository,
+                          ),
                         ],
                       ),
                     ),

@@ -107,7 +107,7 @@ class SubmitButton extends StatelessWidget {
                     instructor: _userRepository
                         .getUserReference(_userRepository.currentUserUid),
                   )
-                : _course!.copyWith(
+                : _course.copyWith(
                     title: _titleController.text,
                     salePrice: num.parse(_salePriceController.text),
                     regularPrice: num.parse(_regularPriceController.text.isEmpty
