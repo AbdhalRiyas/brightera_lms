@@ -1,6 +1,7 @@
 import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/models/course.dart';
 import 'package:app/app/repositories/course_repository.dart';
+import 'package:app/app/repositories/subject_repository.dart';
 import 'package:app/app/services/firebase_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,6 +19,7 @@ class ShowCourseScreen extends StatefulWidget {
 
 class _ShowCourseScreenState extends State<ShowCourseScreen> {
   final CourseRepository _repository = CourseRepository();
+  final SubjectRepository _subjectRepository = SubjectRepository();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _previewVideoController = TextEditingController();
@@ -52,10 +54,17 @@ class _ShowCourseScreenState extends State<ShowCourseScreen> {
                     Form(
                       child: Column(
                         children: [
-                          CachedNetworkImage(
-                            imageUrl: widget.course.image,
-                            width: double.maxFinite,
-                            fit: BoxFit.fill,
+                          if (widget.course.image.isNotEmpty)
+                            CachedNetworkImage(
+                              imageUrl: widget.course.image,
+                              width: double.maxFinite,
+                              fit: BoxFit.fill,
+                            ),
+                          TextButton(
+                            onPressed: () {},
+                            child: Text(widget.course.image.isNotEmpty
+                                ? "Change Course Cover"
+                                : "Add a Course Cover"),
                           ),
                           const SizedBox(height: ThemeConstants.paddingSmall),
                           TextFormField(
@@ -147,6 +156,48 @@ class _ShowCourseScreenState extends State<ShowCourseScreen> {
                                 fontWeight: FontWeight.w400,
                                 color: Colors.black),
                           ),
+                          const SizedBox(height: ThemeConstants.paddingSmall),
+                          FutureBuilder(
+                              future: _subjectRepository.getAllSubjects(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                      child:
+                                          CircularProgressIndicator.adaptive());
+                                }
+
+                                if (snapshot.hasData) {
+                                  return DropdownButtonFormField(
+                                    items: List.generate(
+                                      snapshot.data!.length,
+                                      (i) {
+                                        return DropdownMenuItem(
+                                          value:
+                                              "subjects/${snapshot.data?[i].id}",
+                                          child: Text(
+                                              snapshot.data?[i].name ?? ''),
+                                        );
+                                      },
+                                    ).toList(),
+                                    onChanged: (value) {
+                                      // Handle value change
+                                      print("Selected language: $value");
+                                    },
+                                    value: widget.course.subject?.path,
+                                    decoration: const InputDecoration(
+                                        labelText: "Subject"),
+                                    style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.black),
+                                  );
+                                } else {
+                                  return const Center(
+                                      child: Text("Couldn't fetch subjects"));
+                                }
+                              }),
+                          const SizedBox(height: ThemeConstants.paddingSmall),
                           if (widget.course.instructorInfo != null)
                             Text.rich(
                               TextSpan(
@@ -226,11 +277,15 @@ class _ShowCourseScreenState extends State<ShowCourseScreen> {
                                 ),
                               ),
                             ],
-                          )
+                          ),
+                          const SizedBox(height: ThemeConstants.paddingSmall),
+                          ElevatedButton(
+                            onPressed: () {},
+                            child: const Text("Save Changes"),
+                          ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: ThemeConstants.paddingSmall),
                     // const Text(
                     //   "Syllabus",
                     //   style: TextStyle(
@@ -246,10 +301,4 @@ class _ShowCourseScreenState extends State<ShowCourseScreen> {
       ),
     );
   }
-}
-
-class ShowCourseScreenArguments {
-  final Course course;
-
-  ShowCourseScreenArguments(this.course);
 }
