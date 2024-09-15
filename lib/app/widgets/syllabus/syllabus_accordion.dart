@@ -18,13 +18,15 @@ class SyllabusAccordion extends StatefulWidget {
     this.activeLesson,
     this.courseProgressBox,
     this.syllabusScrollController,
-  });
+    ScrollPhysics? scrollPhysics,
+  }) : _scrollPhysics = scrollPhysics;
 
   final Course course;
   final YoutubePlayerController? youtubePlayerController;
   final ValueNotifier<ActiveLesson>? activeLesson;
   final Box? courseProgressBox;
   final ScrollController? syllabusScrollController;
+  final ScrollPhysics? _scrollPhysics;
 
   @override
   State<SyllabusAccordion> createState() => SyllabusAccordionState();
@@ -150,6 +152,7 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
   Widget build(BuildContext context) {
     super.build(context);
     return ListView(
+      physics: widget._scrollPhysics,
       shrinkWrap: true,
       controller: widget.syllabusScrollController,
       children: [

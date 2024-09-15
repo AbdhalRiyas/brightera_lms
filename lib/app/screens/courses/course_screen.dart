@@ -119,7 +119,10 @@ class _CourseScreenState extends State<CourseScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SyllabusAccordion(course: widget.course)
+                  SyllabusAccordion(
+                    course: widget.course,
+                    scrollPhysics: const NeverScrollableScrollPhysics(),
+                  )
                 ],
               ),
             );
