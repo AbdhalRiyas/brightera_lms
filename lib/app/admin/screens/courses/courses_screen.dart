@@ -40,7 +40,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
 
             if (snapshot.hasData) {
               final courses = snapshot.data!;
-              return ListView.separated(
+              return ListView.builder(
                 itemBuilder: (context, i) {
                   final course = courses[i];
 
@@ -84,7 +84,6 @@ class _CoursesScreenState extends State<CoursesScreen> {
                     ),
                   );
                 },
-                separatorBuilder: (context, i) => const Divider(),
                 itemCount: courses.length,
               );
             } else {
