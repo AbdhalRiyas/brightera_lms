@@ -32,6 +32,31 @@ class CourseRepository {
         data: course.toFirestore());
   }
 
+  Future<Result> updateSection(
+      {required String courseId, required Section section}) async {
+    return await _firebaseService.updateDocument(
+        collection: 'courses',
+        subCollectionPaths: [
+          {"subCollection": "sections", "subDocumentId": section.id},
+        ],
+        documentId: courseId,
+        data: section.toFirestore());
+  }
+
+  Future<Result> updateLecture(
+      {required String courseId,
+      required String sectionId,
+      required Lecture lecture}) async {
+    return await _firebaseService.updateDocument(
+        collection: 'courses',
+        subCollectionPaths: [
+          {"subCollection": "sections", "subDocumentId": sectionId},
+          {"subCollection": "lectures", "subDocumentId": lecture.id}
+        ],
+        documentId: courseId,
+        data: lecture.toFirestore());
+  }
+
   Future<List<Course>> getCoursesBySubject(String subjectId,
       [bool onlyFeatured = false]) async {
     // Fetch user data from Firebase

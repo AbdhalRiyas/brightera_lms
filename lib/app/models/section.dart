@@ -24,4 +24,11 @@ class Section {
       lectures: lectures ?? [],
     );
   }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'title': title,
+      'order': order,
+    };
+  }
 }

@@ -326,13 +326,33 @@ class FirebaseService {
     }
   }
 
-  Future<Result<String>> updateDocument(
-      {required String collection,
-      required String documentId,
-      required Map<String, dynamic> data}) async {
+  Future<Result<String>> updateDocument({
+    required String collection,
+    required String documentId,
+    required Map<String, dynamic> data,
+    List<Map<String, String>>?
+        subCollectionPaths, // List of subcollections and their document IDs
+  }) async {
     try {
-      // Update the document in Firestore
-      await _firestore.collection(collection).doc(documentId).update(data);
+      // Start with the main document reference
+      DocumentReference documentRef =
+          _firestore.collection(collection).doc(documentId);
+
+      // If there are subcollections, navigate through them
+      if (subCollectionPaths != null && subCollectionPaths.isNotEmpty) {
+        for (var path in subCollectionPaths) {
+          // Each entry in subCollectionPaths contains the subcollection and document ID
+          String subCollection = path['subCollection']!;
+          String subDocumentId = path['subDocumentId']!;
+
+          // Navigate to the next level
+          documentRef =
+              documentRef.collection(subCollection).doc(subDocumentId);
+        }
+      }
+
+      // Update the final document
+      await documentRef.update(data);
 
       return Result(data: "Updated successfully!");
     } on FirebaseException catch (e) {

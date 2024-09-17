@@ -7,7 +7,7 @@ import 'package:app/app/utils/int_extension.dart';
 import 'package:app/app/utils/string_extension.dart';
 import 'package:flutter/material.dart';
 
-class CreateEditSyllabusScreen extends StatelessWidget {
+class CreateEditSyllabusScreen extends StatefulWidget {
   const CreateEditSyllabusScreen(
       {super.key,
       required Course course,
@@ -19,10 +19,71 @@ class CreateEditSyllabusScreen extends StatelessWidget {
   final CourseRepository _courseRepository;
 
   @override
+  State<CreateEditSyllabusScreen> createState() =>
+      _CreateEditSyllabusScreenState();
+}
+
+class _CreateEditSyllabusScreenState extends State<CreateEditSyllabusScreen> {
+  void _createEditSection([Section? section, int order = 0]) {
+    final TextEditingController _titleController = TextEditingController();
+
+    _titleController.text = section?.title ?? '';
+
+    showDialog(
+      context: context,
+      builder: (_) => GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: AlertDialog(
+          content: StatefulBuilder(
+            builder: (BuildContext context,
+                    void Function(void Function()) setState) =>
+                Form(
+                    child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  section != null ? "Edit Section" : "Create a Section",
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: ThemeConstants.paddingLarge),
+                TextFormField(
+                  controller: _titleController,
+                  decoration: const InputDecoration(labelText: "Title"),
+                  maxLength: 60,
+                  onChanged: (value) {},
+                ),
+                // ListTile(
+                //   title: const Text("Active"),
+                //   contentPadding: EdgeInsets.zero,
+                //   trailing: Switch.adaptive(
+                //       value: isActive,
+                //       onChanged: (value) {
+                //         setState(
+                //           () => isActive = !isActive,
+                //         );
+                //       }),
+                // ),
+                const SizedBox(height: ThemeConstants.paddingMedium),
+                TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Cancel")),
+              ],
+            )),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Edit Syllabus"),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () => _createEditSection(),
       ),
       body: Padding(
         padding: const EdgeInsets.all(ThemeConstants.paddingSmall),
@@ -30,7 +91,8 @@ class CreateEditSyllabusScreen extends StatelessWidget {
           shrinkWrap: true,
           children: [
             FutureBuilder(
-                future: _courseRepository.fetchSectionsForCourse(_course.id),
+                future: widget._courseRepository
+                    .fetchSectionsForCourse(widget._course.id),
                 builder: (_, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
@@ -47,6 +109,9 @@ class CreateEditSyllabusScreen extends StatelessWidget {
                         itemBuilder: (_, i) {
                           List<Lecture> lectures =
                               snapshot.data?[i].lectures ?? [];
+
+                          ValueNotifier<bool> isLecturesExpanded =
+                              ValueNotifier(false);
                           return Column(
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -64,13 +129,16 @@ class CreateEditSyllabusScreen extends StatelessWidget {
                                     fontSize: 12,
                                   ),
                                 ),
+                                onTap: () => _createEditSection(sections[i]),
                                 trailing: IconButton(
-                                  onPressed: () {},
+                                  onPressed: () => setState(
+                                    () {
+                                      isLecturesExpanded.value =
+                                          !isLecturesExpanded.value;
+                                    },
+                                  ),
                                   icon: const Icon(Icons.add),
                                 ),
-                                onTap: () {
-                                  print("wwqd");
-                                },
                               ),
                               ReorderableListView.builder(
                                 physics: const NeverScrollableScrollPhysics(),
@@ -101,11 +169,16 @@ class CreateEditSyllabusScreen extends StatelessWidget {
                                         lectures.removeAt(oldSubIndex);
 
                                     lectures.insert(newSubIndex, movedLecture);
-
-                                    for (int i = 0; i < sections.length; i++) {
-                                      lectures[i].order = i;
-                                    }
                                   });
+
+                                  for (int k = 0; k < lectures.length; k++) {
+                                    lectures[k].order = k;
+                                    widget._courseRepository.updateLecture(
+                                      courseId: widget._course.id,
+                                      sectionId: sections[i].id,
+                                      lecture: lectures[k],
+                                    );
+                                  }
                                 },
                               ),
                             ],
@@ -120,11 +193,14 @@ class CreateEditSyllabusScreen extends StatelessWidget {
                                 sections.removeAt(oldIndex);
 
                             sections.insert(newIndex, movedSection);
-
-                            for (int i = 0; i < sections.length; i++) {
-                              sections[i].order = i;
-                            }
                           });
+
+                          for (int k = 0; k < sections.length; k++) {
+                            sections[k].order = k;
+                            widget._courseRepository.updateSection(
+                                courseId: widget._course.id,
+                                section: sections[k]);
+                          }
                         },
                       );
                     });

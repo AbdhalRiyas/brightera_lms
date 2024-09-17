@@ -21,17 +21,58 @@ class Lecture {
   });
 
   factory Lecture.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data();
     return Lecture(
       id: doc.id,
-      title: doc.data()?['title'] ?? '',
-      type: doc.data()?['type'] ?? 'video',
-      source: doc.data()?['source'] ?? '',
-      freePreview: doc.data()?['free_preview'] ?? false,
-      isLive: doc.data()?['is_live'] ?? false,
-      order: doc.data()?['order'] ?? 1,
-      durationInSeconds: doc.data()?['durationInSeconds'] ?? 0,
-      pdfNotes: doc.data()?['pdfNotes'] ?? '',
-      downloads: doc.data()?['downloads'] ?? [],
+      title: data?['title'] ?? '',
+      type: data?['type'] ?? 'video',
+      source: data?['source'] ?? '',
+      freePreview: data?['free_preview'] ?? false,
+      isLive: data?['is_live'] ?? false,
+      order: data?['order'] ?? 1,
+      durationInSeconds: data?['durationInSeconds'] ?? 0,
+      pdfNotes: data?['pdfNotes'] ?? '',
+      downloads: data?['downloads'] ?? [],
+    );
+  }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'title': title,
+      'type': type,
+      'source': source,
+      'free_preview': freePreview,
+      'is_live': isLive,
+      'order': order,
+      'durationInSeconds': durationInSeconds,
+      'pdfNotes': pdfNotes,
+      'downloads': downloads,
+    };
+  }
+
+  Lecture copyWith({
+    String? id,
+    String? title,
+    String? type,
+    String? source,
+    bool? freePreview,
+    bool? isLive,
+    int? order,
+    int? durationInSeconds,
+    String? pdfNotes,
+    List<dynamic>? downloads,
+  }) {
+    return Lecture(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      type: type ?? this.type,
+      source: source ?? this.source,
+      freePreview: freePreview ?? this.freePreview,
+      isLive: isLive ?? this.isLive,
+      order: order ?? this.order,
+      durationInSeconds: durationInSeconds ?? this.durationInSeconds,
+      pdfNotes: pdfNotes ?? this.pdfNotes,
+      downloads: downloads ?? this.downloads,
     );
   }
 }
