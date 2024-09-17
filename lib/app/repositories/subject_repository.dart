@@ -19,7 +19,7 @@ class SubjectRepository {
   }
 
   Future<Result> createSubject(Subject subject) async {
-    return await _firebaseService.addDocument(
+    return await _firebaseService.createDocument(
       collection: 'subjects',
       data: subject.toFirestoreJson(),
     );

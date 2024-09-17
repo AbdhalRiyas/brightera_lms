@@ -308,14 +308,35 @@ class FirebaseService {
     await _firestore.collection('users').doc(id).delete();
   }
 
-  Future<Result<String>> addDocument({
+  Future<Result<String>> createDocument({
     required String collection,
+    String? documentId,
     required Map<String, dynamic> data,
+    List<Map<String, String>>?
+        subCollectionPaths, // List of subcollections and their document IDs
   }) async {
     try {
       // Add the document to Firestore and get a reference to the added document
-      DocumentReference docRef =
-          await _firestore.collection(collection).add(data);
+      DocumentReference docRef = documentId != null
+          ? _firestore.collection(collection).doc(documentId)
+          : await _firestore.collection(collection).add(data);
+
+      if (documentId != null &&
+          subCollectionPaths != null &&
+          subCollectionPaths.isNotEmpty) {
+        for (var path in subCollectionPaths) {
+          String subCollection = path['subCollection']!;
+          String subDocumentId = path['subDocumentId']!;
+
+          docRef = docRef
+              .collection(subCollection)
+              .doc(subDocumentId.isEmpty ? null : subDocumentId);
+        }
+      }
+
+      if (documentId != null) {
+        await docRef.set(data);
+      }
 
       // Return the document ID or any other info inside Result
       return Result(data: docRef.id);

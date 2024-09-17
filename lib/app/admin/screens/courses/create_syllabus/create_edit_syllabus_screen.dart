@@ -7,6 +7,8 @@ import 'package:app/app/utils/int_extension.dart';
 import 'package:app/app/utils/string_extension.dart';
 import 'package:flutter/material.dart';
 
+import 'widgets/create_edit_section.dart';
+
 class CreateEditSyllabusScreen extends StatefulWidget {
   const CreateEditSyllabusScreen(
       {super.key,
@@ -24,55 +26,19 @@ class CreateEditSyllabusScreen extends StatefulWidget {
 }
 
 class _CreateEditSyllabusScreenState extends State<CreateEditSyllabusScreen> {
-  void _createEditSection([Section? section, int order = 0]) {
-    final TextEditingController _titleController = TextEditingController();
+  late Future<List<Section>> _sectionsAndLectures;
 
-    _titleController.text = section?.title ?? '';
+  @override
+  void initState() {
+    _sectionsAndLectures =
+        widget._courseRepository.fetchSectionsForCourse(widget._course.id);
+    super.initState();
+  }
 
-    showDialog(
-      context: context,
-      builder: (_) => GestureDetector(
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: AlertDialog(
-          content: StatefulBuilder(
-            builder: (BuildContext context,
-                    void Function(void Function()) setState) =>
-                Form(
-                    child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  section != null ? "Edit Section" : "Create a Section",
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: ThemeConstants.paddingLarge),
-                TextFormField(
-                  controller: _titleController,
-                  decoration: const InputDecoration(labelText: "Title"),
-                  maxLength: 60,
-                  onChanged: (value) {},
-                ),
-                // ListTile(
-                //   title: const Text("Active"),
-                //   contentPadding: EdgeInsets.zero,
-                //   trailing: Switch.adaptive(
-                //       value: isActive,
-                //       onChanged: (value) {
-                //         setState(
-                //           () => isActive = !isActive,
-                //         );
-                //       }),
-                // ),
-                const SizedBox(height: ThemeConstants.paddingMedium),
-                TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text("Cancel")),
-              ],
-            )),
-          ),
-        ),
-      ),
-    );
+  void _updateSections(List<Section> updatedSections) {
+    setState(() {
+      _sectionsAndLectures = Future.value(updatedSections);
+    });
   }
 
   @override
@@ -83,7 +49,13 @@ class _CreateEditSyllabusScreenState extends State<CreateEditSyllabusScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: () => _createEditSection(),
+        onPressed: () => createEditSection(
+          context: context,
+          courseId: widget._course.id,
+          courseRepository: widget._courseRepository,
+          sectionsAndLectures: _sectionsAndLectures,
+          updateSections: _updateSections,
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(ThemeConstants.paddingSmall),
@@ -91,8 +63,7 @@ class _CreateEditSyllabusScreenState extends State<CreateEditSyllabusScreen> {
           shrinkWrap: true,
           children: [
             FutureBuilder(
-                future: widget._courseRepository
-                    .fetchSectionsForCourse(widget._course.id),
+                future: _sectionsAndLectures,
                 builder: (_, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
@@ -129,7 +100,14 @@ class _CreateEditSyllabusScreenState extends State<CreateEditSyllabusScreen> {
                                     fontSize: 12,
                                   ),
                                 ),
-                                onTap: () => _createEditSection(sections[i]),
+                                onTap: () => createEditSection(
+                                  context: context,
+                                  courseId: widget._course.id,
+                                  courseRepository: widget._courseRepository,
+                                  sectionsAndLectures: _sectionsAndLectures,
+                                  section: sections[i],
+                                  updateSections: _updateSections,
+                                ),
                                 trailing: IconButton(
                                   onPressed: () => setState(
                                     () {

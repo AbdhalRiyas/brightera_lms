@@ -19,7 +19,7 @@ class CourseRepository {
   }
 
   Future<Result> createCourse(Course course) async {
-    return await _firebaseService.addDocument(
+    return await _firebaseService.createDocument(
       collection: 'courses',
       data: course.toFirestore(),
     );
@@ -30,6 +30,18 @@ class CourseRepository {
         collection: 'courses',
         documentId: course.id,
         data: course.toFirestore());
+  }
+
+  Future<Result> createSection(
+      {required String courseId, required Section section}) async {
+    return await _firebaseService.createDocument(
+      collection: 'courses',
+      subCollectionPaths: [
+        {"subCollection": "sections", "subDocumentId": ""},
+      ],
+      documentId: courseId,
+      data: section.toFirestore(),
+    );
   }
 
   Future<Result> updateSection(

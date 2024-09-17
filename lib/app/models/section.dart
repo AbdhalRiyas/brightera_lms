@@ -31,4 +31,16 @@ class Section {
       'order': order,
     };
   }
+
+  Section copyWith({
+    String? id,
+    String? title,
+    int? order,
+  }) {
+    return Section(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      order: order ?? this.order,
+    );
+  }
 }

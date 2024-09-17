@@ -1,5 +1,5 @@
-import 'package:app/app/admin/screens/courses/widgets/build_cover_image.dart';
-import 'package:app/app/admin/screens/courses/widgets/pick_course_cover.dart';
+import 'package:app/app/admin/screens/courses/create_course/widgets/build_cover_image.dart';
+import 'package:app/app/admin/screens/courses/create_course/widgets/pick_course_cover.dart';
 import 'package:app/app/config/app_contants.dart';
 import 'package:flutter/material.dart';
 

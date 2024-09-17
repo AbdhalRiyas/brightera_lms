@@ -1,5 +1,5 @@
-import 'package:app/app/admin/screens/courses/create_edit_syllabus_screen.dart';
-import 'package:app/app/admin/screens/courses/create_update_course_screen.dart';
+import 'package:app/app/admin/screens/courses/create_syllabus/create_edit_syllabus_screen.dart';
+import 'package:app/app/admin/screens/courses/create_course/create_update_course_screen.dart';
 import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/models/course.dart';
 import 'package:app/app/repositories/course_repository.dart';
