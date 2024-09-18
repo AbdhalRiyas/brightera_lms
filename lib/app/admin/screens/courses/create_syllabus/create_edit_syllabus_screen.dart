@@ -41,6 +41,14 @@ class _CreateEditSyllabusScreenState extends State<CreateEditSyllabusScreen> {
     });
   }
 
+  void _updateModifiedSection(Section section, int index) async {
+    final sections = await _sectionsAndLectures;
+    sections[index] = section;
+    setState(() {
+      _sectionsAndLectures = Future.value(sections);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,7 +114,8 @@ class _CreateEditSyllabusScreenState extends State<CreateEditSyllabusScreen> {
                                   courseRepository: widget._courseRepository,
                                   sectionsAndLectures: _sectionsAndLectures,
                                   section: sections[i],
-                                  updateSections: _updateSections,
+                                  updateSections: _updateModifiedSection,
+                                  index: i,
                                 ),
                                 trailing: IconButton(
                                   onPressed: () => setState(
