@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:app/app/config/theme_constants.dart';
+import 'package:app/app/models/lecture.dart';
 import 'package:app/app/models/section.dart';
 import 'package:app/app/repositories/course_repository.dart';
 import 'package:app/app/utils/result.dart';
@@ -12,9 +13,10 @@ void createEditLecture({
   required Function updateSections,
   required Future<List<Section>> sectionsAndLectures,
   required CourseRepository courseRepository,
-  Section? section,
   required String courseId,
-  int? index,
+  required String sectionId,
+  required int order,
+  required int sectionIndex,
 }) {
   final formKey = GlobalKey<FormState>();
   bool freePreview = false;
@@ -24,7 +26,6 @@ void createEditLecture({
   final TextEditingController durationController = TextEditingController();
   final TextEditingController sourceController = TextEditingController();
   final TextEditingController titleController = TextEditingController();
-  final TextEditingController typeController = TextEditingController();
 
   const String initialId = '';
 
@@ -172,14 +173,49 @@ void createEditLecture({
 
                         // Submit Button
                         ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (formKey.currentState!.validate()) {
                               // If the form is valid, display a success message or process the data
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('Processing Data')),
+                              final scaffoldMessenger =
+                                  ScaffoldMessenger.of(context);
+
+                              Lecture lecture = Lecture(
+                                id: '',
+                                title: titleController.text,
+                                type: type,
+                                source: sourceController.text,
+                                order: order,
+                                durationInSeconds:
+                                    num.parse(durationController.text),
+                                isLive: isLive,
+                                freePreview: freePreview,
                               );
-                              // You can handle the form submission here
+
+                              Result result =
+                                  await courseRepository.createLecture(
+                                courseId: courseId,
+                                sectionId: sectionId,
+                                lecture: lecture,
+                              );
+
+                              if (result.isSuccess) {
+                                lecture = lecture.copyWith(id: result.data);
+
+                                final sections = await sectionsAndLectures;
+
+                                sections[sectionIndex].lectures.add(lecture);
+
+                                updateSections(sections);
+
+                                Navigator.pop(context);
+                              } else {
+                                scaffoldMessenger.showSnackBar(
+                                  SnackBar(
+                                    content: Text(result.error ??
+                                        "Couldn't able to add the lecture"),
+                                  ),
+                                );
+                              }
                             }
                           },
                           child: const Text('Submit'),

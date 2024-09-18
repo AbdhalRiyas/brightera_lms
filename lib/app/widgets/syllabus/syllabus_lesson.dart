@@ -4,7 +4,7 @@ import 'package:app/app/models/course.dart';
 import 'package:app/app/models/lecture.dart';
 import 'package:app/app/screens/courses/widgets/show_free_preview.dart';
 import 'package:app/app/services/firebase_service.dart';
-import 'package:app/app/utils/int_extension.dart';
+import 'package:app/app/utils/num_extension.dart';
 import 'package:app/app/utils/string_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';

@@ -4,7 +4,7 @@ class Lecture {
   final String id, title, type, source, pdfNotes;
   final bool freePreview, isLive;
   int order;
-  final int durationInSeconds;
+  final num durationInSeconds;
   final List<dynamic> downloads;
 
   Lecture({

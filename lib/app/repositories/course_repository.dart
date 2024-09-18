@@ -55,6 +55,21 @@ class CourseRepository {
         data: section.toFirestore());
   }
 
+  Future<Result> createLecture(
+      {required String courseId,
+      required String sectionId,
+      required Lecture lecture}) async {
+    return await _firebaseService.createDocument(
+      collection: 'courses',
+      subCollectionPaths: [
+        {"subCollection": "sections", "subDocumentId": sectionId},
+        {"subCollection": "lectures", "subDocumentId": ""}
+      ],
+      documentId: courseId,
+      data: lecture.toFirestore(),
+    );
+  }
+
   Future<Result> updateLecture(
       {required String courseId,
       required String sectionId,

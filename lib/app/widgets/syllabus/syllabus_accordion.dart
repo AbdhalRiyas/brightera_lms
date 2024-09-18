@@ -68,21 +68,31 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
     int lastLecture =
         lastLectureDetail == null ? 0 : lastLectureDetail['lecture'];
 
-    String videoId = (_sections.length > lastSection &&
-            _sections[lastSection].lectures.length > lastLecture)
-        ? YoutubePlayer.convertUrlToId(
-                _sections[lastSection].lectures[lastLecture].source) ??
-            ''
-        : '';
+    if (lastSection >= _sections.length) {
+      lastSection = 0;
+      lastLecture = 0;
+    }
+
+    if (lastLecture >= _sections[lastSection].lectures.length) {
+      lastLecture = 0;
+    }
+
+    String videoId = YoutubePlayer.convertUrlToId(
+            _sections[lastSection].lectures[lastLecture].source) ??
+        '';
 
     _openedSection = lastSection;
+
+    final lectures = _sections[lastSection].lectures;
 
     widget.activeLesson?.value = ActiveLesson.fromJson({
       "section": lastSection,
       "lecture": lastLecture,
       "source": YoutubePlayer.convertUrlToId(videoId),
-      "notes": _sections[lastSection].lectures[lastLecture].pdfNotes,
-      "downloads": _sections[lastSection].lectures[lastLecture].downloads,
+      "notes":
+          lectures.length > lastLecture ? lectures[lastLecture].pdfNotes : "",
+      "downloads":
+          lectures.length > lastLecture ? lectures[lastLecture].downloads : [],
     });
 
     setState(() {

@@ -4,7 +4,7 @@ import 'package:app/app/models/course.dart';
 import 'package:app/app/models/lecture.dart';
 import 'package:app/app/models/section.dart';
 import 'package:app/app/repositories/course_repository.dart';
-import 'package:app/app/utils/int_extension.dart';
+import 'package:app/app/utils/num_extension.dart';
 import 'package:app/app/utils/string_extension.dart';
 import 'package:flutter/material.dart';
 
@@ -191,6 +191,9 @@ class _CreateEditSyllabusScreenState extends State<CreateEditSyllabusScreen> {
                                   courseRepository: widget._courseRepository,
                                   sectionsAndLectures: _sectionsAndLectures,
                                   updateSections: _updateSections,
+                                  sectionId: sections[i].id,
+                                  order: sections[i].lectures.length,
+                                  sectionIndex: i,
                                 ),
                                 icon: const Icon(
                                   Icons.add,
