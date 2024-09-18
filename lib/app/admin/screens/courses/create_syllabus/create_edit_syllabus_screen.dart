@@ -1,3 +1,4 @@
+import 'package:app/app/admin/screens/courses/create_syllabus/widgets/create_edit_lecture.dart';
 import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/models/course.dart';
 import 'package:app/app/models/lecture.dart';
@@ -51,18 +52,27 @@ class _CreateEditSyllabusScreenState extends State<CreateEditSyllabusScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double bottomNotch = MediaQuery.of(context).viewPadding.bottom;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Edit Syllabus"),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () => createEditSection(
-          context: context,
-          courseId: widget._course.id,
-          courseRepository: widget._courseRepository,
-          sectionsAndLectures: _sectionsAndLectures,
-          updateSections: _updateSections,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomSheet: Padding(
+        padding: EdgeInsets.only(
+          left: ThemeConstants.paddingSmall,
+          right: ThemeConstants.paddingSmall,
+          bottom: bottomNotch,
+        ),
+        child: ElevatedButton(
+          child: const Text("Add a Section"),
+          onPressed: () => createEditSection(
+            context: context,
+            courseId: widget._course.id,
+            courseRepository: widget._courseRepository,
+            sectionsAndLectures: _sectionsAndLectures,
+            updateSections: _updateSections,
+          ),
         ),
       ),
       body: Padding(
@@ -97,6 +107,8 @@ class _CreateEditSyllabusScreenState extends State<CreateEditSyllabusScreen> {
                             key: Key(sections[i].id),
                             children: [
                               ListTile(
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: ThemeConstants.paddingSmall),
                                 leading: ReorderableDragStartListener(
                                   index: i,
                                   child: const Icon(Icons.drag_handle),
@@ -124,7 +136,11 @@ class _CreateEditSyllabusScreenState extends State<CreateEditSyllabusScreen> {
                                           !isLecturesExpanded.value;
                                     },
                                   ),
-                                  icon: const Icon(Icons.add),
+                                  icon: Icon(
+                                    Icons.edit,
+                                    size: 18,
+                                    color: Colors.red[900],
+                                  ),
                                 ),
                               ),
                               ReorderableListView.builder(
@@ -132,7 +148,7 @@ class _CreateEditSyllabusScreenState extends State<CreateEditSyllabusScreen> {
                                 shrinkWrap: true,
                                 itemBuilder: (_, j) => ListTile(
                                   contentPadding: const EdgeInsets.only(
-                                      left: ThemeConstants.paddingLarge * 2),
+                                      left: ThemeConstants.paddingLarge),
                                   key: Key(lectures[j].id),
                                   leading: Text("${lectures[j].order + 1}"),
                                   title: Text(
@@ -168,6 +184,23 @@ class _CreateEditSyllabusScreenState extends State<CreateEditSyllabusScreen> {
                                   }
                                 },
                               ),
+                              TextButton.icon(
+                                onPressed: () => createEditLecture(
+                                  context: context,
+                                  courseId: widget._course.id,
+                                  courseRepository: widget._courseRepository,
+                                  sectionsAndLectures: _sectionsAndLectures,
+                                  updateSections: _updateSections,
+                                ),
+                                icon: const Icon(
+                                  Icons.add,
+                                  size: 18,
+                                ),
+                                label: const Text(
+                                  "Add a Lecture",
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                              ),
                             ],
                           );
                         },
@@ -195,6 +228,7 @@ class _CreateEditSyllabusScreenState extends State<CreateEditSyllabusScreen> {
                     return const Text("No sections have been added yet!");
                   }
                 }),
+            SizedBox(height: bottomNotch + 30),
           ],
         ),
       ),
