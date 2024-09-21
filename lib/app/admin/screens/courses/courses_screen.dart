@@ -54,7 +54,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
                               ThemeConstants.borderRadiusLarge)),
-                      onSelected: (String result) {
+                      onSelected: (String result) async {
                         // Handle the selected option
                         switch (result) {
                           case 'Edit Syllabus':
@@ -68,8 +68,6 @@ class _CoursesScreenState extends State<CoursesScreen> {
                               ),
                             );
                             break;
-                          case 'Delete':
-                            break;
                           default:
                             break;
                         }
@@ -80,13 +78,13 @@ class _CoursesScreenState extends State<CoursesScreen> {
                           value: 'Edit Syllabus',
                           child: Text('Edit Syllabus'),
                         ),
-                        const PopupMenuItem<String>(
-                          value: 'Delete',
-                          child: Text(
-                            'Delete',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        ),
+                        // const PopupMenuItem<String>(
+                        //   value: 'Delete',
+                        //   child: Text(
+                        //     'Delete',
+                        //     style: TextStyle(color: Colors.red),
+                        //   ),
+                        // ),
                       ],
                       icon: const Icon(Icons.more_vert), // Vertical dots icon
                     ),
