@@ -55,6 +55,19 @@ class CourseRepository {
         data: section.toFirestore());
   }
 
+  Future<Result> deleteSection({
+    required String courseId,
+    required String sectionId,
+  }) async {
+    return await _firebaseService.deleteDocument(
+      collection: 'courses',
+      documentId: courseId,
+      subCollectionPaths: [
+        {"subCollection": "sections", "subDocumentId": sectionId},
+      ],
+    );
+  }
+
   Future<Result> createLecture(
       {required String courseId,
       required String sectionId,
