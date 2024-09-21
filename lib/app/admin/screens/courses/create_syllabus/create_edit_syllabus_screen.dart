@@ -5,6 +5,7 @@ import 'package:app/app/models/lecture.dart';
 import 'package:app/app/models/section.dart';
 import 'package:app/app/repositories/course_repository.dart';
 import 'package:app/app/utils/num_extension.dart';
+import 'package:app/app/utils/result.dart';
 import 'package:app/app/utils/string_extension.dart';
 import 'package:flutter/material.dart';
 
@@ -146,32 +147,68 @@ class _CreateEditSyllabusScreenState extends State<CreateEditSyllabusScreen> {
                               ReorderableListView.builder(
                                 physics: const NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
-                                itemBuilder: (_, j) => ListTile(
-                                  contentPadding: const EdgeInsets.only(
-                                      left: ThemeConstants.paddingLarge),
-                                  key: Key(lectures[j].id),
-                                  leading: Text("${lectures[j].order + 1}"),
-                                  title: Text(
-                                    lectures[j].title,
-                                    style: const TextStyle(fontSize: 11),
+                                itemBuilder: (_, j) => Dismissible(
+                                  key: Key("dismiss_${lectures[j].id}"),
+                                  background: Container(
+                                    color: Colors.red,
+                                    padding: const EdgeInsets.only(right: 20),
+                                    alignment: Alignment.centerRight,
+                                    child: const Icon(Icons.delete,
+                                        color: Colors.white),
                                   ),
-                                  subtitle: Text(
-                                    lectures[j].isLive
-                                        ? "Live video"
-                                        : "${lectures[j].type.capitalize()} - ${lectures[j].durationInSeconds.toMinutes()}",
-                                    style: const TextStyle(fontSize: 10),
-                                  ),
-                                  onTap: () => createEditLecture(
-                                    context: context,
-                                    courseId: widget._course.id,
-                                    courseRepository: widget._courseRepository,
-                                    sectionsAndLectures: _sectionsAndLectures,
-                                    updateSections: _updateSections,
-                                    sectionId: sections[i].id,
-                                    order: sections[i].lectures.length,
-                                    sectionIndex: i,
-                                    lecture: lectures[j],
-                                    lectureIndex: j,
+                                  direction: DismissDirection
+                                      .endToStart, // Swipe from right to left
+                                  confirmDismiss: (direction) async {
+                                    final scaffoldMessenger =
+                                        ScaffoldMessenger.of(context);
+
+                                    Result result = await widget
+                                        ._courseRepository
+                                        .deleteLecture(
+                                            courseId: widget._course.id,
+                                            lecture: lectures[j],
+                                            sectionId: sections[i].id);
+
+                                    scaffoldMessenger.showSnackBar(
+                                      SnackBar(
+                                        content:
+                                            Text(result.data ?? result.error),
+                                        backgroundColor: result.isSuccess
+                                            ? Colors.green
+                                            : Colors.red,
+                                      ),
+                                    );
+
+                                    return result.isSuccess;
+                                  },
+                                  child: ListTile(
+                                    contentPadding: const EdgeInsets.only(
+                                        left: ThemeConstants.paddingLarge),
+                                    key: Key(lectures[j].id),
+                                    leading: Text("${lectures[j].order + 1}"),
+                                    title: Text(
+                                      lectures[j].title,
+                                      style: const TextStyle(fontSize: 11),
+                                    ),
+                                    subtitle: Text(
+                                      lectures[j].isLive
+                                          ? "Live video"
+                                          : "${lectures[j].type.capitalize()} - ${lectures[j].durationInSeconds.toMinutes()}",
+                                      style: const TextStyle(fontSize: 10),
+                                    ),
+                                    onTap: () => createEditLecture(
+                                      context: context,
+                                      courseId: widget._course.id,
+                                      courseRepository:
+                                          widget._courseRepository,
+                                      sectionsAndLectures: _sectionsAndLectures,
+                                      updateSections: _updateSections,
+                                      sectionId: sections[i].id,
+                                      order: sections[i].lectures.length,
+                                      sectionIndex: i,
+                                      lecture: lectures[j],
+                                      lectureIndex: j,
+                                    ),
                                   ),
                                 ),
                                 itemCount: lectures.length,

@@ -383,14 +383,17 @@ class FirebaseService {
     }
   }
 
-  Future<Result<String>> deleteDocument({
-    required String collection,
-    required String documentId,
-    String? referenceCollection, // The collection to check for references
-    String?
-        referenceField, // The field in the reference collection that holds the DocumentReference
-  }) async {
+  Future<Result<String>> deleteDocument(
+      {required String collection,
+      required String documentId,
+      String? referenceCollection, // The collection to check for references
+      String?
+          referenceField, // The field in the reference collection that holds the DocumentReference
+      List<Map<String, String>>? subCollectionPaths}) async {
     try {
+      DocumentReference docRef =
+          _firestore.collection(collection).doc(documentId);
+
       // Create the DocumentReference for the document we want to delete
       if (referenceCollection != null && referenceField != null) {
         DocumentReference docRef =
@@ -410,8 +413,20 @@ class FirebaseService {
         }
       }
 
+      // If there are subcollections, navigate through them
+      if (subCollectionPaths != null && subCollectionPaths.isNotEmpty) {
+        for (var path in subCollectionPaths) {
+          // Each entry in subCollectionPaths contains the subcollection and document ID
+          String subCollection = path['subCollection']!;
+          String subDocumentId = path['subDocumentId']!;
+
+          // Navigate to the next level
+          docRef = docRef.collection(subCollection).doc(subDocumentId);
+        }
+      }
+
       // If not referenced, delete the document from Firestore
-      await _firestore.collection(collection).doc(documentId).delete();
+      await docRef.delete();
 
       return Result(data: "Deleted successfully!");
     } on FirebaseException catch (e) {

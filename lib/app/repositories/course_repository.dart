@@ -84,6 +84,20 @@ class CourseRepository {
         data: lecture.toFirestore());
   }
 
+  Future<Result> deleteLecture(
+      {required String courseId,
+      required String sectionId,
+      required Lecture lecture}) async {
+    return await _firebaseService.deleteDocument(
+      collection: 'courses',
+      documentId: courseId,
+      subCollectionPaths: [
+        {"subCollection": "sections", "subDocumentId": sectionId},
+        {"subCollection": "lectures", "subDocumentId": lecture.id}
+      ],
+    );
+  }
+
   Future<List<Course>> getCoursesBySubject(String subjectId,
       [bool onlyFeatured = false]) async {
     // Fetch user data from Firebase
