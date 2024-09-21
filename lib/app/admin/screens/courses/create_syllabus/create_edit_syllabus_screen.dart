@@ -161,6 +161,18 @@ class _CreateEditSyllabusScreenState extends State<CreateEditSyllabusScreen> {
                                         : "${lectures[j].type.capitalize()} - ${lectures[j].durationInSeconds.toMinutes()}",
                                     style: const TextStyle(fontSize: 10),
                                   ),
+                                  onTap: () => createEditLecture(
+                                    context: context,
+                                    courseId: widget._course.id,
+                                    courseRepository: widget._courseRepository,
+                                    sectionsAndLectures: _sectionsAndLectures,
+                                    updateSections: _updateSections,
+                                    sectionId: sections[i].id,
+                                    order: sections[i].lectures.length,
+                                    sectionIndex: i,
+                                    lecture: lectures[j],
+                                    lectureIndex: j,
+                                  ),
                                 ),
                                 itemCount: lectures.length,
                                 onReorder: (int oldSubIndex, int newSubIndex) {
