@@ -11,30 +11,76 @@ class IndexField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(
-        bottom: ThemeConstants.paddingMedium,
-      ),
-      decoration: BoxDecoration(
-        border: Border.all(),
-        borderRadius: BorderRadius.circular(
-          ThemeConstants.borderRadiusLarge * 2,
+    return Row(
+      children: [
+        Container(
+          height: 56,
+          padding: const EdgeInsets.symmetric(
+              horizontal: ThemeConstants.paddingMedium),
+          decoration: BoxDecoration(
+              color: ThemeConstants.inputFieldFill,
+              borderRadius:
+                  BorderRadius.circular(ThemeConstants.borderRadiusMedium),
+              border: Border.all(
+                color: ThemeConstants.inputFieldFill,
+                width: ThemeConstants.borderSizeLarge,
+              )),
+          child: Row(
+            children: [
+              Image.asset(
+                "assets/images/lk.webp",
+                height: 24,
+              ),
+              const SizedBox(width: ThemeConstants.paddingSmall),
+              const Text("+94"),
+            ],
+          ),
         ),
-      ),
-      child: TextFormField(
-        controller: _indexController,
-        textAlign: TextAlign.center,
-        decoration: const InputDecoration(
-          hintText: 'Index',
-          border: InputBorder.none,
+        const SizedBox(width: ThemeConstants.paddingSmall),
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              color: ThemeConstants.inputFieldFill,
+              borderRadius:
+                  BorderRadius.circular(ThemeConstants.borderRadiusMedium),
+            ),
+            child: TextFormField(
+              controller: _indexController,
+              textAlign: TextAlign.center,
+              keyboardType: TextInputType.number,
+              maxLength: 10,
+              decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderRadius:
+                      BorderRadius.circular(ThemeConstants.borderRadiusMedium),
+                  borderSide: const BorderSide(
+                    color: ThemeConstants
+                        .inputFieldFill, // Change this to your preferred color
+                    width: ThemeConstants.borderSizeLarge,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(
+                    ThemeConstants.borderRadiusMedium,
+                  ),
+                  borderSide: const BorderSide(
+                    color: ThemeConstants.primaryColor,
+                  ),
+                ),
+                hintText: 'Mobile number',
+                border: InputBorder.none,
+                counterText: '',
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your mobile number';
+                }
+                return null;
+              },
+            ),
+          ),
         ),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter your index number';
-          }
-          return null;
-        },
-      ),
+      ],
     );
   }
 }

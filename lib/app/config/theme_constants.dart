@@ -12,13 +12,13 @@ class ThemeConstants {
   static const double paddingLarge = 24.0;
 
   // Colors
-  static const Color primaryColor = Color(0xFF830182);
-  static const Color accentColor = Color(0xFFf300fe);
+  static const Color primaryColor = Color(0xFF7E017E);
+  static const Color accentColor = Color(0xFFFE1BFE);
   static const Color borderColor = Color.fromARGB(255, 221, 220, 221);
   static const Color backgroundColor = Color(0xFFF4F4F4);
-  static const Color almondMilk = Color(0xFFF1EDE9);
   static const Color lavenderMist = Color(0xFFE6DFF1);
-  static const Color aqua = Color(0xFFC0DEDB);
+  static const Color inputFieldFill = Color(0xFFEBE0EB);
+  static const Color primaryShadowColor = Color(0xFFD6C2D6);
 
   static const Color primaryButtonColor = primaryColor;
   static const Color primaryButtonTextColor = Colors.white;
@@ -63,7 +63,7 @@ class ThemeConstants {
       backgroundColor: backgroundColor,
       titleTextStyle: TextStyle(
         fontWeight: FontWeight.bold,
-        color: Colors.black,
+        color: Color(0xFF1F141F),
         fontSize: 22,
       ),
     ),
@@ -71,6 +71,7 @@ class ThemeConstants {
       foregroundColor: primaryButtonTextColor,
       backgroundColor: primaryButtonColor,
     ),
+    inputDecorationTheme: InputDecorationTheme(fillColor: Color(0xFFEBE0EB)),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
           backgroundColor: primaryButtonColor,
@@ -78,6 +79,7 @@ class ThemeConstants {
           minimumSize: const Size.fromHeight(50),
           textStyle: const TextStyle(
             fontWeight: FontWeight.w600,
+            fontSize: 16,
           ),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadiusMedium))),
@@ -103,11 +105,11 @@ class ThemeConstants {
   static const TextStyle headingStyle = TextStyle(
     fontSize: 24,
     fontWeight: FontWeight.bold,
-    color: Color(0xFF020202),
+    color: Color(0xFF1F141F),
   );
 
   static const TextStyle bodyTextStyle = TextStyle(
     fontSize: 16,
-    color: Colors.black54,
+    color: Color(0xFF1F141F),
   );
 }

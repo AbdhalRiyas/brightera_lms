@@ -10,14 +10,20 @@ class LoginButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: ThemeConstants.primaryButtonColor,
-        foregroundColor: ThemeConstants.primaryButtonTextColor,
-        minimumSize: const Size.fromHeight(50),
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 50,
+            color: ThemeConstants.primaryShadowColor,
+            offset: Offset(0, 20),
+          ),
+        ],
       ),
-      onPressed: onPressed,
-      child: const Text("Login"),
+      child: ElevatedButton(
+        onPressed: onPressed,
+        child: const Text("Login or Register"),
+      ),
     );
   }
 }

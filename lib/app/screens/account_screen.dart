@@ -1,4 +1,5 @@
 import 'package:app/app/models/user.dart' show UserRole;
+import 'package:app/app/screens/login_screen/login_screen.dart';
 import 'package:app/app/services/auth_manager.dart';
 import 'package:app/app/services/firebase_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -72,6 +73,14 @@ class _AccountScreenState extends State<AccountScreen> {
                                   ),
                                 ),
                               ),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) => LoginScreen()));
+                                },
+                                child: Text("Login")),
                           ],
                         );
                       }
