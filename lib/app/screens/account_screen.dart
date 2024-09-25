@@ -78,9 +78,9 @@ class _AccountScreenState extends State<AccountScreen> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (_) => LoginScreen()));
+                                          builder: (_) => const LoginScreen()));
                                 },
-                                child: Text("Login")),
+                                child: const Text("Login")),
                           ],
                         );
                       }

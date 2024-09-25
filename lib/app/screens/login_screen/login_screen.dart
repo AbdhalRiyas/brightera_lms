@@ -1,6 +1,6 @@
 import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/repositories/user_repository.dart';
-import 'package:app/app/screens/login_screen/widgets/index_field.dart';
+import 'package:app/app/screens/login_screen/widgets/mobile_number_field.dart';
 import 'package:app/app/screens/login_screen/widgets/login_button.dart';
 import 'package:app/app/services/firebase_service.dart';
 import 'package:app/app/utils/get_primary_icon_color.dart';
@@ -22,36 +22,36 @@ class _LoginScreenState extends State<LoginScreen> {
   final _indexController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  bool _otpCodeSent = false;
+  final bool _otpCodeSent = false;
 
   Future<void> _signIn() async {
-    // if (_formKey.currentState!.validate()) {
-    //   try {
-    //     showLoader(context);
+    if (_formKey.currentState!.validate()) {
+      try {
+        showLoader(context);
 
-    //     var result = await _userRepository.login(
-    //       _indexController.text.trim(),
-    //       _passwordController.text.trim(),
-    //     );
+        var result = await _userRepository.login(
+          _indexController.text.trim(),
+          _passwordController.text.trim(),
+        );
 
-    //     if (mounted) {
-    //       hideLoader(context);
+        if (mounted) {
+          hideLoader(context);
 
-    //       if (result.isSuccess) {
-    //         ResultHandler()
-    //             .showSuccess(context, result.data ?? 'Sign in successful');
-    //         Navigator.pop(context); // back to previous screen
-    //       } else {
-    //         ResultHandler()
-    //             .showError(context, result.error ?? 'Sign in unsuccessful');
-    //       }
-    //     }
-    //   } catch (e) {
-    //     if (mounted) {
-    //       ResultHandler().showError(context, 'Login failed: ${e.toString()}');
-    //     }
-    //   }
-    // }
+          if (result.isSuccess) {
+            ResultHandler()
+                .showSuccess(context, result.data ?? 'Sign in successful');
+            Navigator.pop(context); // back to previous screen
+          } else {
+            ResultHandler()
+                .showError(context, result.error ?? 'Sign in unsuccessful');
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          ResultHandler().showError(context, 'Login failed: ${e.toString()}');
+        }
+      }
+    }
   }
 
   @override
@@ -125,12 +125,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                           key: _formKey,
                                           child: Column(
                                             children: [
-                                              IndexField(
+                                              MobileNumberField(
                                                   indexController:
                                                       _indexController),
-                                              // PasswordField(
-                                              //     passwordController:
-                                              //         _passwordController),
                                               const SizedBox(
                                                   height: ThemeConstants
                                                       .paddingMedium),

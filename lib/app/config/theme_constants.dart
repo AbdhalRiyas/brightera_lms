@@ -71,7 +71,8 @@ class ThemeConstants {
       foregroundColor: primaryButtonTextColor,
       backgroundColor: primaryButtonColor,
     ),
-    inputDecorationTheme: InputDecorationTheme(fillColor: Color(0xFFEBE0EB)),
+    inputDecorationTheme:
+        const InputDecorationTheme(fillColor: Color(0xFFEBE0EB)),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
           backgroundColor: primaryButtonColor,

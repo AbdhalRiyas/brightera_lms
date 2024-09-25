@@ -1,8 +1,9 @@
 import 'package:app/app/config/theme_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-class IndexField extends StatelessWidget {
-  const IndexField({
+class MobileNumberField extends StatelessWidget {
+  const MobileNumberField({
     super.key,
     required TextEditingController indexController,
   }) : _indexController = indexController;
@@ -71,9 +72,16 @@ class IndexField extends StatelessWidget {
                 border: InputBorder.none,
                 counterText: '',
               ),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(
+                    RegExp(r'^[0-9]*$')), // Allows only numbers 0-9
+              ],
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter your mobile number';
+                } else if (value.startsWith('0') && value.length != 10 ||
+                    value.startsWith('7') && value.length != 9) {
+                  return 'Please enter a valid mobile number';
                 }
                 return null;
               },
