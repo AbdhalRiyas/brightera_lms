@@ -38,7 +38,7 @@ class UserRepository {
   Future<Result<String>> verifyPhoneNumber(
       String phoneNumber, String otp) async {
     // Create a new user in Firebase
-    var result = await _firebaseService.validateOtp("94$phoneNumber", otp);
+    var result = await _firebaseService.validateOtp(phoneNumber, otp);
     return result;
   }
 

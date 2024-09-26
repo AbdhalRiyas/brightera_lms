@@ -60,11 +60,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _verifyOtp(String otp) async {
-    print("otp");
     try {
       showLoader(context);
 
-      var result = await _userRepository.verifyPhoneNumber(_phoneNumber, otp);
+      var result =
+          await _userRepository.verifyPhoneNumber("94$_phoneNumber", otp);
 
       if (mounted) {
         hideLoader(context);
@@ -194,10 +194,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                           "Please verify your phone number to login. We have sent an OTP to the below mentioned number. (OTP) will be valid for 10 mins)",
                                           textAlign: TextAlign.center,
                                         ),
-                                        const Text(
-                                          "7676757470",
+                                        Text(
+                                          _phoneNumber,
                                           textAlign: TextAlign.center,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),

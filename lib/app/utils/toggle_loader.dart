@@ -1,3 +1,4 @@
+import 'package:app/app/config/theme_constants.dart';
 import 'package:flutter/material.dart';
 
 void showLoader(BuildContext context) => showDialog(
@@ -10,6 +11,11 @@ void showLoader(BuildContext context) => showDialog(
           mainAxisSize: MainAxisSize.min,
           children: [
             CircularProgressIndicator(),
+            SizedBox(height: ThemeConstants.paddingMedium),
+            Text(
+              "Processing please wait...",
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       ),

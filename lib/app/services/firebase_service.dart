@@ -34,7 +34,6 @@ class FirebaseService {
   Future<Result<String>> requestOtp(String phoneNumber) async {
     try {
       String deviceId = await MobileDeviceIdentifier().getDeviceId() ?? '';
-      print(deviceId);
       final HttpsCallable callable = _functions
           .httpsCallable('requestOtp'); // Replace with your Cloud Function name
       await callable.call(<String, dynamic>{
@@ -58,7 +57,7 @@ class FirebaseService {
       final HttpsCallable callable = _functions
           .httpsCallable('verifyOtp'); // Replace with your Cloud Function name
       final response = await callable.call(<String, dynamic>{
-        'phoneNumber': "94767675740",
+        'phoneNumber': phoneNumber,
         'otp': otp,
         'deviceId': deviceId,
       });
@@ -76,8 +75,8 @@ class FirebaseService {
 
       return Result(data: 'Sign-in successful');
     } on FirebaseFunctionsException catch (e) {
-      String errorMessage = _handleFirebaseError(e);
-      return Result(error: errorMessage);
+      // String errorMessage = _handleFirebaseError(e);
+      return Result(error: e.message);
     } catch (e) {
       return Result(error: 'Unexpected error: $e');
     }
