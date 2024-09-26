@@ -1,6 +1,7 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 admin.initializeApp();
 
@@ -57,14 +58,20 @@ exports.requestOtp = functions.https.onCall(async (data, context) => {
 
     // Generate and store OTP
     const otp = generateOtp();
-    await storeOtp(formattedPhoneNumber, otp, requestIp, deviceId);
 
     // Send OTP via SMS Gateway
     try {
-        await sendOtpSms(formattedPhoneNumber, otp);
-        // Increment daily OTP count
-        await incrementDailyOtpCount(formattedPhoneNumber);
-        return { message: 'OTP sent successfully.' };
+        let isSmsSent = await sendOtpSms(formattedPhoneNumber, otp);
+
+        if (isSmsSent) {
+            await storeOtp(formattedPhoneNumber, otp, requestIp, deviceId);
+
+            // Increment daily OTP count
+            await incrementDailyOtpCount(formattedPhoneNumber);
+            return { message: 'OTP sent successfully.' };
+        } else {
+            throw new functions.https.HttpsError('internal', 'Failed to send OTP. Please try again later.');
+        }
     } catch (error) {
         console.error('Error sending OTP:', error);
         throw new functions.https.HttpsError('internal', 'Failed to send OTP. Please try again later.');
@@ -157,7 +164,9 @@ function generateOtp() {
 }
 
 async function sendOtpSms(phoneNumber, otp) {
-    const message = `Your verification code is ${otp}. It will expire in ${OTP_EXPIRY_MINUTES} minutes.`;
+    const message = `Use the code: ${otp} to verify your phone number. It will expire in ${OTP_EXPIRY_MINUTES} minutes.`;
+    
+    // Create the query parameters
     const params = new URLSearchParams({
         user_id: SMS_GATEWAY_USER_ID,
         api_key: SMS_GATEWAY_API_KEY,
@@ -166,7 +175,26 @@ async function sendOtpSms(phoneNumber, otp) {
         message: message
     });
 
-    await axios.post(SMS_GATEWAY_URL, params);
+    // Construct the full URL with parameters
+    const url = `${SMS_GATEWAY_URL}?${params.toString()}`;
+
+    console.log(url);
+
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+            return false;
+        }
+
+        const data = await response.json(); // Parse the JSON response if needed
+        console.log('OTP SMS sent successfully:', data);
+        return true;
+    } catch (error) {
+        console.error('Error sending OTP SMS:', error);
+        return false;
+    }
 }
 
 async function storeOtp(phoneNumber, otp, ip, deviceId) {
@@ -259,11 +287,14 @@ async function canRequestNewOtp(phoneNumber) {
 }
 
 async function isBlocked(ip, phoneNumber, deviceId) {
+    // Get the current timestamp for comparison
+    const currentTimestamp = Date.now();
+
     const blocksRef = db.collection('blocked');
     const blockDocs = await blocksRef.where('ip', '==', ip)
         .where('phoneNumber', '==', phoneNumber)
         .where('deviceId', '==', deviceId)
-        .where('unblockAt', '>', admin.firestore.FieldValue.serverTimestamp())
+        .where('unblockAt', '>', currentTimestamp)
         .get();
 
     return !blockDocs.empty;

@@ -29,9 +29,16 @@ class UserRepository {
     return _firebaseService.getDocumentReference('users', documentPath);
   }
 
-  Future<Result<String>> login(String index, String password) async {
+  Future<Result<String>> login(String phoneNumber) async {
     // Create a new user in Firebase
-    var result = await _firebaseService.signInWithCustomToken(index, password);
+    var result = await _firebaseService.requestOtp("94$phoneNumber");
+    return result;
+  }
+
+  Future<Result<String>> verifyPhoneNumber(
+      String phoneNumber, String otp) async {
+    // Create a new user in Firebase
+    var result = await _firebaseService.validateOtp("94$phoneNumber", otp);
     return result;
   }
 

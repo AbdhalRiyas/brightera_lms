@@ -8,6 +8,7 @@ import 'package:app/app/utils/result_handler.dart';
 import 'package:app/app/utils/toggle_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -20,9 +21,10 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final UserRepository _userRepository = UserRepository();
   final _indexController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _otpController = TextEditingController();
+  String _phoneNumber = '';
 
-  final bool _otpCodeSent = false;
+  bool _otpCodeSent = false;
 
   Future<void> _signIn() async {
     if (_formKey.currentState!.validate()) {
@@ -31,25 +33,54 @@ class _LoginScreenState extends State<LoginScreen> {
 
         var result = await _userRepository.login(
           _indexController.text.trim(),
-          _passwordController.text.trim(),
         );
 
         if (mounted) {
           hideLoader(context);
 
           if (result.isSuccess) {
+            setState(() {
+              _otpCodeSent = true;
+              _phoneNumber = _indexController.text.trim();
+            });
             ResultHandler()
-                .showSuccess(context, result.data ?? 'Sign in successful');
-            Navigator.pop(context); // back to previous screen
+                .showSuccess(context, result.data ?? 'OTP code has been sent!');
           } else {
             ResultHandler()
-                .showError(context, result.error ?? 'Sign in unsuccessful');
+                .showError(context, result.error ?? "Couldn't send OTP code.");
           }
         }
       } catch (e) {
         if (mounted) {
-          ResultHandler().showError(context, 'Login failed: ${e.toString()}');
+          ResultHandler()
+              .showError(context, 'Verification failed: ${e.toString()}');
         }
+      }
+    }
+  }
+
+  Future<void> _verifyOtp(String otp) async {
+    print("otp");
+    try {
+      showLoader(context);
+
+      var result = await _userRepository.verifyPhoneNumber(_phoneNumber, otp);
+
+      if (mounted) {
+        hideLoader(context);
+
+        if (result.isSuccess) {
+          ResultHandler()
+              .showSuccess(context, result.data ?? 'Sign in successful');
+          Navigator.pop(context); // back to previous screen
+        } else {
+          ResultHandler()
+              .showError(context, result.error ?? 'Sign in unsuccessful');
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ResultHandler().showError(context, 'Login failed: ${e.toString()}');
       }
     }
   }
@@ -94,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 .padding
                                 .bottom, // Exclude the bottom notch or system UI height
                       ),
-                      child: FirebaseService().currentUser == null
+                      child: FirebaseService().currentUser != null
                           ? const Center(child: Text("You're signed in!"))
                           : Padding(
                               padding: const EdgeInsets.all(
@@ -148,29 +179,35 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ),
                                       ],
                                     )
-                                  : const Column(
+                                  : Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.stretch,
                                       children: [
-                                        Text(
+                                        const Text(
                                           "Validate Your OTP",
                                           textAlign: TextAlign.center,
                                           style: TextStyle(fontSize: 22),
                                         ),
-                                        Text(
+                                        const Text(
                                           "Please verify your phone number to login. We have sent an OTP to the below mentioned number. (OTP) will be valid for 10 mins)",
                                           textAlign: TextAlign.center,
                                         ),
-                                        Text(
+                                        const Text(
                                           "7676757470",
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                        TextField()
+                                        PinFieldAutoFill(
+                                          controller: _otpController,
+                                          codeLength: 6,
+                                          textInputAction: TextInputAction.done,
+                                          onCodeSubmitted: (code) =>
+                                              _verifyOtp(code),
+                                        ),
                                       ],
                                     ),
                             ),
@@ -184,7 +221,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void dispose() {
     _indexController.dispose();
-    _passwordController.dispose();
+    _otpController.dispose();
     super.dispose();
   }
 }

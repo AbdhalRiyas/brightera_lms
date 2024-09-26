@@ -9,6 +9,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_device_identifier/mobile_device_identifier.dart';
 
 class FirebaseService {
   FirebaseService._privateConstructor();
@@ -28,6 +29,76 @@ class FirebaseService {
   User? get currentUser => _auth.currentUser;
 
   Stream<User?> get authStateChanges => _auth.authStateChanges();
+
+  /// Request a new OTP for the given phone number
+  Future<Result<String>> requestOtp(String phoneNumber) async {
+    try {
+      String deviceId = await MobileDeviceIdentifier().getDeviceId() ?? '';
+      print(deviceId);
+      final HttpsCallable callable = _functions
+          .httpsCallable('requestOtp'); // Replace with your Cloud Function name
+      await callable.call(<String, dynamic>{
+        'phoneNumber': phoneNumber,
+        'deviceId': deviceId,
+      });
+
+      return Result(data: 'OTP sent successfully');
+    } on FirebaseFunctionsException catch (e) {
+      String errorMessage = _handleFirebaseError(e);
+      return Result(error: errorMessage);
+    } catch (e) {
+      return Result(error: 'Unexpected error: $e');
+    }
+  }
+
+  /// Validate the OTP provided by the user
+  Future<Result<String>> validateOtp(String phoneNumber, String otp) async {
+    try {
+      String deviceId = await MobileDeviceIdentifier().getDeviceId() ?? '';
+      final HttpsCallable callable = _functions
+          .httpsCallable('verifyOtp'); // Replace with your Cloud Function name
+      final response = await callable.call(<String, dynamic>{
+        'phoneNumber': "94767675740",
+        'otp': otp,
+        'deviceId': deviceId,
+      });
+
+      print(response);
+
+      // If OTP verification is successful, sign in the user
+      final token = response.data['token'];
+      // Sign in with the custom token
+      await FirebaseAuth.instance.signInWithCustomToken(token);
+
+      // After successful sign-in, retrieve and store user details
+      final userDetails = await getCurrentUserDetails();
+      AuthManager().setUserDetails(userDetails);
+
+      return Result(data: 'Sign-in successful');
+    } on FirebaseFunctionsException catch (e) {
+      String errorMessage = _handleFirebaseError(e);
+      return Result(error: errorMessage);
+    } catch (e) {
+      return Result(error: 'Unexpected error: $e');
+    }
+  }
+
+  String _handleFirebaseError(FirebaseFunctionsException e) {
+    switch (e.code) {
+      case 'resource-exhausted':
+        return 'Too many requests. Please try again later.';
+      case 'invalid-argument':
+        return 'Invalid argument provided.';
+      case 'not-found':
+        return 'Requested resource not found.';
+      case 'deadline-exceeded':
+        return 'Request timed out. Please try again.';
+      case 'unauthenticated':
+        return 'Authentication failed. Please check your credentials.';
+      default:
+        return 'Error: ${e.message}';
+    }
+  }
 
   Future<Result<String>> signInWithCustomToken(
       String indexNumber, String password) async {

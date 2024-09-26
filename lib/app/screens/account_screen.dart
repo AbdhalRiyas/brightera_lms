@@ -73,14 +73,6 @@ class _AccountScreenState extends State<AccountScreen> {
                                   ),
                                 ),
                               ),
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) => const LoginScreen()));
-                                },
-                                child: const Text("Login")),
                           ],
                         );
                       }
@@ -88,6 +80,14 @@ class _AccountScreenState extends State<AccountScreen> {
                       return const SizedBox();
                     },
                   ),
+                TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const LoginScreen()));
+                    },
+                    child: const Text("Login")),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
