@@ -151,6 +151,12 @@ class _LoginScreenState extends State<LoginScreen> with LoginScreenLogic {
           controller: otpController,
           codeLength: 6,
           textInputAction: TextInputAction.done,
+          onCodeChanged: (code) {
+            if (otpController.text.length == 6) {
+              // Check the length of the code directly
+              verifyOtp(otpController.text); // Call the verification function
+            }
+          },
           onCodeSubmitted: (code) => verifyOtp(code),
         ),
         const SizedBox(height: ThemeConstants.paddingSmall),

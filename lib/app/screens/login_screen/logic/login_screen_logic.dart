@@ -5,6 +5,7 @@ import 'package:app/app/utils/result.dart';
 import 'package:app/app/utils/result_handler.dart';
 import 'package:app/app/utils/toggle_loader.dart';
 import 'package:flutter/material.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 
 mixin LoginScreenLogic<LoginScreen extends StatefulWidget>
     on State<LoginScreen> {
@@ -17,11 +18,11 @@ mixin LoginScreenLogic<LoginScreen extends StatefulWidget>
   String phoneNumber = '';
   bool otpCodeSent = false;
 
-  final int _resendTime = 1 * 60;
+  final int _resendTime = 10 * 60;
 
   Timer? _timer;
   final ValueNotifier<int> remainingSeconds =
-      ValueNotifier(1 * 60); // 10 minutes
+      ValueNotifier(10 * 60); // 10 minutes
 
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -58,6 +59,8 @@ mixin LoginScreenLogic<LoginScreen extends StatefulWidget>
             });
             ResultHandler()
                 .showSuccess(context, result.data ?? 'OTP code has been sent!');
+
+            await SmsAutoFill().listenForCode();
           } else {
             ResultHandler()
                 .showError(context, result.error ?? "Couldn't send OTP code.");
@@ -90,6 +93,7 @@ mixin LoginScreenLogic<LoginScreen extends StatefulWidget>
         if (result.isSuccess) {
           ResultHandler()
               .showSuccess(context, result.data ?? 'Sign in successful');
+          SmsAutoFill().unregisterListener();
           Navigator.pop(context); // back to previous screen
         } else {
           ResultHandler()
@@ -110,6 +114,7 @@ mixin LoginScreenLogic<LoginScreen extends StatefulWidget>
   }
 
   void changePhoneNumber([bool render = true]) {
+    SmsAutoFill().unregisterListener();
     _timer?.cancel();
     indexController.clear();
     otpController.clear();
@@ -124,6 +129,7 @@ mixin LoginScreenLogic<LoginScreen extends StatefulWidget>
 
   @override
   void dispose() {
+    SmsAutoFill().unregisterListener();
     changePhoneNumber(false);
     super.dispose();
   }
