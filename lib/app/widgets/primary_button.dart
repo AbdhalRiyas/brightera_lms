@@ -1,11 +1,13 @@
 import 'package:app/app/config/theme_constants.dart';
 import 'package:flutter/material.dart';
 
-class LoginButton extends StatelessWidget {
+class PrimaryButton extends StatelessWidget {
   final VoidCallback? onPressed;
-  const LoginButton({
+  final String text;
+  const PrimaryButton({
     super.key,
     this.onPressed,
+    required this.text,
   });
 
   @override
@@ -22,7 +24,7 @@ class LoginButton extends StatelessWidget {
       ),
       child: ElevatedButton(
         onPressed: onPressed,
-        child: const Text("Login or Register"),
+        child: Text(text),
       ),
     );
   }

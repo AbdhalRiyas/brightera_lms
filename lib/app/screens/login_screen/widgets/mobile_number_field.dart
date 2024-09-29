@@ -79,8 +79,11 @@ class MobileNumberField extends StatelessWidget {
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter your mobile number';
-                } else if (value.startsWith('0') && value.length != 10 ||
-                    value.startsWith('7') && value.length != 9) {
+                } else if (value.length == 9 && value.startsWith('0')) {
+                  return 'Please enter a valid mobile number';
+                } else if (value.length == 10 && !value.startsWith('0')) {
+                  return 'Please enter a valid mobile number';
+                } else if (value.length < 9 || value.length > 10) {
                   return 'Please enter a valid mobile number';
                 }
                 return null;

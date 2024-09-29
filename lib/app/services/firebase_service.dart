@@ -62,8 +62,6 @@ class FirebaseService {
         'deviceId': deviceId,
       });
 
-      print(response);
-
       // If OTP verification is successful, sign in the user
       final token = response.data['token'];
       // Sign in with the custom token
