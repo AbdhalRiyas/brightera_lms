@@ -1,19 +1,21 @@
 import 'package:app/app/config/theme_constants.dart';
 import 'package:flutter/material.dart';
 
-void showLoader(BuildContext context) => showDialog(
+void showLoader(BuildContext context,
+        [String label = "Processing please wait..."]) =>
+    showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const AlertDialog(
+      builder: (context) => AlertDialog(
         content: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(),
-            SizedBox(height: ThemeConstants.paddingMedium),
+            const CircularProgressIndicator(),
+            const SizedBox(height: ThemeConstants.paddingMedium),
             Text(
-              "Processing please wait...",
+              label,
               textAlign: TextAlign.center,
             ),
           ],

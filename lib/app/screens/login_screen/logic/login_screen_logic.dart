@@ -37,7 +37,7 @@ mixin LoginScreenLogic<LoginScreen extends StatefulWidget>
   Future<void> signIn([bool resend = false]) async {
     if (resend || formKey.currentState!.validate()) {
       try {
-        showLoader(context);
+        showLoader(context, "Sending OTP, Please wait...");
 
         String currentPhoneNumber =
             resend ? phoneNumber : indexController.text.trim();
@@ -74,7 +74,7 @@ mixin LoginScreenLogic<LoginScreen extends StatefulWidget>
 
   Future<void> verifyOtp(String otp) async {
     try {
-      showLoader(context);
+      showLoader(context, "Verifying OTP, Please wait...");
 
       String currentPhoneNumber = phoneNumber;
       currentPhoneNumber = currentPhoneNumber.startsWith('0')
