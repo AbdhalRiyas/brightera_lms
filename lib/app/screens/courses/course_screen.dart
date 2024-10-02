@@ -1,6 +1,7 @@
 import 'package:app/app/config/theme_constants.dart';
 import 'package:app/app/models/course.dart';
 import 'package:app/app/repositories/course_repository.dart';
+import 'package:app/app/screens/checkout_screen.dart';
 import 'package:app/app/screens/courses/widgets/course_cover.dart';
 import 'package:app/app/screens/courses/widgets/enroll_now.dart';
 import 'package:app/app/services/firebase_service.dart';
@@ -99,8 +100,12 @@ class _CourseScreenState extends State<CourseScreen> {
                               ? Navigator.pushNamed(context, '/lectures',
                                   arguments:
                                       LecturesArguments(course: widget.course))
-                              : enrollNow(
-                                  context, widget.course, currentUser?.uid),
+                              : Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => CheckoutScreen(),
+                                  ),
+                                ),
                           child: Text(
                             hasEnrolled ? "Go to lectures" : "Enroll Now",
                             style: const TextStyle(
