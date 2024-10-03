@@ -3,7 +3,6 @@ import 'package:app/app/models/course.dart';
 import 'package:app/app/repositories/course_repository.dart';
 import 'package:app/app/screens/checkout_screen.dart';
 import 'package:app/app/screens/courses/widgets/course_cover.dart';
-import 'package:app/app/screens/courses/widgets/enroll_now.dart';
 import 'package:app/app/services/firebase_service.dart';
 import 'package:app/app/widgets/syllabus/syllabus_accordion.dart';
 import 'package:app/app/screens/lectures_screen/lectures_screen.dart';
@@ -42,7 +41,6 @@ class _CourseScreenState extends State<CourseScreen> {
       body: StreamBuilder<User?>(
           stream: FirebaseService().authStateChanges,
           builder: (context, snapshot) {
-            final currentUser = snapshot.data;
             return Padding(
               padding: const EdgeInsets.all(ThemeConstants.paddingSmall),
               child: ListView(
@@ -103,7 +101,7 @@ class _CourseScreenState extends State<CourseScreen> {
                               : Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => CheckoutScreen(),
+                                    builder: (_) => const CheckoutScreen(),
                                   ),
                                 ),
                           child: Text(
