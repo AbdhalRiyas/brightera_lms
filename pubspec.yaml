@@ -52,6 +52,7 @@ dependencies:
   file_picker: ^8.1.2
   mobile_device_identifier: ^0.0.2
   sms_autofill: ^2.4.0
+  payhere_mobilesdk_flutter: ^3.0.4
 
 dev_dependencies:
   flutter_test:

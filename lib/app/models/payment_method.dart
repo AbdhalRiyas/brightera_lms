@@ -4,7 +4,17 @@ class PaymentMethod {
   final String id, name, description, icon;
   final List<dynamic> images;
   final bool isActive;
-  final String type; // we support bank, ipg
+  final String type; // we support bank, payhere
+
+  PaymentMethod({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.icon,
+    required this.images,
+    required this.isActive,
+    required this.type,
+  });
 
   factory PaymentMethod.fromFireStore(
       DocumentSnapshot<Map<String, dynamic>> doc) {
@@ -20,15 +30,6 @@ class PaymentMethod {
       type: data?['type'] ?? '',
     );
   }
-
-  PaymentMethod(
-      {required this.id,
-      required this.name,
-      required this.description,
-      required this.icon,
-      required this.images,
-      required this.isActive,
-      required this.type});
 
   Map<String, dynamic> toJson() => {
         "id": id,

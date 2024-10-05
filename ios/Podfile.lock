@@ -1,4 +1,8 @@
 PODS:
+  - Alamofire (5.0.0-rc.2)
+  - AlamofireObjectMapper (6.2.0):
+    - Alamofire (= 5.0.0-rc.2)
+    - ObjectMapper (~> 3.5.1)
   - cloud_firestore (5.3.0):
     - Firebase/Firestore (= 11.0.0)
     - firebase_core
@@ -165,10 +169,18 @@ PODS:
     - nanopb/encode (= 3.30910.0)
   - nanopb/decode (3.30910.0)
   - nanopb/encode (3.30910.0)
+  - ObjectMapper (3.5.3)
   - OrderedSet (5.0.0)
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - payhere_mobilesdk_flutter (3.0.4):
+    - Flutter
+    - payHereSDK (= 3.0.5)
+  - payHereSDK (3.0.5):
+    - Alamofire (~> 5.0.0-rc.2)
+    - AlamofireObjectMapper
+    - SDWebImage
   - RecaptchaInterop (100.0.0)
   - SDWebImage (5.19.7):
     - SDWebImage/Core (= 5.19.7)
@@ -195,12 +207,15 @@ DEPENDENCIES:
   - flutter_pdfview (from `.symlinks/plugins/flutter_pdfview/ios`)
   - mobile_device_identifier (from `.symlinks/plugins/mobile_device_identifier/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - payhere_mobilesdk_flutter (from `.symlinks/plugins/payhere_mobilesdk_flutter/ios`)
   - sms_autofill (from `.symlinks/plugins/sms_autofill/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/darwin`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
 SPEC REPOS:
   trunk:
+    - Alamofire
+    - AlamofireObjectMapper
     - DKImagePickerController
     - DKPhotoGallery
     - Firebase
@@ -225,7 +240,9 @@ SPEC REPOS:
     - JNKeychain
     - leveldb-library
     - nanopb
+    - ObjectMapper
     - OrderedSet
+    - payHereSDK
     - RecaptchaInterop
     - SDWebImage
     - SwiftyGif
@@ -256,6 +273,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/mobile_device_identifier/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  payhere_mobilesdk_flutter:
+    :path: ".symlinks/plugins/payhere_mobilesdk_flutter/ios"
   sms_autofill:
     :path: ".symlinks/plugins/sms_autofill/ios"
   sqflite:
@@ -269,6 +288,8 @@ CHECKOUT OPTIONS:
     :tag: 11.0.0
 
 SPEC CHECKSUMS:
+  Alamofire: f9450d3c7f6bea2ad62e7a541c3e9b186c7991d6
+  AlamofireObjectMapper: 74d1440c92c42bbcc2b5f4dc81654ac095ec669f
   cloud_firestore: 15d5767445fbd525df58295240753e87393c854f
   cloud_functions: 7918c97e2f146266f5591dbb2e9bca3f7fbb2c18
   DKImagePickerController: 946cec48c7873164274ecc4624d19e3da4c1ef3c
@@ -304,8 +325,11 @@ SPEC CHECKSUMS:
   leveldb-library: e8eadf9008a61f9e1dde3978c086d2b6d9b9dc28
   mobile_device_identifier: 34f80c8985bb1506880c2ae10cb24cfb9918f1a7
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
+  ObjectMapper: 97111c97e054a6ee25917662106689f0b4127b37
   OrderedSet: aaeb196f7fef5a9edf55d89760da9176ad40b93c
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
+  payhere_mobilesdk_flutter: 0c66ccf33db8ded7bca47e4160350c3bbc0ce79e
+  payHereSDK: 4f21d4c3b9158247827277dea7de25da216e4541
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
   SDWebImage: 8a6b7b160b4d710e2a22b6900e25301075c34cb3
   sms_autofill: c461043483362c3f1709ee76eaae6eb570b31686
