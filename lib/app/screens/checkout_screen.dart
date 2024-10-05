@@ -175,7 +175,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Padding _buildPaymentSummary(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
-        top: ThemeConstants.paddingSmall,
+        top: ThemeConstants.paddingLarge,
         left: ThemeConstants.paddingSmall,
         right: ThemeConstants.paddingSmall,
         bottom:
