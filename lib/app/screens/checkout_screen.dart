@@ -176,8 +176,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     return Padding(
       padding: EdgeInsets.only(
         top: ThemeConstants.paddingLarge,
-        left: ThemeConstants.paddingSmall,
-        right: ThemeConstants.paddingSmall,
         bottom:
             ThemeConstants.paddingSmall + MediaQuery.paddingOf(context).bottom,
       ),
