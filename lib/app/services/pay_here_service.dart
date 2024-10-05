@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:payhere_mobilesdk_flutter/payhere_mobilesdk_flutter.dart';
 
 class PayHereService {
@@ -9,7 +10,7 @@ class PayHereService {
     return _instance;
   }
 
-  void processPayment() async {
+  void processPayment(VoidCallback toggleOverlay) async {
     Map paymentObject = {
       "sandbox": true, // true if using Sandbox Merchant ID
       "merchant_id": "1228362", // Replace your Merchant ID
@@ -34,11 +35,14 @@ class PayHereService {
       "custom_2": ""
     };
 
+    toggleOverlay();
+
     PayHere.startPayment(paymentObject, (paymentId) {
       print("One Time Payment Success. Payment Id: $paymentId");
     }, (error) {
       print("One Time Payment Failed. Error: $error");
     }, () {
+      toggleOverlay();
       print("One Time Payment Dismissed");
     });
   }

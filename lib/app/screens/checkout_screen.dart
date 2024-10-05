@@ -21,6 +21,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final _paymentMethodRepository = PaymentMethodRepository();
   late Future<List<PaymentMethod>> _paymentMethods;
   final ValueNotifier<int> _selectedPg = ValueNotifier(-1);
+  final ValueNotifier<bool> _paymentOverlayVisibility =
+      ValueNotifier(false); // it's used to prevent touch outside of payhere
 
   @override
   void initState() {
@@ -28,147 +30,165 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     super.initState();
   }
 
+  void _togglePaymentOverlay() {
+    _paymentOverlayVisibility.value = !_paymentOverlayVisibility.value;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: FocusManager.instance.primaryFocus?.unfocus,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Checkout"),
-        ),
-        body: Padding(
-          padding: EdgeInsets.only(
-            left: ThemeConstants.paddingSmall,
-            right: ThemeConstants.paddingSmall,
-            bottom: MediaQuery.paddingOf(context).bottom,
-          ),
-          child: ListView(
-            children: [
-              Text(
-                "Payment method",
-                style: _buildSubHeadingStyles(),
+    return Stack(
+      children: [
+        GestureDetector(
+          onTap: FocusManager.instance.primaryFocus?.unfocus,
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text("Checkout"),
+            ),
+            body: Padding(
+              padding: EdgeInsets.only(
+                left: ThemeConstants.paddingSmall,
+                right: ThemeConstants.paddingSmall,
+                bottom: MediaQuery.paddingOf(context).bottom,
               ),
-              FutureBuilder(
-                future: _paymentMethods,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    // Show a loading indicator while waiting for the data
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    // Handle the error state
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    // Handle the case where there's no data
-                    return const Text('No payment methods available');
-                  } else {
-                    // Assuming snapshot.data is a List<PaymentMethod>
-                    final List<PaymentMethod> paymentMethods = snapshot.data!;
+              child: ListView(
+                children: [
+                  Text(
+                    "Payment method",
+                    style: _buildSubHeadingStyles(),
+                  ),
+                  FutureBuilder(
+                    future: _paymentMethods,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        // Show a loading indicator while waiting for the data
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        // Handle the error state
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        // Handle the case where there's no data
+                        return const Text('No payment methods available');
+                      } else {
+                        // Assuming snapshot.data is a List<PaymentMethod>
+                        final List<PaymentMethod> paymentMethods =
+                            snapshot.data!;
 
-                    // Map each payment method to a Text widget or any other widget you want
-                    return _buildCheckoutWidgets(paymentMethods);
-                  }
-                },
-              ),
-              const SizedBox(height: ThemeConstants.paddingLarge),
-              Text(
-                "Order details",
-                style: _buildSubHeadingStyles(),
-              ),
-              ...List.generate(
-                widget.courses.length,
-                (int index) => ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 0),
-                  leading: CachedNetworkImage(
-                    imageUrl: widget.courses[index].image,
-                    width: 50,
-                    height: 50,
+                        // Map each payment method to a Text widget or any other widget you want
+                        return _buildCheckoutWidgets(paymentMethods);
+                      }
+                    },
                   ),
-                  title: Text(
-                    widget.courses[index].title,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  const SizedBox(height: ThemeConstants.paddingLarge),
+                  Text(
+                    "Order details",
+                    style: _buildSubHeadingStyles(),
                   ),
-                  trailing: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        formatPrice(widget.courses[index].salePrice),
+                  ...List.generate(
+                    widget.courses.length,
+                    (int index) => ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+                      leading: CachedNetworkImage(
+                        imageUrl: widget.courses[index].image,
+                        width: 50,
+                        height: 50,
+                      ),
+                      title: Text(
+                        widget.courses[index].title,
                         style: const TextStyle(
-                          fontSize: 13,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                      if (widget.courses[index].regularPrice != 0.00)
-                        Text(
-                          formatPrice(widget.courses[index].regularPrice),
-                          style: const TextStyle(
-                              decoration: TextDecoration.lineThrough),
-                        ),
-                    ],
+                      trailing: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            formatPrice(widget.courses[index].salePrice),
+                            style: const TextStyle(
+                              fontSize: 13,
+                            ),
+                          ),
+                          if (widget.courses[index].regularPrice != 0.00)
+                            Text(
+                              formatPrice(widget.courses[index].regularPrice),
+                              style: const TextStyle(
+                                  decoration: TextDecoration.lineThrough),
+                            ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(height: ThemeConstants.paddingLarge),
-              Text(
-                "Promotions",
-                style: _buildSubHeadingStyles(),
-              ),
-              SizedBox(
-                height: 40,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Expanded(
-                      child: TextField(
-                        maxLength: 25,
-                        style: TextStyle(fontSize: 12),
-                        decoration: InputDecoration(
-                          counterText: '',
-                          hintText: "Enter Coupon",
-                          contentPadding: EdgeInsets.all(
-                            ThemeConstants.paddingSmall,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(
-                                ThemeConstants.borderRadiusSmall,
+                  const SizedBox(height: ThemeConstants.paddingLarge),
+                  Text(
+                    "Promotions",
+                    style: _buildSubHeadingStyles(),
+                  ),
+                  SizedBox(
+                    height: 40,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Expanded(
+                          child: TextField(
+                            maxLength: 25,
+                            style: TextStyle(fontSize: 12),
+                            decoration: InputDecoration(
+                              counterText: '',
+                              hintText: "Enter Coupon",
+                              contentPadding: EdgeInsets.all(
+                                ThemeConstants.paddingSmall,
                               ),
-                              bottomLeft: Radius.circular(
-                                ThemeConstants.borderRadiusSmall,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(
-                                ThemeConstants.borderRadiusSmall,
-                              ),
-                              bottomRight: Radius.circular(
-                                ThemeConstants.borderRadiusSmall,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(
+                                    ThemeConstants.borderRadiusSmall,
+                                  ),
+                                  bottomLeft: Radius.circular(
+                                    ThemeConstants.borderRadiusSmall,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                        onPressed: () {},
-                        child: const Text("Apply"),
-                      ),
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(
+                                    ThemeConstants.borderRadiusSmall,
+                                  ),
+                                  bottomRight: Radius.circular(
+                                    ThemeConstants.borderRadiusSmall,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            onPressed: () {},
+                            child: const Text("Apply"),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  _buildPaymentSummary(context)
+                ],
               ),
-              _buildPaymentSummary(context)
-            ],
+            ),
           ),
         ),
-      ),
+        ValueListenableBuilder<bool>(
+            valueListenable: _paymentOverlayVisibility,
+            builder: (context, value, ch) {
+              return value
+                  ? Container(
+                      color: const Color.fromARGB(0, 0, 0, 0),
+                    )
+                  : const SizedBox();
+            }),
+      ],
     );
   }
 
@@ -275,7 +295,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       final paymentMethods = await _paymentMethods;
                       switch (paymentMethods[_selectedPg.value].type) {
                         case 'payhere':
-                          PayHereService().processPayment();
+                          PayHereService()
+                              .processPayment(_togglePaymentOverlay);
                           break;
                         default:
                           break;
