@@ -98,12 +98,9 @@ class _CourseScreenState extends State<CourseScreen> {
                               ? Navigator.pushNamed(context, '/lectures',
                                   arguments:
                                       LecturesArguments(course: widget.course))
-                              : Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const CheckoutScreen(),
-                                  ),
-                                ),
+                              : Navigator.pushNamed(context, '/checkout',
+                                  arguments:
+                                      CheckoutScreenArguments([widget.course])),
                           child: Text(
                             hasEnrolled ? "Go to lectures" : "Enroll Now",
                             style: const TextStyle(

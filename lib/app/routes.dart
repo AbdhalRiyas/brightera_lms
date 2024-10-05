@@ -1,3 +1,4 @@
+import 'package:app/app/screens/checkout_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:app/app/screens/home_screen.dart';
 import 'package:app/app/screens/login_screen/login_screen.dart';
@@ -35,6 +36,9 @@ class RouteManager {
       case '/all-courses':
         return _allCoursesRoute(settings);
 
+      case '/checkout':
+        return _checkoutRoute(settings, isLoggedIn);
+
       case '/course':
         return _courseRoute(settings);
 
@@ -48,6 +52,20 @@ class RouteManager {
         return MaterialPageRoute(
           builder: (context) => const HomeScreen(title: 'Brightera'),
         );
+    }
+  }
+
+  static Route<dynamic>? _checkoutRoute(
+      RouteSettings settings, bool isLoggedIn) {
+    if (isLoggedIn) {
+      final args = settings.arguments as CheckoutScreenArguments;
+      return MaterialPageRoute(
+        builder: (context) => CheckoutScreen(courses: args.courses),
+      );
+    } else {
+      return MaterialPageRoute(
+        builder: (context) => const LoginScreen(),
+      );
     }
   }
 
