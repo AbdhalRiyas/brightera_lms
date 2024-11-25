@@ -1,6 +1,6 @@
-import 'package:app/app/config/app_contants.dart';
-import 'package:app/app/config/theme_constants.dart';
-import 'package:app/app/routes.dart';
+import 'package:app/src/config/app_contants.dart';
+import 'package:app/src/config/theme_constants.dart';
+import 'package:app/src/route/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
