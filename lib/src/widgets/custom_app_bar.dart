@@ -1,4 +1,5 @@
 import 'package:app/src/config/theme_constants.dart';
+import 'package:app/src/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -22,7 +23,12 @@ class CustomAppBar extends StatelessWidget {
         Row(
           children: [
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                NotificationService().showNotification(
+                  title: 'Test',
+                  body: 'This is a test notification',
+                );
+              },
               icon: SvgPicture.asset(
                 'assets/icons/notification.svg',
                 colorFilter: const ColorFilter.mode(

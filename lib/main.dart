@@ -1,6 +1,7 @@
 import 'package:app/src/config/app_contants.dart';
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/route/routes.dart';
+import 'package:app/src/services/notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -9,6 +10,8 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  NotificationService().initNotification();
 
   await Hive.initFlutter();
 
