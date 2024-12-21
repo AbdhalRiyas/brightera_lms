@@ -1,9 +1,13 @@
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/course.dart';
+import 'package:app/src/models/order.dart';
 import 'package:app/src/models/payment_method.dart';
+import 'package:app/src/repositories/order_repository.dart';
 import 'package:app/src/repositories/payment_method_repository.dart';
+import 'package:app/src/services/firebase_service.dart';
 import 'package:app/src/services/pay_here_service.dart';
 import 'package:app/src/utils/format_price.dart';
+import 'package:app/src/utils/result.dart';
 import 'package:app/src/widgets/primary_button.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -299,6 +303,39 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         case 'payhere':
                           PayHereService()
                               .processPayment(_togglePaymentOverlay);
+                          break;
+                        case 'bank':
+                          Result result = await OrderRepository().createOrder(
+                            Order(
+                              id: DateTime.now()
+                                  .millisecondsSinceEpoch
+                                  .toString(),
+                              userId: FirebaseService().currentUser!.uid,
+                              status: 'pending',
+                              courseId: widget.courses[0].id,
+                              paymentMethod:
+                                  paymentMethods[_selectedPg.value].name,
+                              paymentStatus: 'pending',
+                              total: widget.courses[0].salePrice * 1,
+                            ),
+                          );
+                          if (result.isSuccess) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  "Order created successfully",
+                                ),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  result.error ?? "An error occurred",
+                                ),
+                              ),
+                            );
+                          }
                           break;
                         default:
                           break;
