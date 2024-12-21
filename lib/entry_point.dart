@@ -56,11 +56,33 @@ class _EntryPointState extends State<EntryPoint> {
                 type: BottomNavigationBarType.fixed,
                 items: [
                   BottomNavigationBarItem(
-                      icon: BottomNavigationIcon(
-                        path: 'assets/icons/favourite.svg',
-                        isActive: selectedIndex == 0,
-                      ),
-                      label: 'Featured'),
+                    icon: BottomNavigationIcon(
+                      path: 'assets/icons/favourite.svg',
+                      isActive: selectedIndex == 0,
+                    ),
+                    label: 'Featured',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: BottomNavigationIcon(
+                      path: 'assets/icons/search.svg',
+                      isActive: selectedIndex == 0,
+                    ),
+                    label: 'Search',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: BottomNavigationIcon(
+                      path: 'assets/icons/search.svg',
+                      isActive: selectedIndex == 0,
+                    ),
+                    label: 'My Learning',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: BottomNavigationIcon(
+                      path: 'assets/icons/search.svg',
+                      isActive: selectedIndex == 0,
+                    ),
+                    label: 'Wishlist',
+                  ),
                   // BottomNavigationBarItem(
                   //     icon: BottomNavigationIcon(
                   //       path: 'assets/icons/play.svg',

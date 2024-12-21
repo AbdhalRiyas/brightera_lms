@@ -37,16 +37,16 @@ class CustomAppBar extends StatelessWidget {
                 ),
               ),
             ),
-            IconButton(
-              onPressed: () {},
-              icon: SvgPicture.asset(
-                'assets/icons/search.svg',
-                colorFilter: const ColorFilter.mode(
-                  Colors.black,
-                  BlendMode.srcIn,
-                ),
-              ),
-            ),
+            // IconButton(
+            //   onPressed: () {},
+            //   icon: SvgPicture.asset(
+            //     'assets/icons/search.svg',
+            //     colorFilter: const ColorFilter.mode(
+            //       Colors.black,
+            //       BlendMode.srcIn,
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ],
