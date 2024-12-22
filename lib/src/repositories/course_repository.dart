@@ -18,6 +18,11 @@ class CourseRepository {
         'images/${generateUniqueFileName(filePath.split('.').last)}', filePath);
   }
 
+  DocumentReference<Map<String, dynamic>> getCourseReference(
+      String documentPath) {
+    return _firebaseService.getDocumentReference('courses', documentPath);
+  }
+
   Future<Result> createCourse(Course course) async {
     return await _firebaseService.createDocument(
       collection: 'courses',

@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Order {
   final String id;
-  final String userId;
   final String status;
-  final String courseId;
+  final DocumentReference userId;
+  final DocumentReference courseId;
   final String paymentMethod;
   final String paymentStatus;
   final double total;
@@ -19,22 +21,22 @@ class Order {
     this.discount = 0,
   });
 
-  factory Order.fromFirestore(Map<String, dynamic> data) {
+  factory Order.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data();
     return Order(
-      id: data['id'],
-      userId: data['userId'],
-      status: data['status'],
-      courseId: data['course'],
-      paymentMethod: data['paymentMethod'],
-      paymentStatus: data['paymentStatus'],
-      total: data['total'],
-      discount: data['discount'] ?? 0,
+      id: doc.id,
+      userId: data?['userId'] ?? '',
+      status: data?['status'] ?? '',
+      courseId: data?['course'] ?? '',
+      paymentMethod: data?['paymentMethod'] ?? '',
+      paymentStatus: data?['paymentStatus'] ?? '',
+      total: data?['total'] ?? 0,
+      discount: data?['discount'] ?? 0,
     );
   }
 
   Map<String, dynamic> toFirestore() {
     return {
-      'id': id,
       'userId': userId,
       'status': status,
       'course': courseId,

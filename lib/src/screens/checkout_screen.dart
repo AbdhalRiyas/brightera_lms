@@ -2,8 +2,10 @@ import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/course.dart';
 import 'package:app/src/models/order.dart';
 import 'package:app/src/models/payment_method.dart';
+import 'package:app/src/repositories/course_repository.dart';
 import 'package:app/src/repositories/order_repository.dart';
 import 'package:app/src/repositories/payment_method_repository.dart';
+import 'package:app/src/repositories/user_repository.dart';
 import 'package:app/src/services/firebase_service.dart';
 import 'package:app/src/services/pay_here_service.dart';
 import 'package:app/src/utils/format_price.dart';
@@ -307,12 +309,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         case 'bank':
                           Result result = await OrderRepository().createOrder(
                             Order(
-                              id: DateTime.now()
-                                  .millisecondsSinceEpoch
-                                  .toString(),
-                              userId: FirebaseService().currentUser!.uid,
+                              id: '',
+                              userId: UserRepository().getUserReference(
+                                  UserRepository().currentUserUid),
                               status: 'pending',
-                              courseId: widget.courses[0].id,
+                              courseId: CourseRepository()
+                                  .getCourseReference(widget.courses[0].id),
                               paymentMethod:
                                   paymentMethods[_selectedPg.value].name,
                               paymentStatus: 'pending',
