@@ -70,7 +70,8 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 'Created At', widget.order.createdAt.toString()),
 
             // Payment Proof Section
-            widget.order.paymentProof != null
+            widget.order.paymentProof != null &&
+                    widget.order.paymentProof!.startsWith('http')
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
