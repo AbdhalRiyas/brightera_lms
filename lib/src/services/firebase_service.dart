@@ -551,4 +551,23 @@ class FirebaseService {
       return Result(error: e.message);
     }
   }
+
+  // get user orders
+  Future<QuerySnapshot<Map<String, dynamic>>?> getUserOrders(
+      String userId) async {
+    try {
+      // Create a reference to the specific user document
+      DocumentReference userRef = _firestore.collection('users').doc(userId);
+
+      // Query the orders collection where the user field matches the user reference
+      Query<Map<String, dynamic>> query =
+          _firestore.collection('orders').where('userId', isEqualTo: userRef);
+
+      return await query.get();
+    } catch (e) {
+      // Handle any errors here
+      debugPrint('Error fetching orders by user: $e');
+      return null;
+    }
+  }
 }

@@ -13,4 +13,30 @@ class OrderRepository {
       data: order.toFirestore(),
     );
   }
+
+  //  Future<Result> uploadCourseCover(String filePath) async {
+  //   return await _firebaseService.uploadFile(
+  //       'images/${generateUniqueFileName(filePath.split('.').last)}', filePath);
+  // }
+
+  Future<Result> addPaymentProof(String orderId, String paymentProof) async {
+    return await _firebaseService.updateDocument(
+      collection: collection,
+      documentId: orderId,
+      data: {'paymentProof': paymentProof},
+    );
+  }
+
+  Future<List<Order>> getUserOrders(String userId) async {
+    final data = await _firebaseService.getUserOrders(userId);
+    final List<Order> orders = [];
+
+    if (data != null) {
+      for (var doc in data.docs) {
+        orders.add(Order.fromFirestore(doc));
+      }
+    }
+
+    return orders;
+  }
 }

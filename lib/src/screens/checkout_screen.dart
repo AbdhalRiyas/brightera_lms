@@ -6,7 +6,7 @@ import 'package:app/src/repositories/course_repository.dart';
 import 'package:app/src/repositories/order_repository.dart';
 import 'package:app/src/repositories/payment_method_repository.dart';
 import 'package:app/src/repositories/user_repository.dart';
-import 'package:app/src/services/firebase_service.dart';
+import 'package:app/src/screens/orders_screen.dart';
 import 'package:app/src/services/pay_here_service.dart';
 import 'package:app/src/utils/format_price.dart';
 import 'package:app/src/utils/result.dart';
@@ -307,26 +307,31 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                               .processPayment(_togglePaymentOverlay);
                           break;
                         case 'bank':
-                          Result result = await OrderRepository().createOrder(
-                            Order(
-                              id: '',
-                              userId: UserRepository().getUserReference(
-                                  UserRepository().currentUserUid),
-                              status: 'pending',
-                              courseId: CourseRepository()
-                                  .getCourseReference(widget.courses[0].id),
-                              paymentMethod:
-                                  paymentMethods[_selectedPg.value].name,
-                              paymentStatus: 'pending',
-                              total: widget.courses[0].salePrice * 1,
-                            ),
+                          Order order = Order(
+                            id: '123456',
+                            userId: UserRepository().getUserReference(
+                                UserRepository().currentUserUid),
+                            status: 'pending',
+                            courseId: CourseRepository()
+                                .getCourseReference(widget.courses[0].id),
+                            createdAt: DateTime.now(),
+                            paymentMethod:
+                                paymentMethods[_selectedPg.value].name,
+                            paymentStatus: 'pending',
+                            total: widget.courses[0].salePrice * 1,
                           );
+                          Result result =
+                              await OrderRepository().createOrder(order);
                           if (result.isSuccess) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const OrdersScreen(),
+                              ),
+                            );
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text(
-                                  "Order created successfully",
-                                ),
+                                content: Text("Order created successfully"),
                               ),
                             );
                           } else {
