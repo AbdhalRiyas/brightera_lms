@@ -1,11 +1,30 @@
 import 'package:app/src/models/order.dart';
+import 'package:app/src/repositories/course_repository.dart';
 import 'package:app/src/repositories/order_repository.dart';
 import 'package:flutter/material.dart';
 
-class OrderDetailsScreen extends StatelessWidget {
+class OrderDetailsScreen extends StatefulWidget {
   const OrderDetailsScreen({super.key, required this.order});
 
   final Order order;
+
+  @override
+  State<OrderDetailsScreen> createState() => _OrderDetailsScreenState();
+}
+
+class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
+  final CourseRepository _courseRepository = CourseRepository();
+
+  @override
+  void initState() {
+    _fetchCourse();
+    super.initState();
+  }
+
+  void _fetchCourse() async {
+    final course =
+        await _courseRepository.getCourseDetails(widget.order.courseId.id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,24 +52,25 @@ class OrderDetailsScreen extends StatelessWidget {
               thickness: 1,
             ),
             // Order Details Section
-            _buildOrderDetailRow('Order ID', order.id),
+            _buildOrderDetailRow('Order ID', widget.order.id),
             const SizedBox(height: 12),
-            _buildOrderDetailRow('Status', order.status),
+            _buildOrderDetailRow('Status', widget.order.status),
             const SizedBox(height: 12),
-            _buildOrderDetailRow('Payment Method', order.paymentMethod),
+            _buildOrderDetailRow('Payment Method', widget.order.paymentMethod),
             const SizedBox(height: 12),
-            _buildOrderDetailRow('Payment Status', order.paymentStatus),
-            const SizedBox(height: 12),
-            _buildOrderDetailRow(
-                'Total', '\$${order.total.toStringAsFixed(2)}'),
+            _buildOrderDetailRow('Payment Status', widget.order.paymentStatus),
             const SizedBox(height: 12),
             _buildOrderDetailRow(
-                'Discount', '\$${order.discount.toStringAsFixed(2)}'),
+                'Total', '\$${widget.order.total.toStringAsFixed(2)}'),
             const SizedBox(height: 12),
-            _buildOrderDetailRow('Created At', order.createdAt.toString()),
+            _buildOrderDetailRow(
+                'Discount', '\$${widget.order.discount.toStringAsFixed(2)}'),
+            const SizedBox(height: 12),
+            _buildOrderDetailRow(
+                'Created At', widget.order.createdAt.toString()),
 
             // Payment Proof Section
-            order.paymentProof != null
+            widget.order.paymentProof != null
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -69,13 +89,13 @@ class OrderDetailsScreen extends StatelessWidget {
                         height: 32,
                         thickness: 1,
                       ),
-                      Image.network(order.paymentProof!),
+                      Image.network(widget.order.paymentProof!),
                     ],
                   )
                 : TextButton(
                     onPressed: () {
                       OrderRepository()
-                          .addPaymentProof(order.id, 'paymentProof');
+                          .addPaymentProof(widget.order.id, 'paymentProof');
                     },
                     child: const Text('Add Payment Proof'),
                   ),

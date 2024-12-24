@@ -208,4 +208,15 @@ class CourseRepository {
       return null;
     }
   }
+
+  Future<Course?> getCourseDetails(String courseId) async {
+    final courseData =
+        await _firebaseService.getDocumentById(courseId, 'courses');
+    final course = Course.fromFirestore(courseData);
+    if (course.instructor != null) {
+      final instructor = await _getInstructorInfo(course.instructor!);
+      return course.copyWith(instructorInfo: instructor);
+    }
+    return course;
+  }
 }

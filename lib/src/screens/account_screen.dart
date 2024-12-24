@@ -4,6 +4,8 @@ import 'package:app/src/services/firebase_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'orders_screen.dart';
+
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key, this.isInstructorView = false});
 
@@ -72,6 +74,14 @@ class _AccountScreenState extends State<AccountScreen> {
                                   ),
                                 ),
                               ),
+                            ListTile(
+                              title: const Text('Orders'),
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const OrdersScreen())),
+                            ),
                           ],
                         );
                       }

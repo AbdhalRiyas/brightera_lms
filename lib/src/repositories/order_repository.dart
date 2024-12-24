@@ -28,15 +28,14 @@ class OrderRepository {
   }
 
   Future<List<Order>> getUserOrders(String userId) async {
-    final data = await _firebaseService.getUserOrders(userId);
-    final List<Order> orders = [];
+    final data = await _firebaseService.getCollection(
+      collection: 'orders',
+      fromFirestore: Order.fromFirestore,
+      comparisonField: 'userId',
+      referenceCollection: 'users',
+      referenceId: userId,
+    );
 
-    if (data != null) {
-      for (var doc in data.docs) {
-        orders.add(Order.fromFirestore(doc));
-      }
-    }
-
-    return orders;
+    return data;
   }
 }
