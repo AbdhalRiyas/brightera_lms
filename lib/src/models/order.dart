@@ -54,4 +54,30 @@ class Order {
       'paymentProof': paymentProof,
     };
   }
+
+  Order copyWith({
+    String? id,
+    String? status,
+    DocumentReference? userId,
+    DocumentReference? courseId,
+    DateTime? createdAt,
+    String? paymentMethod,
+    String? paymentStatus,
+    double? total,
+    double? discount,
+    String? paymentProof,
+  }) {
+    return Order(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      status: status ?? this.status,
+      courseId: courseId ?? this.courseId,
+      createdAt: createdAt ?? this.createdAt,
+      paymentMethod: paymentMethod ?? this.paymentMethod,
+      paymentStatus: paymentStatus ?? this.paymentStatus,
+      total: total ?? this.total,
+      discount: discount ?? this.discount,
+      paymentProof: paymentProof ?? this.paymentProof,
+    );
+  }
 }
