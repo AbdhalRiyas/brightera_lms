@@ -254,6 +254,19 @@ class FirebaseService {
     return snapshot.docs.map((doc) => fromFirestore(doc)).toList();
   }
 
+  //get Document Stream
+  Stream<T> getDocumentStream<T>({
+    required String collection,
+    required String documentId,
+    required T Function(DocumentSnapshot<Map<String, dynamic>>) fromFirestore,
+  }) {
+    return _firestore
+        .collection(collection)
+        .doc(documentId)
+        .snapshots()
+        .map((snapshot) => fromFirestore(snapshot));
+  }
+
   Future<QuerySnapshot<Map<String, dynamic>>?> getCoursesBySubject(
       String subjectId,
       [bool isFeatured = false]) async {
