@@ -38,7 +38,6 @@ class OrderRepository {
       referenceCollection: 'users',
       referenceId: userId,
     );
-
     return data;
   }
 

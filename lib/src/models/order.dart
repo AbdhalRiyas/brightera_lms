@@ -1,3 +1,4 @@
+import 'package:app/src/models/course.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Order {
@@ -11,6 +12,7 @@ class Order {
   final double total;
   final double discount;
   final String? paymentProof;
+  final Course course;
 
   const Order({
     required this.id,
@@ -23,6 +25,7 @@ class Order {
     required this.total,
     this.discount = 0,
     this.paymentProof,
+    required this.course,
   });
 
   factory Order.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
@@ -31,13 +34,14 @@ class Order {
       id: doc.id,
       userId: data?['userId'] ?? '',
       status: data?['status'] ?? '',
-      courseId: data?['course'] ?? '',
+      courseId: data?['courseId'] ?? '',
       createdAt: data?['createdAt']?.toDate() ?? '',
       paymentMethod: data?['paymentMethod'] ?? '',
       paymentStatus: data?['paymentStatus'] ?? '',
       total: data?['total'] ?? 0,
       discount: data?['discount'] ?? 0,
       paymentProof: data?['paymentProof'],
+      course: doc.data()?['course'],
     );
   }
 
@@ -45,13 +49,14 @@ class Order {
     return {
       'userId': userId,
       'status': status,
-      'course': courseId,
+      'courseId': courseId,
       'paymentMethod': paymentMethod,
       'createdAt': createdAt,
       'paymentStatus': paymentStatus,
       'total': total,
       'discount': discount,
       'paymentProof': paymentProof,
+      'course': course.toFirestore(),
     };
   }
 
@@ -66,6 +71,7 @@ class Order {
     double? total,
     double? discount,
     String? paymentProof,
+    Course? course,
   }) {
     return Order(
       id: id ?? this.id,
@@ -78,6 +84,7 @@ class Order {
       total: total ?? this.total,
       discount: discount ?? this.discount,
       paymentProof: paymentProof ?? this.paymentProof,
+      course: course ?? this.course,
     );
   }
 }
