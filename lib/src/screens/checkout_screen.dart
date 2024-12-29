@@ -319,11 +319,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 paymentMethods[_selectedPg.value].name,
                             paymentStatus: 'pending',
                             total: widget.courses[0].salePrice * 1,
-                            course: widget.courses[0],
+                            course: widget.courses[0].toFirestore(),
                           );
                           Result result =
                               await OrderRepository().createOrder(order);
                           if (result.isSuccess) {
+                            Navigator.pop(context);
                             Navigator.push(
                               context,
                               MaterialPageRoute(

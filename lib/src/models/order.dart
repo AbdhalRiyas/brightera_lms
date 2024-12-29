@@ -12,7 +12,7 @@ class Order {
   final double total;
   final double discount;
   final String? paymentProof;
-  final Course course;
+  final Map<String, dynamic> course;
 
   const Order({
     required this.id,
@@ -28,7 +28,9 @@ class Order {
     required this.course,
   });
 
-  factory Order.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
+  factory Order.fromFirestore(
+    DocumentSnapshot<Map<String, dynamic>> doc,
+  ) {
     final data = doc.data();
     return Order(
       id: doc.id,
@@ -41,7 +43,7 @@ class Order {
       total: data?['total'] ?? 0,
       discount: data?['discount'] ?? 0,
       paymentProof: data?['paymentProof'],
-      course: doc.data()?['course'],
+      course: data?['course'],
     );
   }
 
@@ -56,7 +58,7 @@ class Order {
       'total': total,
       'discount': discount,
       'paymentProof': paymentProof,
-      'course': course.toFirestore(),
+      'course': course,
     };
   }
 
@@ -84,7 +86,7 @@ class Order {
       total: total ?? this.total,
       discount: discount ?? this.discount,
       paymentProof: paymentProof ?? this.paymentProof,
-      course: course ?? this.course,
+      course: course?.toFirestore() ?? this.course,
     );
   }
 }

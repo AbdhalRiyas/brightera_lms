@@ -1,6 +1,5 @@
 import 'package:app/src/models/course.dart';
 import 'package:app/src/models/order.dart';
-import 'package:app/src/repositories/course_repository.dart';
 import 'package:app/src/repositories/order_repository.dart';
 import 'package:app/src/screens/orders/widgets/pick_payment_proof.dart';
 import 'package:app/src/utils/format_price.dart';
@@ -18,38 +17,37 @@ class OrderDetailsScreen extends StatefulWidget {
 }
 
 class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
-  final CourseRepository _courseRepository = CourseRepository();
+  // final CourseRepository _courseRepository = CourseRepository();
   final OrderRepository _orderRepository = OrderRepository();
   Course? course;
-  bool isLoading = true;
   FilePickerResult? paymentProof;
 
-  @override
-  void initState() {
-    super.initState();
-    _fetchCourse();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _fetchCourse();
+  // }
 
-  void _fetchCourse() async {
-    try {
-      final fetchedCourse =
-          await _courseRepository.getCourseDetails(widget.order.courseId.id);
-      setState(() {
-        course = fetchedCourse;
-        isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to fetch course: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
+  // void _fetchCourse() async {
+  //   try {
+  //     final fetchedCourse =
+  //         await _courseRepository.getCourseDetails(widget.order.courseId.id);
+  //     setState(() {
+  //       course = fetchedCourse;
+  //       isLoading = false;
+  //     });
+  //   } catch (e) {
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text('Failed to fetch course: $e'),
+  //         backgroundColor: Colors.red,
+  //       ),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -57,44 +55,43 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       appBar: AppBar(
         title: const Text('Order Details'),
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : StreamBuilder<Order>(
-              stream: _orderRepository.getOrderStream(widget.order.id),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      'Error: ${snapshot.error}',
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                  );
-                } else if (!snapshot.hasData) {
-                  return const Center(child: Text('Order not found.'));
-                }
+      body: StreamBuilder<Order>(
+        stream: _orderRepository.getOrderStream(widget.order.id),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                'Error: ${snapshot.error}',
+                style: const TextStyle(color: Colors.red),
+              ),
+            );
+          } else if (!snapshot.hasData) {
+            return const Center(child: Text('Order not found.'));
+          }
 
-                final order = snapshot.data!;
-                return SingleChildScrollView(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (course != null) _buildCourseDetails(context),
-                      const SizedBox(height: 24),
-                      _buildOrderSummary(context, order),
-                      const SizedBox(height: 24),
-                      _buildPaymentProofSection(context, order),
-                    ],
-                  ),
-                );
-              },
+          final order = snapshot.data!;
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildCourseDetails(context),
+                const SizedBox(height: 24),
+                _buildOrderSummary(context, order),
+                const SizedBox(height: 24),
+                _buildPaymentProofSection(context, order),
+              ],
             ),
+          );
+        },
+      ),
     );
   }
 
   Widget _buildCourseDetails(BuildContext context) {
+    final courseData = widget.order.course;
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -103,7 +100,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
         child: Row(
           children: [
             CachedNetworkImage(
-              imageUrl: course!.image,
+              imageUrl: courseData['image'] ?? '',
               width: 60,
               height: 60,
               placeholder: (context, url) => const CircularProgressIndicator(),
@@ -116,7 +113,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    course!.title,
+                    courseData['title'] ?? 'No title available',
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -129,16 +126,16 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        formatPrice(course!.salePrice),
+                        formatPrice(courseData['salePrice'] ?? 0.00),
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: Colors.green,
                         ),
                       ),
-                      if (course!.regularPrice != 0.00)
+                      if ((courseData['regularPrice'] ?? 0.00) != 0.00)
                         Text(
-                          formatPrice(course!.regularPrice),
+                          formatPrice(courseData['regularPrice']),
                           style: const TextStyle(
                             fontSize: 12,
                             decoration: TextDecoration.lineThrough,

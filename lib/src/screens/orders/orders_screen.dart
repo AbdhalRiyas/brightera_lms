@@ -66,7 +66,7 @@ class OrdersScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Order ID: ${order.id}',
+                          '${order.course['title']}',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
