@@ -1,3 +1,4 @@
+import 'package:app/src/admin/screens/coupons/coupons_screen.dart';
 import 'package:app/src/admin/screens/courses/courses_screen.dart';
 import 'package:app/src/admin/screens/subjects/subjects_screen.dart';
 import 'package:app/src/widgets/custom_app_bar.dart';
@@ -22,6 +23,11 @@ class _LmsScreenState extends State<LmsScreen> {
       "title": "Courses",
       "icon": Icons.book,
       "navigation": const CoursesScreen(),
+    },
+    {
+      "title": "Coupons",
+      "icon": Icons.card_giftcard,
+      "navigation": const CouponsScreen(),
     }
   ];
 
