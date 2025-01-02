@@ -89,7 +89,6 @@ class _CouponAddEditDialogState extends State<CouponAddEditDialog> {
                   return null;
                 },
               ),
-              // Coupon Type Dropdown
               DropdownButtonFormField<CouponType>(
                 value: _couponType,
                 items: const [
@@ -102,9 +101,13 @@ class _CouponAddEditDialogState extends State<CouponAddEditDialog> {
                     child: Text('Fixed Amount'),
                   ),
                 ],
-                onChanged: (value) => setState(() {
-                  _couponType = value;
-                }),
+                onChanged: (value) {
+                  setState(() {
+                    _couponType = value;
+                    _discountController
+                        .clear(); // Clear discount field to avoid confusion
+                  });
+                },
                 decoration: const InputDecoration(labelText: 'Coupon Type'),
                 validator: (value) {
                   if (value == null) {
@@ -116,18 +119,36 @@ class _CouponAddEditDialogState extends State<CouponAddEditDialog> {
               // Discount Field
               TextFormField(
                 controller: _discountController,
-                decoration: const InputDecoration(labelText: 'Discount'),
+                decoration: InputDecoration(
+                  labelText: _couponType == CouponType.percentage
+                      ? 'Discount (%)'
+                      : 'Discount (Fixed Amount)',
+                  // hintText: _couponType == CouponType.percentage
+                  //     ? 'Enter a percentage (e.g., 10)'
+                  //     : 'Enter an amount (e.g., 50)',
+                ),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Discount is required';
                   }
-                  if (double.tryParse(value) == null) {
+                  final discountValue = double.tryParse(value);
+                  if (discountValue == null) {
                     return 'Enter a valid number';
+                  }
+                  if (_couponType == CouponType.percentage) {
+                    if (discountValue <= 0 || discountValue > 100) {
+                      return 'Enter a percentage between 1 and 100';
+                    }
+                  } else if (_couponType == CouponType.fixedAmount) {
+                    if (discountValue <= 0) {
+                      return 'Enter a positive fixed amount';
+                    }
                   }
                   return null;
                 },
               ),
+
               // Max Usage Field
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Max Usage'),
@@ -158,7 +179,9 @@ class _CouponAddEditDialogState extends State<CouponAddEditDialog> {
                   setState(() {
                     _appliesToAllCourses = value;
                     if (value) {
-                      _selectedCourses.clear(); // Clear selected courses
+                      _selectedCourses.clear();
+                    } else {
+                      _selectedCourses = [];
                     }
                   });
                 },
