@@ -61,6 +61,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                   direction: DismissDirection.endToStart,
                   confirmDismiss: (direction) async {
                     Result result = await _repository.deleteCoupon(coupon.id);
+                    ScaffoldMessenger.of(context).clearSnackBars();
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(result.data ?? result.error),

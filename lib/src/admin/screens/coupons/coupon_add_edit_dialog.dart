@@ -1,5 +1,7 @@
 import 'package:app/src/models/coupon.dart';
+import 'package:app/src/models/course.dart';
 import 'package:app/src/repositories/coupon_repository.dart';
+import 'package:app/src/repositories/course_repository.dart';
 import 'package:app/src/utils/result.dart';
 import 'package:flutter/material.dart';
 
@@ -22,8 +24,13 @@ class _CouponAddEditDialogState extends State<CouponAddEditDialog> {
   late final TextEditingController _couponCodeController;
   late final TextEditingController _discountController;
   late final TextEditingController _expiryDateController;
+  late final TextEditingController _maxUsageController;
+  late DateTime? _selectedDate;
   CouponType? _couponType;
-  DateTime _selectedDate = DateTime.now();
+
+  bool _appliesToAllCourses = false;
+  List<String> _selectedCourses = [];
+  List<Course> _availableCourses = [];
 
   @override
   void initState() {
@@ -35,7 +42,22 @@ class _CouponAddEditDialogState extends State<CouponAddEditDialog> {
     _expiryDateController = TextEditingController(
       text: widget.coupon?.expiryDate?.toLocal().toString().split(' ')[0] ?? '',
     );
+    _maxUsageController =
+        TextEditingController(text: widget.coupon?.maxUsage.toString() ?? '');
     _couponType = widget.coupon?.type;
+    _selectedDate = widget.coupon?.expiryDate;
+    _appliesToAllCourses = widget.coupon?.appliesTo.contains('*') ?? false;
+    _selectedCourses = widget.coupon?.appliesTo ?? [];
+
+    // Fetch courses
+    _fetchCourses();
+  }
+
+  Future<void> _fetchCourses() async {
+    final courses = await CourseRepository().getCourses(); // Fetch courses
+    setState(() {
+      _availableCourses = courses;
+    });
   }
 
   @override
@@ -110,6 +132,16 @@ class _CouponAddEditDialogState extends State<CouponAddEditDialog> {
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Max Usage'),
                 keyboardType: TextInputType.number,
+                controller: _maxUsageController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Max Usage is required';
+                  }
+                  if (int.tryParse(value) == null) {
+                    return 'Enter a valid number';
+                  }
+                  return null;
+                },
               ),
               // Expiry Date Field
               TextFormField(
@@ -117,13 +149,43 @@ class _CouponAddEditDialogState extends State<CouponAddEditDialog> {
                 decoration: const InputDecoration(labelText: 'Expiry Date'),
                 readOnly: true,
                 onTap: () => _selectDate(context),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Expiry date is required';
-                  }
-                  return null;
+              ),
+              // Applies To Field
+              SwitchListTile(
+                title: const Text('Applies to All Courses'),
+                value: _appliesToAllCourses,
+                onChanged: (value) {
+                  setState(() {
+                    _appliesToAllCourses = value;
+                    if (value) {
+                      _selectedCourses.clear(); // Clear selected courses
+                    }
+                  });
                 },
               ),
+              if (!_appliesToAllCourses)
+                // Course Selection (if not applying to all courses)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Select Courses:'),
+                    ..._availableCourses.map((course) {
+                      return CheckboxListTile(
+                        title: Text(course.title),
+                        value: _selectedCourses.contains(course.id),
+                        onChanged: (selected) {
+                          setState(() {
+                            if (selected == true) {
+                              _selectedCourses.add(course.id);
+                            } else {
+                              _selectedCourses.remove(course.id);
+                            }
+                          });
+                        },
+                      );
+                    }),
+                  ],
+                ),
               const SizedBox(height: 20),
               // Create Button
               ElevatedButton(
@@ -145,7 +207,7 @@ class _CouponAddEditDialogState extends State<CouponAddEditDialog> {
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? newSelectedDate = await showDatePicker(
       context: context,
-      initialDate: _selectedDate,
+      initialDate: widget.coupon?.expiryDate ?? DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(2026),
     );
@@ -153,7 +215,7 @@ class _CouponAddEditDialogState extends State<CouponAddEditDialog> {
       setState(() {
         _selectedDate = newSelectedDate;
         _expiryDateController.text =
-            _selectedDate.toLocal().toString().split(' ')[0];
+            _selectedDate!.toLocal().toString().split(' ')[0];
       });
     }
   }
@@ -165,12 +227,14 @@ class _CouponAddEditDialogState extends State<CouponAddEditDialog> {
         code: _couponCodeController.text.trim().toUpperCase(),
         discount: double.parse(_discountController.text),
         maxUsage: 0,
-        appliesTo: [],
+        appliesTo: _appliesToAllCourses ? ['*'] : _selectedCourses,
         type: _couponType!,
-        expiryDate: _selectedDate,
+        expiryDate: _selectedDate!,
       );
 
-      final Result result = await widget.repository.createCoupon(coupon);
+      final Result result = widget.coupon == null
+          ? await widget.repository.createCoupon(coupon)
+          : await widget.repository.updateCoupon(coupon);
       if (result.isSuccess) {
         print(
             'Coupon ${widget.coupon == null ? 'created' : 'updated'} successfully');

@@ -219,4 +219,11 @@ class CourseRepository {
     }
     return course;
   }
+
+  Future<List<Course>> getCourses() {
+    return _firebaseService.getCollection(
+      collection: 'courses',
+      fromFirestore: Course.fromFirestore,
+    );
+  }
 }
