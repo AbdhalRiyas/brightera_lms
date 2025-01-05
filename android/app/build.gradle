@@ -28,7 +28,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "lk.brightera.app"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34 //flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
