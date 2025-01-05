@@ -1,3 +1,4 @@
+import 'package:app/src/admin/screens/coupons/coupon_course_selector.dart';
 import 'package:app/src/models/coupon.dart';
 import 'package:app/src/models/course.dart';
 import 'package:app/src/repositories/coupon_repository.dart';
@@ -187,28 +188,16 @@ class _CouponAddEditDialogState extends State<CouponAddEditDialog> {
                 },
               ),
               if (!_appliesToAllCourses)
-                // Course Selection (if not applying to all courses)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Select Courses:'),
-                    ..._availableCourses.map((course) {
-                      return CheckboxListTile(
-                        title: Text(course.title),
-                        value: _selectedCourses.contains(course.id),
-                        onChanged: (selected) {
-                          setState(() {
-                            if (selected == true) {
-                              _selectedCourses.add(course.id);
-                            } else {
-                              _selectedCourses.remove(course.id);
-                            }
-                          });
-                        },
-                      );
-                    }),
-                  ],
+                CouponCourseSelector(
+                  availableCourses: _availableCourses,
+                  selectedCourses: _selectedCourses,
+                  onSelectionChanged: (selectedCourses) {
+                    setState(() {
+                      _selectedCourses = selectedCourses;
+                    });
+                  },
                 ),
+
               const SizedBox(height: 20),
               // Create Button
               ElevatedButton(
