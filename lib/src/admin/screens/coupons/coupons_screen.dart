@@ -1,4 +1,5 @@
 import 'package:app/src/admin/screens/coupons/coupon_add_edit_dialog.dart';
+import 'package:app/src/models/coupon.dart';
 import 'package:app/src/repositories/coupon_repository.dart';
 import 'package:app/src/utils/result.dart';
 import 'package:flutter/material.dart';
@@ -79,7 +80,12 @@ class _CouponsScreenState extends State<CouponsScreen> {
                   ),
                   child: ListTile(
                     title: Text(coupon.code),
-                    subtitle: Text(coupon.discount.toString()),
+                    subtitle: coupon.type == CouponType.percentage
+                        ? Text('${coupon.discount}% off')
+                        : Text('LKR ${coupon.discount} off'),
+                    trailing: Text(
+                      'Expires on ${coupon.expiryDate!.toLocal().toString().split(' ')[0]}',
+                    ),
                     onTap: () {
                       showDialog(
                         context: context,

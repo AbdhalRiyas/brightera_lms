@@ -1,9 +1,11 @@
 import 'package:app/src/models/coupon.dart';
 import 'package:app/src/services/firebase_service.dart';
 import 'package:app/src/utils/result.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 
 class CouponRepository {
   final FirebaseService _firebaseService = FirebaseService();
+  final FirebaseFunctions _functions = FirebaseFunctions.instance;
   final String collection = 'coupons';
 
   Future<Result> createCoupon(Coupon coupon) async {
@@ -41,5 +43,15 @@ class CouponRepository {
       collection: collection,
       documentId: couponId,
     );
+  }
+
+  Future<Result> applyCoupon(String couponCode, String courseId) async {
+    final HttpsCallable callable = _functions.httpsCallable('applyCoupon');
+    final data = {
+      'couponCode': couponCode,
+      'courseId': courseId,
+    };
+    final result = await callable(data);
+    return result.data;
   }
 }

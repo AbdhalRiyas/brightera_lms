@@ -22,6 +22,7 @@ class _CouponCourseSelectorState extends State<CouponCourseSelector> {
   @override
   Widget build(BuildContext context) {
     return DropdownSearch<String>.multiSelection(
+      mode: Mode.form,
       items: (filter, loadProps) =>
           widget.availableCourses.map((course) => course.title).toList(),
       selectedItems: widget.selectedCourses.map((id) {
@@ -31,8 +32,13 @@ class _CouponCourseSelectorState extends State<CouponCourseSelector> {
         return course.title;
       }).toList(),
       popupProps: const PopupPropsMultiSelection.menu(
-        showSelectedItems: true,
         showSearchBox: true,
+        searchFieldProps: TextFieldProps(
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: "Search courses",
+          ),
+        ),
       ),
       decoratorProps: const DropDownDecoratorProps(
         decoration: InputDecoration(
@@ -48,7 +54,6 @@ class _CouponCourseSelectorState extends State<CouponCourseSelector> {
           );
           return course.id;
         }).toList();
-
         widget.onSelectionChanged(selectedIds);
       },
     );
