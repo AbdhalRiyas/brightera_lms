@@ -1,20 +1,29 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.1.1' // Use AGP 8.1.1 or later
+    }
+}
+
 allprojects {
     repositories {
         google()
         mavenCentral()
         mavenLocal()
         maven {
-            url  "https://repo.repsy.io/mvn/payhere/payhere-mobilesdk-android/"
+            url "https://repo.repsy.io/mvn/payhere/payhere-mobilesdk-android/"
         }
     }
 }
 
 rootProject.buildDir = "../build"
+
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-subprojects {
-    project.evaluationDependsOn(":app")
+    evaluationDependsOn(":app") // Combines the subprojects into a single block
 }
 
 tasks.register("clean", Delete) {
