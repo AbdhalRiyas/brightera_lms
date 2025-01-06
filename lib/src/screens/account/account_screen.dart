@@ -1,11 +1,11 @@
 import 'package:app/src/models/user.dart' show UserRole;
-import 'package:app/src/screens/profile_card.dart';
+import 'package:app/src/screens/account/profile_card.dart';
 import 'package:app/src/services/auth_manager.dart';
 import 'package:app/src/services/firebase_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'orders/orders_screen.dart';
+import '../orders/orders_screen.dart';
 import 'profile_menu_list_tile.dart';
 
 class AccountScreen extends StatefulWidget {

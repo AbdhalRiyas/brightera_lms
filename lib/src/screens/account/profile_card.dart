@@ -7,14 +7,12 @@ class ProfileCard extends StatelessWidget {
     required this.name,
     this.uId,
     required this.imageSrc,
-    this.proLableText = "Pro",
     this.press,
     this.isShowHi = true,
   });
 
   final String name, imageSrc;
   final String? uId;
-  final String proLableText;
   final bool isShowHi;
   final VoidCallback? press;
 

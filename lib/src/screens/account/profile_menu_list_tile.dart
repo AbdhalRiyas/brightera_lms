@@ -1,4 +1,4 @@
-import 'package:app/src/screens/divider_list_tile.dart';
+import 'package:app/src/screens/account/divider_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
