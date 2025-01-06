@@ -1,6 +1,8 @@
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/course.dart';
 import 'package:app/src/repositories/course_repository.dart';
+import 'package:app/src/route/screen_exports.dart';
+import 'package:app/src/widgets/course_card/course_card.dart';
 import 'package:flutter/material.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -40,16 +42,15 @@ class _SearchScreenState extends State<SearchScreen> {
         padding: const EdgeInsets.all(ThemeConstants.paddingMedium),
         child: SearchAnchor(
           viewBackgroundColor: Colors.white,
-          viewShape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(ThemeConstants.borderRadiusMedium),
-          ),
           builder: (BuildContext context, SearchController controller) {
             return Container(
               decoration: BoxDecoration(
                 color: Colors.grey[200],
                 borderRadius: BorderRadius.circular(
                   ThemeConstants.borderRadiusMedium,
+                ),
+                border: Border.all(
+                  color: Colors.grey[300]!,
                 ),
               ),
               child: SearchBar(
@@ -83,20 +84,17 @@ class _SearchScreenState extends State<SearchScreen> {
                     .toLowerCase()
                     .contains(controller.text.toLowerCase()))
                 .toList();
-            return List<ListTile>.generate(
+            return List<CourseCard>.generate(
               suggestions.length,
               (index) {
                 final course = suggestions[index];
-                return ListTile(
-                  title: Text(
-                    course.title,
-                  ),
-                  onTap: () {
-                    controller.text = course.title;
-                  },
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: ThemeConstants.paddingSmall,
-                    horizontal: ThemeConstants.paddingMedium,
+                return CourseCard(
+                  course: course,
+                  listMode: true,
+                  onTap: () => Navigator.pushNamed(
+                    context,
+                    '/course',
+                    arguments: CourseScreenArguments(course),
                   ),
                 );
               },
