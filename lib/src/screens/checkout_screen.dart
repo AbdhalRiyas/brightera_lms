@@ -1,7 +1,9 @@
 import 'package:app/src/config/theme_constants.dart';
+import 'package:app/src/models/coupon.dart';
 import 'package:app/src/models/course.dart';
 import 'package:app/src/models/order.dart';
 import 'package:app/src/models/payment_method.dart';
+import 'package:app/src/repositories/coupon_repository.dart';
 import 'package:app/src/repositories/course_repository.dart';
 import 'package:app/src/repositories/order_repository.dart';
 import 'package:app/src/repositories/payment_method_repository.dart';
@@ -29,6 +31,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final ValueNotifier<int> _selectedPg = ValueNotifier(-1);
   final ValueNotifier<bool> _paymentOverlayVisibility =
       ValueNotifier(false); // it's used to prevent touch outside of payhere
+  TextEditingController _couponCodeController = TextEditingController();
 
   @override
   void initState() {
@@ -135,11 +138,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Expanded(
+                        Expanded(
                           child: TextField(
+                            controller: _couponCodeController,
                             maxLength: 25,
-                            style: TextStyle(fontSize: 12),
-                            decoration: InputDecoration(
+                            style: const TextStyle(fontSize: 12),
+                            decoration: const InputDecoration(
                               counterText: '',
                               hintText: "Enter Coupon",
                               contentPadding: EdgeInsets.all(
@@ -172,7 +176,32 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 ),
                               ),
                             ),
-                            onPressed: () {},
+                            onPressed: () async {
+                              // Apply coupon
+                              Result result =
+                                  await CouponRepository().applyCoupon(
+                                _couponCodeController.text,
+                                widget.courses[0].id,
+                              );
+                              if (result.isSuccess) {
+                                Coupon coupon = result.data;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      "Coupon applied successfully. You saved ${formatPrice(coupon.discount)}",
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      result.error ?? "An error occurred",
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
                             child: const Text("Apply"),
                           ),
                         ),

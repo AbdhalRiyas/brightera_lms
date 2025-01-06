@@ -1,6 +1,6 @@
 export 'package:app/src/screens/login_screen/login_screen.dart';
 export 'package:app/src/admin/screens/dashboard_screen.dart';
-export 'package:app/src/screens/account_screen.dart';
+export 'package:app/src/screens/account/account_screen.dart';
 export 'package:app/src/screens/courses/course_screen.dart';
 export 'package:app/src/screens/lectures_screen/lectures_screen.dart';
 export 'package:app/src/screens/list_of_courses_screen.dart';
