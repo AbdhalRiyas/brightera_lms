@@ -46,12 +46,13 @@ class CouponRepository {
   }
 
   Future<Result> applyCoupon(String couponCode, String courseId) async {
-    final HttpsCallable callable = _functions.httpsCallable('applyCoupon');
-    final data = {
+    final HttpsCallable callable = _functions
+        .httpsCallable('applyCoupon'); // Replace with your Cloud Function name
+    final result = await callable.call(<String, dynamic>{
       'couponCode': couponCode,
       'courseId': courseId,
-    };
-    final result = await callable(data);
+    });
+
     return result.data;
   }
 }
