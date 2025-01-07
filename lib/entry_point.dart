@@ -70,24 +70,10 @@ class _EntryPointState extends State<EntryPoint> {
                     ),
                     label: 'Search',
                   ),
-                  // BottomNavigationBarItem(
-                  //   icon: BottomNavigationIcon(
-                  //     path: 'assets/icons/search.svg',
-                  //     isActive: selectedIndex == 2,
-                  //   ),
-                  //   label: 'My Learning',
-                  // ),
-                  // BottomNavigationBarItem(
-                  //   icon: BottomNavigationIcon(
-                  //     path: 'assets/icons/search.svg',
-                  //     isActive: selectedIndex == 3,
-                  //   ),
-                  //   label: 'Wishlist',
-                  // ),
                   BottomNavigationBarItem(
                       icon: BottomNavigationIcon(
                         path: 'assets/icons/user.svg',
-                        isActive: selectedIndex == 4,
+                        isActive: selectedIndex == 2,
                       ),
                       label: 'Account'),
                 ],
