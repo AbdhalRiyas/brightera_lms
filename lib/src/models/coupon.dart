@@ -1,52 +1,60 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-enum CouponType { percentage, fixedAmount }
+enum DiscountType { percentage, fixedAmount }
 
 class Coupon {
-  final String id;
   final String code;
-  final int maxUsage;
-  final List<String> appliesTo;
+  final DiscountType type;
   final double discount;
-  final CouponType type;
+  final bool isActive;
+  final int usageCount;
+  final DateTime? createdAt;
   final DateTime? expiryDate;
+  final int? maxUsage;
+  final List<String>? courseIds;
+  final List<String>? studentIds;
 
   Coupon({
-    required this.id,
     required this.code,
     required this.discount,
-    required this.maxUsage,
-    required this.appliesTo,
     required this.type,
+    required this.isActive,
+    this.usageCount = 0,
+    this.createdAt,
     this.expiryDate,
+    this.courseIds,
+    this.studentIds,
+    this.maxUsage,
   });
 
   //from firestore
   factory Coupon.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data();
     return Coupon(
-      id: doc.id,
-      code: doc.data()?['code'] ?? '',
-      discount: doc.data()?['discount'] ?? 0,
-      maxUsage: doc.data()?['maxUsage'] ?? 0,
-      appliesTo: List<String>.from(doc.data()?['appliesTo'] ?? []),
-      type: doc.data()?['type'] == 'percentage'
-          ? CouponType.percentage
-          : CouponType.fixedAmount,
-      expiryDate: doc.data()?['expiryDate'] != null
-          ? (doc.data()?['expiryDate']).toDate()
-          : null,
+      code: doc.id,
+      discount: data?['discount'],
+      type: DiscountType.values[data?['type']],
+      usageCount: data?['usageCount'] ?? 0,
+      createdAt: (data?['createdAt'] as Timestamp?)?.toDate(),
+      isActive: data?['isActive'],
+      expiryDate: (data?['expiryDate'] as Timestamp?)?.toDate(),
+      courseIds: List<String>.from(data?['courseIds'] ?? []),
+      studentIds: List<String>.from(data?['studentIds'] ?? []),
+      maxUsage: data?['maxUsage'] ?? 0,
     );
   }
 
-  //to firestore
-  Map<String, dynamic> toFireStore() {
+  Map<String, dynamic> toFirestore() {
     return {
-      'code': code,
       'discount': discount,
-      'expiryDate': expiryDate,
-      'maxUsage': maxUsage,
-      'appliesTo': appliesTo,
-      'type': type == CouponType.percentage ? 'percentage' : 'fixedAmount',
+      'type': type.index,
+      'usageCount': usageCount,
+      'isActive': isActive,
+      'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : null,
+      'expiryDate': expiryDate != null ? Timestamp.fromDate(expiryDate!) : null,
+      'courseIds': courseIds ?? [],
+      'studentIds': studentIds ?? [],
+      'maxUsage': maxUsage ?? 0,
     };
   }
 }

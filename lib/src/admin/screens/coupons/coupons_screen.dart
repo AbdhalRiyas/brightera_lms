@@ -1,4 +1,4 @@
-import 'package:app/src/admin/screens/coupons/coupon_add_edit_dialog.dart';
+import 'package:app/src/admin/screens/coupons/coupon_add_edit_screen.dart';
 import 'package:app/src/models/coupon.dart';
 import 'package:app/src/repositories/coupon_repository.dart';
 import 'package:app/src/utils/result.dart';
@@ -23,17 +23,11 @@ class _CouponsScreenState extends State<CouponsScreen> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) {
-              return GestureDetector(
-                onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-                child: CouponAddEditDialog(
-                  repository: _repository,
-                ),
-              );
-            },
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) =>
+                  CouponAddEditDialog(repository: _repository),
+            ),
           );
         },
       ),
@@ -58,11 +52,11 @@ class _CouponsScreenState extends State<CouponsScreen> {
               itemBuilder: (context, i) {
                 final coupon = coupons[i];
                 return Dismissible(
-                  key: Key(coupon.id),
+                  key: Key(coupon.code),
                   direction: DismissDirection.endToStart,
                   confirmDismiss: (direction) async {
                     final scaffoldMessenger = ScaffoldMessenger.of(context);
-                    Result result = await _repository.deleteCoupon(coupon.id);
+                    Result result = await _repository.deleteCoupon(coupon.code);
                     scaffoldMessenger.clearSnackBars();
                     scaffoldMessenger.showSnackBar(
                       SnackBar(
@@ -81,26 +75,20 @@ class _CouponsScreenState extends State<CouponsScreen> {
                   ),
                   child: ListTile(
                     title: Text(coupon.code),
-                    subtitle: coupon.type == CouponType.percentage
+                    subtitle: coupon.type == DiscountType.percentage
                         ? Text('${coupon.discount}% off')
                         : Text('LKR ${coupon.discount} off'),
                     trailing: Text(
-                      'Expires on ${coupon.expiryDate!.toLocal().toString().split(' ')[0]}',
+                      'No. of uses: ${coupon.usageCount}',
                     ),
                     onTap: () {
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (context) {
-                          return GestureDetector(
-                            onTap: () =>
-                                FocusManager.instance.primaryFocus?.unfocus(),
-                            child: CouponAddEditDialog(
-                              repository: _repository,
-                              coupon: coupon,
-                            ),
-                          );
-                        },
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => CouponAddEditDialog(
+                            coupon: coupon,
+                            repository: _repository,
+                          ),
+                        ),
                       );
                     },
                   ),

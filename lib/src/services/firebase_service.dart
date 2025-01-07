@@ -584,4 +584,19 @@ class FirebaseService {
       return Result(error: e.message);
     }
   }
+
+  // check document exists
+  Future<Result> isDocumentExists({
+    required String collection,
+    required String documentId,
+  }) async {
+    try {
+      final docRef = _firestore.collection(collection).doc(documentId);
+      final snapshot = await docRef.get();
+      return Result(data: snapshot.exists);
+    } on FirebaseException catch (e) {
+      debugPrint(e.message);
+      return Result(error: e.message);
+    }
+  }
 }

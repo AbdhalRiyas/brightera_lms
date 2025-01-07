@@ -11,7 +11,8 @@ class CouponRepository {
   Future<Result> createCoupon(Coupon coupon) async {
     return await _firebaseService.createDocument(
       collection: collection,
-      data: coupon.toFireStore(),
+      documentId: coupon.code,
+      data: coupon.toFirestore(),
     );
   }
 
@@ -33,8 +34,8 @@ class CouponRepository {
   Future<Result> updateCoupon(Coupon coupon) async {
     return await _firebaseService.updateDocument(
       collection: collection,
-      documentId: coupon.id,
-      data: coupon.toFireStore(),
+      documentId: coupon.code,
+      data: coupon.toFirestore(),
     );
   }
 
@@ -43,6 +44,14 @@ class CouponRepository {
       collection: collection,
       documentId: couponId,
     );
+  }
+
+  Future<bool> isCouponExists(String couponId) async {
+    Result result = await _firebaseService.isDocumentExists(
+      collection: collection,
+      documentId: couponId,
+    );
+    return result.isSuccess;
   }
 
   Future<Result> applyCoupon(String couponCode, String courseId) async {
