@@ -176,11 +176,13 @@ class _CouponAddEditDialogState extends State<CouponAddEditDialog> {
                       if (value) {
                         _selectedCourses.clear();
                       } else {
+                        widget.coupon?.courseIds?.clear();
                         _selectedCourses = widget.coupon?.courseIds ?? [];
                       }
                     });
                   },
                 ),
+
                 if (!_appliesToAllCourses)
                   CouponCourseSelector(
                     availableCourses: _availableCourses,
