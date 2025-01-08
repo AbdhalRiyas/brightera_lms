@@ -57,11 +57,22 @@ class CouponRepository {
   Future<Result> applyCoupon(String couponCode, String courseId) async {
     final HttpsCallable callable = _functions
         .httpsCallable('applyCoupon'); // Replace with your Cloud Function name
-    final result = await callable.call(<String, dynamic>{
+    print({
       'couponCode': couponCode,
       'courseId': courseId,
     });
-
-    return result.data;
+    try {
+      final result = await callable.call(<String, dynamic>{
+        'couponCode': couponCode,
+        'courseId': courseId,
+      });
+      return result.data;
+    } on FirebaseFunctionsException catch (e) {
+      print('Cloud Function Error: ${e.message}');
+      rethrow;
+    } catch (e) {
+      print('Unexpected Error: $e');
+      rethrow;
+    }
   }
 }

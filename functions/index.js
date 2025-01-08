@@ -524,41 +524,81 @@ exports.applyCoupon = functions.https.onCall(async (data, context) => {
     );
   }
 
-  // Retrieve the coupon document
-  const couponDoc = await db.collection("coupons").doc(couponCode).get();
-
-  if (!couponDoc.exists) {
+  // Get the authenticated user
+  const user = context.auth;
+  if (!user) {
     throw new functions.https.HttpsError(
-      "not-found",
-      "Coupon not found. Please enter a valid coupon code."
+      "unauthenticated",
+      "You must be logged in to apply a coupon."
     );
   }
 
-  const couponData = couponDoc.data();
+  try {
+    // Retrieve the coupon document by code
+    const couponDoc = await db.collection("coupons").doc(couponCode).get();
+    if (!couponDoc.exists) {
+      throw new functions.https.HttpsError(
+        "not-found",
+        "Coupon code not found."
+      );
+    }
 
-  // Check if the coupon is valid for the course
-  if (!couponData.courses.includes(courseId)) {
+    const coupon = couponDoc.data();
+
+    // Check if the coupon is active
+    if (!coupon.isActive) {
+      throw new functions.https.HttpsError(
+        "failed-precondition",
+        "This coupon is no longer active."
+      );
+    }
+
+    // Check if the coupon has expired
+    if (coupon.expiryDate && coupon.expiryDate.toDate() < new Date()) {
+      throw new functions.https.HttpsError(
+        "deadline-exceeded",
+        "This coupon has expired."
+      );
+    }
+
+    // Check usage limits (if maxUsage is defined)
+    if (coupon.maxUsage && coupon.usageCount >= coupon.maxUsage) {
+      throw new functions.https.HttpsError(
+        "resource-exhausted",
+        "This coupon has reached its maximum usage limit."
+      );
+    }
+
+    // Check if the coupon is applicable to the user
+    // if (coupon.studentIds && coupon.studentIds.length > 0) {
+    //   if (!coupon.studentIds.includes(user.uid)) {
+    //     throw new functions.https.HttpsError(
+    //       "permission-denied",
+    //       "You are not authorized to use this coupon."
+    //     );
+    //   }
+    // }
+
+    // Check if the coupon is applicable to the course
+    if (coupon.courseIds && !coupon.courseIds.includes("*")) {
+      if (!coupon.courseIds.includes(courseId)) {
+        throw new functions.https.HttpsError(
+          "permission-denied",
+          "This coupon is not valid for the selected course."
+        );
+      }
+    }
+
+    // All checks passed, return the discount
+    return {
+      discount: coupon.discount,
+      type: coupon.type, // Include discount type (e.g., percentage or fixed)
+    };
+  } catch (error) {
+    console.error("Error applying coupon:", error);
     throw new functions.https.HttpsError(
-      "failed-precondition",
-      "Coupon is not valid for this course."
+      "internal",
+      "An error occurred while applying the coupon."
     );
   }
-
-  // Check if the coupon is expired
-  if (couponData.expiryDate.toDate() < new Date()) {
-    throw new functions.https.HttpsError(
-      "deadline-exceeded",
-      "Coupon has expired."
-    );
-  }
-
-  // Check if the user is authorized to use the coupon
-  if (context.auth.uid !== couponData.authorizedUser) {
-    throw new functions.https.HttpsError(
-      "permission-denied",
-      "You are not authorized to use this coupon."
-    );
-  }
-
-  return { discount: couponData.discount };
 });
