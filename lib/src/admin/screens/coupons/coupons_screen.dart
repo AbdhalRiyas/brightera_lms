@@ -79,7 +79,10 @@ class _CouponsScreenState extends State<CouponsScreen> {
                         ? Text('${coupon.discount}% off')
                         : Text('LKR ${coupon.discount} off'),
                     trailing: Text(
-                      'No. of uses: ${coupon.usageCount}',
+                      'No. of uses: ${coupon.usageCount.toString()}/${coupon.maxUsage}',
+                      style: const TextStyle(
+                        fontSize: 14,
+                      ),
                     ),
                     onTap: () {
                       Navigator.of(context).push(
