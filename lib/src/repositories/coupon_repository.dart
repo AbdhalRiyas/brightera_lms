@@ -66,7 +66,8 @@ class CouponRepository {
         'couponCode': couponCode,
         'courseId': courseId,
       });
-      return result.data;
+      print(result.data);
+      return Result(data: result.data);
     } on FirebaseFunctionsException catch (e) {
       print('Cloud Function Error: ${e.message}');
       rethrow;
