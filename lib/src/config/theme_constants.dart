@@ -12,11 +12,12 @@ class ThemeConstants {
   static const double paddingLarge = 24.0;
 
   // Colors
-  static const Color primaryColor = Color(0xFF7E017E);
-  static const Color accentColor = Color(0xFFFE1BFE);
+  static const Color primaryColor = Color(0xFF42A5F5);
+  static const Color accentColor = Color(0x8042A5F5);
   static const Color borderColor = Color.fromARGB(255, 221, 220, 221);
-  static const Color backgroundColor = Color(0xFFF4F4F4);
+  static const Color backgroundColor = Color(0xFFFEF7FF);
   static const Color lavenderMist = Color(0xFFE6DFF1);
+  static const Color greyColor = Color(0xFFBDBDBD);
   static const Color inputFieldFill = Color(0xFFEBE0EB);
   static const Color primaryShadowColor = Color(0xFFD6C2D6);
 
@@ -85,16 +86,16 @@ class ThemeConstants {
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadiusMedium))),
     ),
-    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      elevation: 0,
-      backgroundColor: backgroundColor,
-      selectedIconTheme: IconThemeData(
-        color: accentColor,
-      ),
-      selectedLabelStyle: TextStyle(
-        color: accentColor,
-      ),
-    ),
+    // bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+    //   elevation: 0,
+    //   backgroundColor: backgroundColor,
+    //   selectedIconTheme: IconThemeData(
+    //     color: accentColor,
+    //   ),
+    //   selectedLabelStyle: TextStyle(
+    //     color: accentColor,
+    //   ),
+    // ),
     cardTheme: CardTheme(
       elevation: 5,
       shape: RoundedRectangleBorder(
