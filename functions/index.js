@@ -570,14 +570,14 @@ exports.applyCoupon = functions.https.onCall(async (data, context) => {
     }
 
     // Check if the coupon is applicable to the user
-    // if (coupon.studentIds && coupon.studentIds.length > 0) {
-    //   if (!coupon.studentIds.includes(user.uid)) {
-    //     throw new functions.https.HttpsError(
-    //       "permission-denied",
-    //       "You are not authorized to use this coupon."
-    //     );
-    //   }
-    // }
+    if (coupon.studentIds && coupon.studentIds.length > 0) {
+      if (!coupon.studentIds.includes(user.uid)) {
+        throw new functions.https.HttpsError(
+          "permission-denied",
+          "You are not authorized to use this coupon."
+        );
+      }
+    }
 
     // Check if the coupon is applicable to the course
     if (coupon.courseIds && !coupon.courseIds.includes("*")) {
@@ -589,10 +589,10 @@ exports.applyCoupon = functions.https.onCall(async (data, context) => {
       }
     }
 
-    // All checks passed, return the discount
+    // All checks passed, return the coupon details
     return {
       discount: coupon.discount,
-      type: coupon.type, // Include discount type (e.g., percentage or fixed)
+      type: coupon.type,
     };
   } catch (error) {
     console.error("Error applying coupon:", error);

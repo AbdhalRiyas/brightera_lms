@@ -94,16 +94,20 @@ class _CouponAddEditDialogState extends State<CouponAddEditDialog> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Coupon Code Field
-                  TextFormField(
-                    controller: _couponCodeController,
-                    decoration: const InputDecoration(labelText: 'Coupon Code'),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Coupon Code is required';
-                      }
-                      return null;
-                    },
-                  ),
+                  widget.coupon != null
+                      ? Text("Coupon Code: ${widget.coupon!.code}",
+                          style: const TextStyle(fontSize: 24))
+                      : TextFormField(
+                          controller: _couponCodeController,
+                          decoration:
+                              const InputDecoration(labelText: 'Coupon Code'),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Coupon Code is required';
+                            }
+                            return null;
+                          },
+                        ),
                   ValueListenableBuilder<DiscountType?>(
                     valueListenable: _couponType,
                     builder: (context, couponType, _) {
@@ -341,7 +345,9 @@ class _CouponAddEditDialogState extends State<CouponAddEditDialog> {
   Future<void> _onSubmit() async {
     if (_formKey.currentState!.validate()) {
       final coupon = Coupon(
-        code: _couponCodeController.text.trim(),
+        code: widget.coupon == null
+            ? _couponCodeController.text
+            : widget.coupon!.code,
         discount: double.parse(_discountController.text),
         isActive: _isActive.value,
         usageCount: 0,

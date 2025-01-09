@@ -46,34 +46,20 @@ class CouponRepository {
     );
   }
 
-  Future<bool> isCouponExists(String couponId) async {
-    Result result = await _firebaseService.isDocumentExists(
-      collection: collection,
-      documentId: couponId,
-    );
-    return result.isSuccess;
-  }
-
   Future<Result> applyCoupon(String couponCode, String courseId) async {
     final HttpsCallable callable = _functions
         .httpsCallable('applyCoupon'); // Replace with your Cloud Function name
-    print({
+
+    final Map<String, dynamic> data = {
       'couponCode': couponCode,
       'courseId': courseId,
-    });
+    };
+
     try {
-      final result = await callable.call(<String, dynamic>{
-        'couponCode': couponCode,
-        'courseId': courseId,
-      });
-      print(result.data);
-      return Result(data: result.data);
-    } on FirebaseFunctionsException catch (e) {
-      print('Cloud Function Error: ${e.message}');
-      rethrow;
+      final response = await callable(data);
+      return Result(data: response.data);
     } catch (e) {
-      print('Unexpected Error: $e');
-      rethrow;
+      return Result(error: e.toString());
     }
   }
 }

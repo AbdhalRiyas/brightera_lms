@@ -177,19 +177,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                               ),
                             ),
                             onPressed: () async {
-                              // Apply coupon
-                              Result result =
+                              final couponCode = _couponCodeController.text;
+                              final result =
                                   await CouponRepository().applyCoupon(
-                                _couponCodeController.text,
+                                couponCode,
                                 widget.courses[0].id,
                               );
                               if (result.isSuccess) {
-                                Coupon coupon = result.data;
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      "Coupon applied successfully. You saved ${formatPrice(coupon.discount)}",
-                                    ),
+                                  const SnackBar(
+                                    content:
+                                        Text("Coupon applied successfully"),
                                   ),
                                 );
                               } else {
