@@ -1,6 +1,6 @@
 import 'package:app/src/admin/screens/lms_screen.dart';
 import 'package:app/src/config/theme_constants.dart';
-import 'package:app/src/screens/account_screen.dart';
+import 'package:app/src/screens/account/account_screen.dart';
 import 'package:app/src/widgets/bottom_navigation_icon.dart';
 import 'package:flutter/material.dart';
 

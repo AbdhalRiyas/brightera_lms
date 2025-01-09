@@ -1,3 +1,15 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.1.1' // Updated to 7.3.1
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10" // Ensure Kotlin plugin is compatible
+    }
+}
+
+
 plugins {
     id "com.android.application"
     // START: FlutterFire Configuration
@@ -16,7 +28,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "lk.brightera.app"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34 //flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -54,6 +66,7 @@ android {
             signingConfig = signingConfigs.release
         }
     }
+    
 }
 
 flutter {

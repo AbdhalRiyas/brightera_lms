@@ -57,24 +57,26 @@ class _FeaturedCoursesState extends State<FeaturedCourses> {
         : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: 38,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  shrinkWrap: true,
-                  itemCount: _subjects.length,
-                  itemBuilder: (context, i) => SubjectButton(
-                    onTap: () => _switchSubject(_subjects[i]),
-                    selectedSubject: _selectedSubject?.id ?? '',
-                    subject: _subjects[i],
-                  ),
-                  separatorBuilder: (BuildContext context, int index) =>
-                      const SizedBox(
-                    width: 10,
+              if (_subjects.length > 1) ...[
+                SizedBox(
+                  height: 38,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
+                    itemCount: _subjects.length,
+                    itemBuilder: (context, i) => SubjectButton(
+                      onTap: () => _switchSubject(_subjects[i]),
+                      selectedSubject: _selectedSubject?.id ?? '',
+                      subject: _subjects[i],
+                    ),
+                    separatorBuilder: (BuildContext context, int index) =>
+                        const SizedBox(
+                      width: 10,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
+                const SizedBox(height: 20),
+              ],
               ListOfCoursesScreen(
                 key: _key,
                 subject: _selectedSubject,

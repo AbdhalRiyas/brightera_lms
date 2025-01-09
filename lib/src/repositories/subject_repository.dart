@@ -43,17 +43,10 @@ class SubjectRepository {
 
   Future<List<Subject>> getAllSubjects() async {
     // Fetch user data from Firebase
-    final data = await _firebaseService.getCollection('subjects');
-    final List<Subject> subjects = [];
+    final data = await _firebaseService.getCollection(
+        collection: 'subjects', fromFirestore: Subject.fromFirestore);
 
-    // Ensure data is not null and iterate through documents
-    if (data != null) {
-      for (var doc in data.docs) {
-        // Create a Subject object from each document
-        subjects.add(Subject.fromFirestore(doc));
-      }
-    }
-    return subjects;
+    return data;
   }
 
   Stream<List<Subject>> getSubjectsStream() {

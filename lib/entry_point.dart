@@ -1,6 +1,7 @@
 import 'package:app/src/config/theme_constants.dart';
-import 'package:app/src/screens/account_screen.dart';
+import 'package:app/src/screens/account/account_screen.dart';
 import 'package:app/src/screens/featured_screen/featured_screen.dart';
+import 'package:app/src/screens/search_screen.dart';
 import 'package:app/src/widgets/bottom_navigation_icon.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +37,7 @@ class _EntryPointState extends State<EntryPoint> {
   final PageController _pageController = PageController();
   final List<Widget> _tabs = const [
     FeaturedScreen(),
-    // Text('My Learning'),
+    SearchScreen(),
     AccountScreen(),
   ];
 
@@ -65,34 +66,14 @@ class _EntryPointState extends State<EntryPoint> {
                   BottomNavigationBarItem(
                     icon: BottomNavigationIcon(
                       path: 'assets/icons/search.svg',
-                      isActive: selectedIndex == 0,
+                      isActive: selectedIndex == 1,
                     ),
                     label: 'Search',
                   ),
                   BottomNavigationBarItem(
-                    icon: BottomNavigationIcon(
-                      path: 'assets/icons/search.svg',
-                      isActive: selectedIndex == 0,
-                    ),
-                    label: 'My Learning',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: BottomNavigationIcon(
-                      path: 'assets/icons/search.svg',
-                      isActive: selectedIndex == 0,
-                    ),
-                    label: 'Wishlist',
-                  ),
-                  // BottomNavigationBarItem(
-                  //     icon: BottomNavigationIcon(
-                  //       path: 'assets/icons/play.svg',
-                  //       isActive: selectedIndex == 1,
-                  //     ),
-                  //     label: 'My Learning'),
-                  BottomNavigationBarItem(
                       icon: BottomNavigationIcon(
                         path: 'assets/icons/user.svg',
-                        isActive: selectedIndex == 1,
+                        isActive: selectedIndex == 2,
                       ),
                       label: 'Account'),
                 ],

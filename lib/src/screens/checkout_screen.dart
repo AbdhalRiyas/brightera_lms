@@ -1,9 +1,17 @@
 import 'package:app/src/config/theme_constants.dart';
+import 'package:app/src/models/coupon.dart';
 import 'package:app/src/models/course.dart';
+import 'package:app/src/models/order.dart';
 import 'package:app/src/models/payment_method.dart';
+import 'package:app/src/repositories/coupon_repository.dart';
+import 'package:app/src/repositories/course_repository.dart';
+import 'package:app/src/repositories/order_repository.dart';
 import 'package:app/src/repositories/payment_method_repository.dart';
+import 'package:app/src/repositories/user_repository.dart';
+import 'package:app/src/screens/orders/orders_screen.dart';
 import 'package:app/src/services/pay_here_service.dart';
 import 'package:app/src/utils/format_price.dart';
+import 'package:app/src/utils/result.dart';
 import 'package:app/src/widgets/primary_button.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +31,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final ValueNotifier<int> _selectedPg = ValueNotifier(-1);
   final ValueNotifier<bool> _paymentOverlayVisibility =
       ValueNotifier(false); // it's used to prevent touch outside of payhere
+  TextEditingController _couponCodeController = TextEditingController();
 
   @override
   void initState() {
@@ -129,11 +138,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Expanded(
+                        Expanded(
                           child: TextField(
+                            controller: _couponCodeController,
                             maxLength: 25,
-                            style: TextStyle(fontSize: 12),
-                            decoration: InputDecoration(
+                            style: const TextStyle(fontSize: 12),
+                            decoration: const InputDecoration(
                               counterText: '',
                               hintText: "Enter Coupon",
                               contentPadding: EdgeInsets.all(
@@ -166,7 +176,30 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 ),
                               ),
                             ),
-                            onPressed: () {},
+                            onPressed: () async {
+                              final couponCode = _couponCodeController.text;
+                              final result =
+                                  await CouponRepository().applyCoupon(
+                                couponCode,
+                                widget.courses[0].id,
+                              );
+                              if (result.isSuccess) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content:
+                                        Text("Coupon applied successfully"),
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      result.error ?? "An error occurred",
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
                             child: const Text("Apply"),
                           ),
                         ),
@@ -299,6 +332,46 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         case 'payhere':
                           PayHereService()
                               .processPayment(_togglePaymentOverlay);
+                          break;
+                        case 'bank':
+                          Order order = Order(
+                            id: '123456',
+                            userId: UserRepository().getUserReference(
+                                UserRepository().currentUserUid),
+                            status: 'pending',
+                            courseId: CourseRepository()
+                                .getCourseReference(widget.courses[0].id),
+                            createdAt: DateTime.now(),
+                            paymentMethod:
+                                paymentMethods[_selectedPg.value].name,
+                            paymentStatus: 'pending',
+                            total: widget.courses[0].salePrice * 1,
+                            course: widget.courses[0].toFirestore(),
+                          );
+                          Result result =
+                              await OrderRepository().createOrder(order);
+                          if (result.isSuccess) {
+                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const OrdersScreen(),
+                              ),
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Order created successfully"),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  result.error ?? "An error occurred",
+                                ),
+                              ),
+                            );
+                          }
                           break;
                         default:
                           break;

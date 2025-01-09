@@ -5,16 +5,10 @@ class PaymentMethodRepository {
   final FirebaseService _firebaseService = FirebaseService();
 
   Future<List<PaymentMethod>> getActivePaymentMethods() async {
-    final collection = await _firebaseService.getCollection('paymentMethods');
+    final collection = await _firebaseService.getCollection(
+        collection: 'paymentMethods',
+        fromFirestore: PaymentMethod.fromFireStore);
 
-    List<PaymentMethod> paymentMethods = [];
-
-    if (collection != null) {
-      for (var doc in collection.docs) {
-        paymentMethods.add(PaymentMethod.fromFireStore(doc));
-      }
-    }
-
-    return paymentMethods;
+    return collection;
   }
 }

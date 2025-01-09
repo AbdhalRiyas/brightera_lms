@@ -18,6 +18,11 @@ class CourseRepository {
         'images/${generateUniqueFileName(filePath.split('.').last)}', filePath);
   }
 
+  DocumentReference<Map<String, dynamic>> getCourseReference(
+      String documentPath) {
+    return _firebaseService.getDocumentReference('courses', documentPath);
+  }
+
   Future<Result> createCourse(Course course) async {
     return await _firebaseService.createDocument(
       collection: 'courses',
@@ -202,5 +207,23 @@ class CourseRepository {
       debugPrint('Error fetching instructor data: $e');
       return null;
     }
+  }
+
+  Future<Course?> getCourseDetails(String courseId) async {
+    final courseData =
+        await _firebaseService.getDocumentById(courseId, 'courses');
+    final course = Course.fromFirestore(courseData);
+    if (course.instructor != null) {
+      final instructor = await _getInstructorInfo(course.instructor!);
+      return course.copyWith(instructorInfo: instructor);
+    }
+    return course;
+  }
+
+  Future<List<Course>> getCourses() {
+    return _firebaseService.getCollection(
+      collection: 'courses',
+      fromFirestore: Course.fromFirestore,
+    );
   }
 }

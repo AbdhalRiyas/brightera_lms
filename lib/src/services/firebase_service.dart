@@ -229,10 +229,42 @@ class FirebaseService {
         (snapshot) => snapshot.docs.map((doc) => fromFirestore(doc)).toList());
   }
 
-  Future<QuerySnapshot<Map<String, dynamic>>?> getCollection(
-      String collection) async {
-    final snapshot = await _firestore.collection(collection).get();
-    return snapshot;
+  Future<List<T>> getCollection<T>({
+    required String collection,
+    required T Function(DocumentSnapshot<Map<String, dynamic>>) fromFirestore,
+    String? comparisonField,
+    String? comparisonValue,
+    String? referenceCollection,
+    String? referenceId,
+  }) async {
+    Query<Map<String, dynamic>> query = _firestore.collection(collection);
+
+    if (comparisonField != null) {
+      if (referenceCollection != null && referenceId != null) {
+        DocumentReference? docRef =
+            _firestore.collection(referenceCollection).doc(referenceId);
+
+        query = query.where(comparisonField, isEqualTo: docRef);
+      } else {
+        query = query.where(comparisonField, isEqualTo: comparisonValue);
+      }
+    }
+
+    final snapshot = await query.get();
+    return snapshot.docs.map((doc) => fromFirestore(doc)).toList();
+  }
+
+  //get Document Stream
+  Stream<T> getDocumentStream<T>({
+    required String collection,
+    required String documentId,
+    required T Function(DocumentSnapshot<Map<String, dynamic>>) fromFirestore,
+  }) {
+    return _firestore
+        .collection(collection)
+        .doc(documentId)
+        .snapshots()
+        .map((snapshot) => fromFirestore(snapshot));
   }
 
   Future<QuerySnapshot<Map<String, dynamic>>?> getCoursesBySubject(
@@ -510,10 +542,11 @@ class FirebaseService {
     return snapshot.docs.map((doc) => doc.data()).toList();
   }
 
-  Future<Map<String, dynamic>?> getCourseById(String id) async {
+  Future<DocumentSnapshot<Map<String, dynamic>>> getDocumentById(
+      String id, String collection) async {
     // Fetch a specific course by ID from Firestore
-    final snapshot = await _firestore.collection('courses').doc(id).get();
-    return snapshot.data();
+    final snapshot = await _firestore.collection(collection).doc(id).get();
+    return snapshot;
   }
 
   Future<void> createCourse(Course course) async {
@@ -546,6 +579,21 @@ class FirebaseService {
     try {
       await fileRef.putFile(file);
       return Result(data: await fileRef.getDownloadURL());
+    } on FirebaseException catch (e) {
+      debugPrint(e.message);
+      return Result(error: e.message);
+    }
+  }
+
+  // check document exists
+  Future<Result> isDocumentExists({
+    required String collection,
+    required String documentId,
+  }) async {
+    try {
+      final docRef = _firestore.collection(collection).doc(documentId);
+      final snapshot = await docRef.get();
+      return Result(data: snapshot.exists);
     } on FirebaseException catch (e) {
       debugPrint(e.message);
       return Result(error: e.message);
