@@ -20,8 +20,10 @@ class BottomNavigationIcon extends StatelessWidget {
       children: [
         SvgPicture.asset(
           path,
-          colorFilter: ColorFilter.mode(
-              isActive ? Colors.black : Colors.black54, BlendMode.srcIn),
+          // colorFilter: ColorFilter.mode(
+          //   isActive ? ThemeConstants.primaryColor : ThemeConstants.greyColor,
+          //   BlendMode.srcIn,
+          // ),
         ),
         if (hasNotes)
           const Positioned(
