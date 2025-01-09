@@ -55,10 +55,16 @@ class _CarouselState extends State<Carousel> {
                   enlargeCenterPage: true,
                 ),
                 itemCount: _banners.length,
-                itemBuilder: (context, index, realIndex) => CachedNetworkImage(
+                itemBuilder: (context, index, realIndex) => ClipRRect(
+                  borderRadius: BorderRadius.circular(
+                    ThemeConstants.borderRadiusLarge,
+                  ),
+                  child: CachedNetworkImage(
                     width: double.maxFinite,
                     fit: BoxFit.fill,
-                    imageUrl: _banners[index].imagePath),
+                    imageUrl: _banners[index].imagePath,
+                  ),
+                ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -72,13 +78,14 @@ class _CarouselState extends State<Carousel> {
                       margin: const EdgeInsets.symmetric(
                           vertical: 8.0, horizontal: 4.0),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                              ThemeConstants.borderRadiusLarge),
-                          color: (Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.white
-                                  : ThemeConstants.primaryButtonColor)
-                              .withOpacity(_current == entry.key ? 0.9 : 0.6)),
+                        borderRadius: BorderRadius.circular(
+                          ThemeConstants.borderRadiusLarge,
+                        ),
+                        color: (Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white
+                                : ThemeConstants.primaryButtonColor)
+                            .withOpacity(_current == entry.key ? 0.9 : 0.6),
+                      ),
                     ),
                   );
                 }).toList(),
