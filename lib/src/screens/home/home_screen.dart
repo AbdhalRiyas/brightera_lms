@@ -1,6 +1,9 @@
 // home_screen.dart
 import 'package:app/src/config/theme_constants.dart';
+import 'package:app/src/repositories/user_repository.dart';
 import 'package:app/src/screens/featured_screen/widgets/carousel.dart';
+import 'package:app/src/screens/featured_screen/widgets/courses/courses.dart';
+import 'package:app/src/services/auth_manager.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -20,11 +23,23 @@ class HomeScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Carousel(),
-                SizedBox(height: 20),
+                SizedBox(height: ThemeConstants.paddingSmall),
                 LanguageFilter(),
-                SizedBox(height: 20),
-                FeaturedCourses(),
-                SizedBox(height: 30),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                      vertical: ThemeConstants.paddingSmall),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Featured Courses",
+                        style: ThemeConstants.headingStyle,
+                      ),
+                      SizedBox(height: 10),
+                      FeaturedCourses(),
+                    ],
+                  ),
+                ),
                 PopularCourses(),
               ],
             ),
@@ -45,10 +60,10 @@ class WelcomeHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Column(
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Welcome Back!',
               style: TextStyle(
                 color: Colors.grey,
@@ -56,8 +71,8 @@ class WelcomeHeader extends StatelessWidget {
               ),
             ),
             Text(
-              'Hey, Mohamed 👋',
-              style: TextStyle(
+              "Hey, ${AuthManager().userDetails!['name']} 👋 ",
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
@@ -117,148 +132,149 @@ class LanguageFilter extends StatelessWidget {
 }
 
 // featured_courses.dart
-class FeaturedCourses extends StatelessWidget {
-  const FeaturedCourses({super.key});
+// class FeaturedCourses extends StatelessWidget {
+//   const FeaturedCourses({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Featured Courses',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 10),
-        SizedBox(
-          height: 200,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: const [
-              CourseCard(
-                title: 'Introduction to Artificial Intelligence (AI)',
-                duration: '1h 30m',
-                price: 'LKR 1000.00',
-                originalPrice: 'LKR 50.00',
-                image: 'assets/ai_course.png',
-              ),
-              CourseCard(
-                title: 'Science - Beginning with Physics!',
-                duration: '45m',
-                price: 'LKR 1899.00',
-                originalPrice: 'LKR 3500.00',
-                image: 'assets/physics_course.png',
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return const Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Text(
+//           'Featured Courses',
+//           style: TextStyle(
+//             fontSize: 20,
+//             fontWeight: FontWeight.bold,
+//           ),
+//         ),
+//         SizedBox(height: 10),
+//         CourseCard(
+//           title: 'Introduction to Artificial Intelligence (AI)',
+//           duration: '1h 50m',
+//           currentPrice: 2000.00,
+//           originalPrice: 5000.00,
+//           category: 'Artificial Intelligence',
+//         ),
+//       ],
+//     );
+//   }
+// }
 
-// course_card.dart
 class CourseCard extends StatelessWidget {
   final String title;
   final String duration;
-  final String price;
-  final String originalPrice;
-  final String image;
+  final double currentPrice;
+  final double originalPrice;
+  final String category;
 
   const CourseCard({
     super.key,
     required this.title,
     required this.duration,
-    required this.price,
+    required this.currentPrice,
     required this.originalPrice,
-    required this.image,
+    required this.category,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 200,
-      margin: const EdgeInsets.only(right: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-            // child: Image.asset(
-            //   image,
-            //   height: 100,
-            //   width: double.infinity,
-            //   fit: BoxFit.cover,
-            // ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
+      child: Container(
+        width: 170,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Course Image
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(8),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.all(Radius.circular(12)),
+                child: Container(
+                  height: 120,
+                  width: double.infinity,
+                  color: const Color(0xFF87CEEB), // Light blue background
+                  child: Image.asset(
+                    'assets/images/books.png', // Add your stacked books image
+                    fit: BoxFit.cover,
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Icon(Icons.access_time, size: 16),
-                    const SizedBox(width: 4),
-                    Text(
-                      duration,
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Text(
-                      price,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      originalPrice,
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 12,
-                        decoration: TextDecoration.lineThrough,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+            // Course Details
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Category and Duration
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        category,
+                        style: const TextStyle(
+                          color: Colors.blue,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        duration,
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  // Course Title
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  // Price Information
+                  Row(
+                    children: [
+                      Text(
+                        'LKR ${currentPrice.toStringAsFixed(2)}',
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      if (originalPrice > currentPrice)
+                        Text(
+                          'LKR ${originalPrice.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey,
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -286,7 +302,7 @@ class PopularCourses extends StatelessWidget {
           duration: '2h 18m',
           price: 'LKR 2499.00',
           originalPrice: 'LKR 5499.00',
-          image: 'assets/figma_course.png',
+          image: 'assets/images/hero.webp',
         ),
         SizedBox(height: 16),
         PopularCourseCard(
@@ -294,7 +310,7 @@ class PopularCourses extends StatelessWidget {
           duration: '1h 30m',
           price: 'LKR 1999.00',
           originalPrice: 'LKR 3999.00',
-          image: 'assets/science_course.png',
+          image: 'assets/images/hero.webp',
         ),
       ],
     );
@@ -335,9 +351,8 @@ class PopularCourseCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          ClipRRect(
-            borderRadius:
-                const BorderRadius.horizontal(left: Radius.circular(12)),
+          const ClipRRect(
+            borderRadius: BorderRadius.horizontal(left: Radius.circular(12)),
             // child: Image.asset(
             //   image,
             //   width: 100,

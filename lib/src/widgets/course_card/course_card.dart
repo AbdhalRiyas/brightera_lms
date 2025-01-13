@@ -54,27 +54,34 @@ class CourseCard extends StatelessWidget {
               onTap: onTap,
               borderRadius:
                   BorderRadius.circular(ThemeConstants.borderRadiusLarge),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  CourseCardImage(
-                    imageUrl: _course.image,
-                    maxHeight: maxHeight,
-                    maxWidth: maxWidth,
+              child: Card(
+                elevation: ThemeConstants.cardElevation,
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(ThemeConstants.paddingSmall),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      CourseCardImage(
+                        imageUrl: _course.image,
+                        maxHeight: maxHeight,
+                        maxWidth: maxWidth,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: ThemeConstants.paddingSmall,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            CourseCardTitle(title: _course.title),
+                            CourseCardSubtitle(course: _course),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: ThemeConstants.paddingSmall,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        CourseCardTitle(title: _course.title),
-                        CourseCardSubtitle(course: _course),
-                      ],
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
     );

@@ -21,13 +21,8 @@ class CourseCardImage extends StatelessWidget {
           ? BorderRadius.circular(
               ThemeConstants.borderRadiusSmall,
             )
-          : const BorderRadius.only(
-              topLeft: Radius.circular(
-                ThemeConstants.borderRadiusLarge,
-              ),
-              topRight: Radius.circular(
-                ThemeConstants.borderRadiusLarge,
-              ),
+          : BorderRadius.circular(
+              ThemeConstants.borderRadiusLarge,
             ),
       child: CachedNetworkImage(
         imageUrl: imageUrl,
