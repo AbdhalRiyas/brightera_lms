@@ -5,6 +5,7 @@ import 'package:app/src/screens/featured_screen/widgets/courses/courses.dart';
 import 'package:app/src/screens/home/popular_course_card.dart';
 import 'package:app/src/services/auth_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -82,17 +83,37 @@ class WelcomeHeader extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Container(
-                      width: 36,
-                      height: 36,
-                      decoration: const ShapeDecoration(
-                        color: Colors.white,
-                        shape: OvalBorder(),
-                      ),
-                      child: const Icon(
-                        Icons.notifications_none,
-                      ),
-                    )
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          width: 36,
+                          height: 36,
+                          decoration: const ShapeDecoration(
+                            color: Colors.white,
+                            shape: OvalBorder(),
+                            shadows: [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 10,
+                              ),
+                            ],
+                          ),
+                          child: SvgPicture.asset(
+                            'assets/icons/bell.svg',
+                            // color: ThemeConstants.primaryColor,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        const CircleAvatar(
+                          radius: 25,
+
+                          // backgroundImage: NetworkImage(
+                          //   AuthManager().userDetails!['profilePic'],
+                          // ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
     );
