@@ -54,34 +54,90 @@ class CourseCard extends StatelessWidget {
               onTap: onTap,
               borderRadius:
                   BorderRadius.circular(ThemeConstants.borderRadiusLarge),
-              child: Card(
-                elevation: ThemeConstants.cardElevation,
-                color: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.all(ThemeConstants.paddingSmall),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      CourseCardImage(
-                        imageUrl: _course.image,
-                        maxHeight: maxHeight,
-                        maxWidth: maxWidth,
+              child: Stack(
+                children: [
+                  Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        ThemeConstants.borderRadiusLarge,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: ThemeConstants.paddingSmall,
+                    ),
+                    elevation: 10,
+                    shadowColor: Colors.black.withAlpha(70),
+                    semanticContainer: true,
+                    color: Colors.white,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
+                          child: CourseCardImage(
+                            imageUrl: _course.image,
+                            maxHeight: maxHeight,
+                            maxWidth: maxWidth,
+                          ),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            CourseCardTitle(title: _course.title),
-                            CourseCardSubtitle(course: _course),
-                          ],
+                        const SizedBox(height: ThemeConstants.paddingSmall),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    "Subject",
+                                    style: TextStyle(
+                                      fontSize: ThemeConstants.fontSizeSmall,
+                                      color: ThemeConstants.primaryColor,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Text(
+                                    _course.durationInHours != null
+                                        ? '${_course.durationInHours} hours'
+                                        : '',
+                                    style: TextStyle(
+                                      fontSize: ThemeConstants.fontSizeSmall,
+                                      color: Colors.black.withAlpha(150),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: ThemeConstants.paddingSmall / 2,
+                              ),
+                              CourseCardTitle(title: _course.title),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+
+                        // Padding(
+                        //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        //   child: CourseCardSubtitle(course: _course),
+                        // ),
+                      ],
+                    ),
                   ),
-                ),
+                  Positioned(
+                    bottom: 8,
+                    left: 0,
+                    right: 0,
+                    child: Column(
+                      children: [
+                        const Divider(
+                          height: 0,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12.0, vertical: 4),
+                          child: CourseCardSubtitle(course: _course),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
     );

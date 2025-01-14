@@ -1,4 +1,3 @@
-import 'package:app/src/config/theme_constants.dart';
 import 'package:flutter/material.dart';
 
 class CourseCardTitle extends StatelessWidget {
@@ -14,8 +13,8 @@ class CourseCardTitle extends StatelessWidget {
       maxLines: 2,
       textAlign: TextAlign.start,
       style: const TextStyle(
-        fontSize: ThemeConstants.fontSizeSmall,
-        fontWeight: FontWeight.w600,
+        fontSize: 14,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }

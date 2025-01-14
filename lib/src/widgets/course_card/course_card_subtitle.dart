@@ -10,48 +10,26 @@ class CourseCardSubtitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        if (course.durationInHours != null)
+        Text(
+          formatPrice(course.salePrice),
+          style: const TextStyle(
+            fontSize: ThemeConstants.fontSizeSmall,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        if (course.regularPrice > 0)
           Text(
-            "${course.durationInHours} Hours",
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-            textAlign: TextAlign.start,
+            formatPrice(course.regularPrice),
             style: const TextStyle(
-              fontSize: ThemeConstants.fontSizeSmall * 0.80,
+              decoration: TextDecoration.lineThrough,
+              fontSize: ThemeConstants.fontSizeSmall,
               fontWeight: FontWeight.w500,
               color: Colors.grey,
             ),
           ),
-        Text.rich(
-          TextSpan(
-            text: formatPrice(course.salePrice),
-            style: const TextStyle(
-              fontSize: ThemeConstants.fontSizeSmall,
-              fontWeight: FontWeight.w600,
-            ),
-            children: course.regularPrice > 0
-                ? [
-                    const TextSpan(
-                      text: "  ", // Add space
-                      style: TextStyle(
-                        fontSize: ThemeConstants.fontSizeSmall,
-                      ),
-                    ),
-                    TextSpan(
-                      text: formatPrice(course.regularPrice),
-                      style: const TextStyle(
-                          decoration: TextDecoration.lineThrough,
-                          fontSize: ThemeConstants.fontSizeSmall,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey),
-                    )
-                  ]
-                : null,
-          ),
-        ),
       ],
     );
   }
