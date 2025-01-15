@@ -1,3 +1,4 @@
+import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/subject.dart';
 import 'package:app/src/repositories/subject_repository.dart';
 import 'package:app/src/screens/list_of_courses_screen.dart';
@@ -13,10 +14,13 @@ class FeaturedCourses extends StatefulWidget {
 
 class _FeaturedCoursesState extends State<FeaturedCourses> {
   final SubjectRepository _repository = SubjectRepository();
+  final List<String> languages = ['All', 'English', 'தமிழ்', 'සිංහල'];
+
   final GlobalKey<ListOfCoursesScreenState> _key =
       GlobalKey<ListOfCoursesScreenState>();
 
   List<Subject> _subjects = [];
+  String _selectedLanguage = 'All';
   bool _isLoading = true;
   Subject? _selectedSubject;
 
@@ -50,6 +54,16 @@ class _FeaturedCoursesState extends State<FeaturedCourses> {
     }
   }
 
+  void _switchLanguage(String language) {
+    if (_selectedLanguage != language) {
+      if (mounted) {
+        setState(() {
+          _selectedLanguage = language;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return _isLoading
@@ -57,6 +71,35 @@ class _FeaturedCoursesState extends State<FeaturedCourses> {
         : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(
+                height: 40,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: languages.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      margin: const EdgeInsets.only(right: 10),
+                      child: FilterChip(
+                        showCheckmark: false,
+                        label: Text(
+                          languages[index],
+                          style: TextStyle(
+                            color: _selectedLanguage == languages[index]
+                                ? Colors.white
+                                : Colors.black,
+                          ),
+                        ),
+                        selected: _selectedLanguage == languages[index],
+                        onSelected: (bool selected) {
+                          _switchLanguage(languages[index]);
+                        },
+                        selectedColor: ThemeConstants.primaryColor,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 10),
               if (_subjects.length > 1) ...[
                 SizedBox(
                   height: 38,
