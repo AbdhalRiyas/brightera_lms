@@ -30,13 +30,10 @@ class CourseCover extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: CachedNetworkImage(
-                imageUrl: course.image,
-                width: double.maxFinite,
-                fit: BoxFit.cover,
-              ),
+            CachedNetworkImage(
+              imageUrl: course.image,
+              width: double.maxFinite,
+              fit: BoxFit.cover,
             ),
             if (course.previewVideo.isNotEmpty)
               Positioned.fill(
@@ -59,16 +56,18 @@ class CourseCover extends StatelessWidget {
                       Text(
                         "Preview this course",
                         style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            shadows: [
-                              BoxShadow(
-                                  offset: const Offset(1, 1),
-                                  blurRadius: 10,
-                                  spreadRadius: 10,
-                                  color: Colors.grey.shade500),
-                            ]),
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          shadows: [
+                            BoxShadow(
+                              offset: const Offset(1, 1),
+                              blurRadius: 10,
+                              spreadRadius: 10,
+                              color: Colors.grey.shade500,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
