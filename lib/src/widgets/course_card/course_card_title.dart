@@ -9,12 +9,12 @@ class CourseCardTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      overflow: TextOverflow.ellipsis,
       maxLines: 2,
       textAlign: TextAlign.start,
       style: const TextStyle(
         fontSize: 14,
         overflow: TextOverflow.ellipsis,
+        fontWeight: FontWeight.w600,
       ),
     );
   }

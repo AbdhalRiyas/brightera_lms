@@ -3,8 +3,10 @@ import 'package:app/src/models/course.dart';
 import 'package:app/src/models/subject.dart';
 import 'package:app/src/repositories/course_repository.dart';
 import 'package:app/src/screens/courses/course_screen.dart';
+import 'package:app/src/widgets/app_bar_icon.dart';
 import 'package:app/src/widgets/course_card/course_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ListOfCoursesScreen extends StatefulWidget {
   const ListOfCoursesScreen(
@@ -94,18 +96,22 @@ class ListOfCoursesScreenState extends State<ListOfCoursesScreen> {
             appBar: AppBar(
               title: Text("Top Courses in ${widget.subject?.name}"),
               centerTitle: false,
+              leading: const AppBarIcon(),
             ),
             body: _courses.isNotEmpty
-                ? ListView.builder(
-                    itemCount: _courses.length,
-                    itemBuilder: (_, i) => CourseCard(
-                      key: Key(_courses[i].id),
-                      course: _courses[i],
-                      listMode: true,
-                      onTap: () => Navigator.pushNamed(
-                        context,
-                        '/course',
-                        arguments: CourseScreenArguments(_courses[i]),
+                ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListView.builder(
+                      itemCount: _courses.length,
+                      itemBuilder: (_, i) => CourseCard(
+                        key: Key(_courses[i].id),
+                        course: _courses[i],
+                        listMode: true,
+                        onTap: () => Navigator.pushNamed(
+                          context,
+                          '/course',
+                          arguments: CourseScreenArguments(_courses[i]),
+                        ),
                       ),
                     ),
                   )

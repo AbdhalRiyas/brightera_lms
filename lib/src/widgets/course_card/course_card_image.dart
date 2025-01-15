@@ -19,7 +19,7 @@ class CourseCardImage extends StatelessWidget {
     return ClipRRect(
       borderRadius: listMode
           ? BorderRadius.circular(
-              ThemeConstants.borderRadiusSmall,
+              ThemeConstants.borderRadiusMedium,
             )
           : BorderRadius.circular(
               ThemeConstants.borderRadiusLarge,
