@@ -16,12 +16,18 @@ class CourseCover extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      borderRadius: BorderRadius.circular(ThemeConstants.borderRadiusMedium),
+      borderRadius: const BorderRadius.only(
+        bottomLeft: Radius.circular(50),
+        bottomRight: Radius.circular(50),
+      ),
       onTap: course.previewVideo.isEmpty
           ? null
           : () => showFreePreview(context, course.previewVideo),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(ThemeConstants.borderRadiusMedium),
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(50),
+          bottomRight: Radius.circular(50),
+        ),
         child: Stack(
           children: [
             AspectRatio(
@@ -43,13 +49,13 @@ class CourseCover extends StatelessWidget {
                     children: [
                       SvgPicture.asset(
                         'assets/icons/play-filled.svg',
-                        height: 50,
+                        height: 40,
                         colorFilter: const ColorFilter.mode(
                           Colors.white,
                           BlendMode.srcIn,
                         ),
                       ),
-                      const SizedBox(height: ThemeConstants.paddingMedium),
+                      const SizedBox(height: ThemeConstants.paddingSmall),
                       Text(
                         "Preview this course",
                         style: TextStyle(

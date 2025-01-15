@@ -8,10 +8,19 @@ class AppBarIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      color: Colors.white,
-      icon: SvgPicture.asset('assets/icons/arrow-back.svg'),
-      onPressed: () => Navigator.pop(context),
+    return Padding(
+      padding: const EdgeInsets.all(2.0),
+      child: IconButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        icon: CircleAvatar(
+          backgroundColor: Colors.white,
+          child: SvgPicture.asset(
+            'assets/icons/arrow-back.svg',
+          ),
+        ),
+      ),
     );
   }
 }
