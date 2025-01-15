@@ -27,28 +27,97 @@ class CourseCard extends StatelessWidget {
     return AnimatedContainer(
       width: maxWidth != null ? maxWidth! / 2 : double.maxFinite,
       duration: const Duration(milliseconds: 300),
-      decoration: listMode
-          ? const BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  width: ThemeConstants.borderSizeSmall,
-                  color: ThemeConstants.borderColor,
+      // decoration: listMode
+      //     ? const BoxDecoration(
+      //         border: Border(
+      //           bottom: BorderSide(
+      //             width: ThemeConstants.borderSizeSmall,
+      //             color: ThemeConstants.borderColor,
+      //           ),
+      //         ),
+      //       )
+      //     : null,
+      child: listMode
+          ?
+          //  ListTile(
+          //     onTap: onTap,
+          //     leading: CourseCardImage(
+          //       imageUrl: _course.image,
+          //       maxHeight: listMode ? 100 : maxHeight,
+          //       maxWidth: listMode ? 50 : maxWidth,
+          //       listMode: true,
+          //     ),
+          //     title: CourseCardTitle(title: _course.title),
+          //     subtitle: CourseCardSubtitle(course: _course),
+          //     trailing: trailing,
+          //   )
+          Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 4,
+              shadowColor: Colors.grey.withAlpha(75),
+              color: Colors.white,
+              child: InkWell(
+                onTap: onTap,
+                borderRadius: BorderRadius.circular(12),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      CourseCardImage(
+                        imageUrl: _course.image,
+                        maxHeight: listMode ? 180 : maxHeight,
+                        maxWidth: listMode ? 110 : maxWidth,
+                        listMode: true,
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CourseCardTitle(title: _course.title),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.person,
+                                    color: Colors.grey,
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    "by Mohamed",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.black.withAlpha(150),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    _course.durationInHours != null
+                                        ? '${_course.durationInHours} hours'
+                                        : '',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.black.withAlpha(150),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              CourseCardSubtitle(course: _course),
+                              trailing ?? Container(),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            )
-          : null,
-      child: listMode
-          ? ListTile(
-              onTap: onTap,
-              leading: CourseCardImage(
-                imageUrl: _course.image,
-                maxHeight: listMode ? 100 : maxHeight,
-                maxWidth: listMode ? 50 : maxWidth,
-                listMode: true,
-              ),
-              title: CourseCardTitle(title: _course.title),
-              subtitle: CourseCardSubtitle(course: _course),
-              trailing: trailing,
             )
           : InkWell(
               onTap: onTap,
@@ -112,11 +181,6 @@ class CourseCard extends StatelessWidget {
                             ],
                           ),
                         ),
-
-                        // Padding(
-                        //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        //   child: CourseCardSubtitle(course: _course),
-                        // ),
                       ],
                     ),
                   ),
