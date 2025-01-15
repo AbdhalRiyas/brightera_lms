@@ -30,10 +30,13 @@ class CourseCover extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            CachedNetworkImage(
-              imageUrl: course.image,
-              width: double.maxFinite,
-              fit: BoxFit.cover,
+            AspectRatio(
+              aspectRatio: 4 / 3,
+              child: CachedNetworkImage(
+                imageUrl: course.image,
+                width: double.maxFinite,
+                fit: BoxFit.cover,
+              ),
             ),
             if (course.previewVideo.isNotEmpty)
               Positioned.fill(

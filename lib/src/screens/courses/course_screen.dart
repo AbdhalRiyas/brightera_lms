@@ -58,6 +58,7 @@ class _CourseScreenState extends State<CourseScreen>
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           widget.course.title,
@@ -68,23 +69,30 @@ class _CourseScreenState extends State<CourseScreen>
                         ),
                         const SizedBox(height: ThemeConstants.paddingSmall),
                         if (widget.course.instructorInfo != null)
-                          Text.rich(
-                            TextSpan(
-                              text: "Taught by ",
-                              children: [
-                                TextSpan(
-                                  text: widget.course.instructorInfo?.name,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w600),
-                                ),
-                                const TextSpan(text: " in "),
-                                TextSpan(text: widget.course.language),
-                              ],
-                            ),
-                            style: const TextStyle(
+                          Text(
+                            "Taught by ${widget.course.instructorInfo?.name}",
+                            style: TextStyle(
                               fontSize: ThemeConstants.fontSizeSmall,
+                              color: Colors.grey[600],
                             ),
                           ),
+                        // Text.rich(
+                        //   TextSpan(
+                        //     text: "Taught by ",
+                        //     children: [
+                        //       TextSpan(
+                        //         text: widget.course.instructorInfo?.name,
+                        //         style: const TextStyle(
+                        //             fontWeight: FontWeight.w600),
+                        //       ),
+                        //       const TextSpan(text: " in "),
+                        //       TextSpan(text: widget.course.language),
+                        //     ],
+                        //   ),
+                        //   style: const TextStyle(
+                        //     fontSize: ThemeConstants.fontSizeSmall,
+                        //   ),
+                        // ),
                         const SizedBox(height: ThemeConstants.paddingLarge),
                         SizedBox(
                           height: 40,
@@ -123,6 +131,7 @@ class _CourseScreenState extends State<CourseScreen>
                             // Ingredients
                             // if (widget.recipe.ingredientsWithQuantites != null)
                             Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const SizedBox(
                                   height: ThemeConstants.paddingLarge,
@@ -135,8 +144,9 @@ class _CourseScreenState extends State<CourseScreen>
                                       color: const Color(0x7FA0D1F9),
                                       title: "Total Duration",
                                       icon: "assets/icons/clock.svg",
-                                      value: widget.course.durationInHours
-                                          .toString(),
+                                      value:
+                                          "${widget.course.durationInHours} hours"
+                                              .toString(),
                                     ),
                                     CourseSpecContainer(
                                       color: const Color(0x7FF0C7C3),
@@ -148,7 +158,7 @@ class _CourseScreenState extends State<CourseScreen>
                                       color: Color(0x3FFFDD67),
                                       title: "Total Students",
                                       icon: "assets/icons/students.svg",
-                                      value: "10",
+                                      value: "100",
                                     ),
                                   ],
                                 ),
@@ -157,7 +167,13 @@ class _CourseScreenState extends State<CourseScreen>
                                 ),
                                 const Text(
                                   "About course",
-                                  style: ThemeConstants.headingStyle,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: ThemeConstants.paddingSmall,
                                 ),
                                 Text(
                                   widget.course.description,
