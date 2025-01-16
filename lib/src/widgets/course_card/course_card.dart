@@ -123,19 +123,20 @@ class CourseCard extends StatelessWidget {
               onTap: onTap,
               borderRadius:
                   BorderRadius.circular(ThemeConstants.borderRadiusLarge),
-              child: Stack(
-                children: [
-                  Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        ThemeConstants.borderRadiusLarge,
-                      ),
-                    ),
-                    elevation: 10,
-                    shadowColor: Colors.black.withAlpha(70),
-                    semanticContainer: true,
-                    color: Colors.white,
-                    child: Column(
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                    ThemeConstants.borderRadiusLarge,
+                  ),
+                ),
+                elevation: 2,
+                shadowColor: const Color.fromARGB(70, 0, 0, 0),
+                semanticContainer: true,
+                color: Colors.white,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
                       children: [
                         Padding(
                           padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
@@ -183,12 +184,7 @@ class CourseCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                  ),
-                  Positioned(
-                    bottom: 8,
-                    left: 0,
-                    right: 0,
-                    child: Column(
+                    Column(
                       children: [
                         const Divider(
                           height: 0,
@@ -199,9 +195,9 @@ class CourseCard extends StatelessWidget {
                           child: CourseCardSubtitle(course: _course),
                         ),
                       ],
-                    ),
-                  ),
-                ],
+                    )
+                  ],
+                ),
               ),
             ),
     );

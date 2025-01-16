@@ -93,17 +93,19 @@ class WelcomeHeader extends StatelessWidget {
                         const Text(
                           'Welcome Back!',
                           style: TextStyle(
-                            color: Colors.grey,
+                            color: Color.fromRGBO(0, 0, 0, 0.5),
                             fontSize: 14,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
-                        Text(
-                          "Hey, ${AuthManager().userDetails!['name']} 👋 ",
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
+                        if (AuthManager().userDetails != null)
+                          Text(
+                            "Hey, ${AuthManager().userDetails!['name']} 👋 ",
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
                       ],
                     ),
                     Row(
@@ -191,20 +193,16 @@ class Categories extends StatelessWidget {
       "History",
     ];
 
-    return SizedBox(
-      height: 40,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: _categories.length,
-        itemBuilder: (context, index) {
-          return Container(
-            margin: const EdgeInsets.only(right: 10),
-            child: Chip(
-              label: Text(_categories[index]),
-            ),
-          );
-        },
-      ),
+    return Wrap(
+      children: List.generate(
+          _categories.length,
+          (index) => Container(
+                margin: const EdgeInsets.only(right: 10),
+                child: OutlinedButton(
+                  child: Text(_categories[index]),
+                  onPressed: () {},
+                ),
+              )),
     );
   }
 }

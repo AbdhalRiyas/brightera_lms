@@ -48,66 +48,57 @@ class _EntryPointState extends State<EntryPoint> {
     return ValueListenableBuilder(
         valueListenable: _selectedIndex,
         builder: (context, selectedIndex, child) => Scaffold(
-              bottomNavigationBar: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
+              bottomNavigationBar: BottomNavigationBar(
+                useLegacyColorScheme: false,
+                selectedLabelStyle: const TextStyle(
+                  color: ThemeConstants.primaryColor,
+                  fontSize: 12,
                 ),
-                child: SizedBox(
-                  height: 80,
-                  child: BottomNavigationBar(
-                    useLegacyColorScheme: false,
-                    selectedLabelStyle: const TextStyle(
-                      color: ThemeConstants.primaryColor,
-                      fontSize: 12,
+                // selectedIconTheme: const IconThemeData(
+                //   color: ThemeConstants.primaryColor,
+                //   size: 2,
+                // ),
+                // selectedItemColor: ThemeConstants.primaryColor,
+                backgroundColor: Colors.white,
+                elevation: 0,
+                type: BottomNavigationBarType.fixed,
+                items: [
+                  BottomNavigationBarItem(
+                    icon: BottomNavigationIcon(
+                      path: 'assets/icons/home.svg',
+                      isActive: selectedIndex == 0,
                     ),
-                    // selectedIconTheme: const IconThemeData(
-                    //   color: ThemeConstants.primaryColor,
-                    //   size: 2,
-                    // ),
-                    // selectedItemColor: ThemeConstants.primaryColor,
-                    backgroundColor: Colors.white,
-                    elevation: 0,
-                    type: BottomNavigationBarType.fixed,
-                    items: [
-                      BottomNavigationBarItem(
-                        icon: BottomNavigationIcon(
-                          path: 'assets/icons/home.svg',
-                          isActive: selectedIndex == 0,
-                        ),
-                        label: 'Home',
-                      ),
-                      BottomNavigationBarItem(
-                        icon: BottomNavigationIcon(
-                          path: 'assets/icons/favourite.svg',
-                          isActive: selectedIndex == 1,
-                        ),
-                        label: 'Featured',
-                      ),
-                      BottomNavigationBarItem(
-                        icon: BottomNavigationIcon(
-                          path: 'assets/icons/search.svg',
-                          isActive: selectedIndex == 2,
-                        ),
-                        label: 'Search',
-                      ),
-                      BottomNavigationBarItem(
-                          icon: BottomNavigationIcon(
-                            path: 'assets/icons/my-learning.svg',
-                            isActive: selectedIndex == 3,
-                          ),
-                          label: 'My Learning'),
-                      BottomNavigationBarItem(
-                          icon: BottomNavigationIcon(
-                            path: 'assets/icons/user.svg',
-                            isActive: selectedIndex == 4,
-                          ),
-                          label: 'Account'),
-                    ],
-                    onTap: _onTappedBar,
-                    currentIndex: selectedIndex,
+                    label: 'Home',
                   ),
-                ),
+                  // BottomNavigationBarItem(
+                  //   icon: BottomNavigationIcon(
+                  //     path: 'assets/icons/favourite.svg',
+                  //     isActive: selectedIndex == 1,
+                  //   ),
+                  //   label: 'Featured',
+                  // ),
+                  BottomNavigationBarItem(
+                    icon: BottomNavigationIcon(
+                      path: 'assets/icons/search.svg',
+                      isActive: selectedIndex == 2,
+                    ),
+                    label: 'Search',
+                  ),
+                  BottomNavigationBarItem(
+                      icon: BottomNavigationIcon(
+                        path: 'assets/icons/my-learning.svg',
+                        isActive: selectedIndex == 3,
+                      ),
+                      label: 'My Learning'),
+                  BottomNavigationBarItem(
+                      icon: BottomNavigationIcon(
+                        path: 'assets/icons/user.svg',
+                        isActive: selectedIndex == 4,
+                      ),
+                      label: 'Account'),
+                ],
+                onTap: _onTappedBar,
+                currentIndex: selectedIndex,
               ),
               backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
               body: PageView(
