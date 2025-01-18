@@ -14,7 +14,7 @@ class CourseCardTitle extends StatelessWidget {
       style: const TextStyle(
         fontSize: 14,
         overflow: TextOverflow.ellipsis,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w400,
       ),
     );
   }

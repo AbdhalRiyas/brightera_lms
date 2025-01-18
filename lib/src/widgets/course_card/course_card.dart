@@ -14,6 +14,7 @@ class CourseCard extends StatelessWidget {
     this.listMode = false,
     this.onTap,
     this.trailing,
+    this.backgroundColor,
   }) : _course = course;
 
   final double? maxWidth, maxHeight;
@@ -21,6 +22,7 @@ class CourseCard extends StatelessWidget {
   final bool listMode;
   final VoidCallback? onTap;
   final Widget? trailing;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +59,7 @@ class CourseCard extends StatelessWidget {
               ),
               elevation: 4,
               shadowColor: Colors.grey.withAlpha(75),
-              color: Colors.white,
+              color: backgroundColor ?? Colors.white,
               child: InkWell(
                 onTap: onTap,
                 borderRadius: BorderRadius.circular(12),
@@ -161,7 +163,7 @@ class CourseCard extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: ThemeConstants.fontSizeSmall,
                                       color: ThemeConstants.primaryColor,
-                                      fontWeight: FontWeight.w600,
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
                                   Text(
@@ -170,7 +172,8 @@ class CourseCard extends StatelessWidget {
                                         : '',
                                     style: TextStyle(
                                       fontSize: ThemeConstants.fontSizeSmall,
-                                      color: Colors.black.withAlpha(150),
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black.withAlpha(100),
                                     ),
                                   ),
                                 ],

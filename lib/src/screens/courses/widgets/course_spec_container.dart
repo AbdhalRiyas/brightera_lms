@@ -18,8 +18,8 @@ class CourseSpecContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 95,
-      height: 95,
+      width: 100,
+      height: 100,
       decoration: ShapeDecoration(
         color: color,
         shape: RoundedRectangleBorder(
@@ -34,7 +34,10 @@ class CourseSpecContainer extends StatelessWidget {
             radius: 18,
             child: SvgPicture.asset(
               icon,
-              color: color,
+              colorFilter: ColorFilter.mode(
+                color,
+                BlendMode.srcIn,
+              ),
             ),
           ),
           Text(

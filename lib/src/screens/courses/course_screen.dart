@@ -5,7 +5,7 @@ import 'package:app/src/screens/checkout_screen.dart';
 import 'package:app/src/screens/courses/widgets/course_cover.dart';
 import 'package:app/src/screens/courses/widgets/course_spec_container.dart';
 import 'package:app/src/services/firebase_service.dart';
-import 'package:app/src/widgets/app_bar_icon.dart';
+import 'package:app/src/widgets/app_bar_back_button.dart';
 import 'package:app/src/widgets/syllabus/syllabus_accordion.dart';
 import 'package:app/src/screens/lectures_screen/lectures_screen.dart';
 import 'package:app/src/utils/format_price.dart';
@@ -46,7 +46,7 @@ class _CourseScreenState extends State<CourseScreen>
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         forceMaterialTransparency: true,
-        leading: const AppBarIcon(),
+        leading: const AppBarBackButton(),
       ),
       body: SingleChildScrollView(
         child: StreamBuilder<User?>(
@@ -64,7 +64,7 @@ class _CourseScreenState extends State<CourseScreen>
                           widget.course.title,
                           style: const TextStyle(
                             fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                         const SizedBox(height: ThemeConstants.paddingSmall),
@@ -73,7 +73,8 @@ class _CourseScreenState extends State<CourseScreen>
                             "Taught by ${widget.course.instructorInfo?.name}",
                             style: TextStyle(
                               fontSize: ThemeConstants.fontSizeSmall,
-                              color: Colors.grey[600],
+                              color: Colors.black.withAlpha(120),
+                              fontWeight: FontWeight.w300,
                             ),
                           ),
                         // Text.rich(
@@ -108,11 +109,11 @@ class _CourseScreenState extends State<CourseScreen>
                             labelColor: ThemeConstants.primaryButtonColor,
                             unselectedLabelColor: Colors.grey,
                             labelStyle: const TextStyle(
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w600,
                               fontSize: 16,
                             ),
                             indicatorWeight: 1,
-                            indicatorSize: TabBarIndicatorSize.label,
+                            indicatorSize: TabBarIndicatorSize.tab,
                             indicatorColor: ThemeConstants.primaryButtonColor,
                             tabs: const [
                               Tab(
@@ -151,7 +152,7 @@ class _CourseScreenState extends State<CourseScreen>
                                     CourseSpecContainer(
                                       color: const Color(0x7FF0C7C3),
                                       title: "Language",
-                                      icon: "assets/icons/book.svg",
+                                      icon: "assets/icons/language.svg",
                                       value: widget.course.language,
                                     ),
                                     const CourseSpecContainer(

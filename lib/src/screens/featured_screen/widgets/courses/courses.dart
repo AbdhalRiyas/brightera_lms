@@ -71,6 +71,11 @@ class _FeaturedCoursesState extends State<FeaturedCourses> {
         : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const Text(
+                "Featured Courses",
+                style: ThemeConstants.headingStyle,
+              ),
+              const SizedBox(height: 10),
               SizedBox(
                 height: 40,
                 child: ListView.builder(

@@ -38,8 +38,8 @@ class _EntryPointState extends State<EntryPoint> {
   final PageController _pageController = PageController();
   final List<Widget> _tabs = const [
     HomeScreen(),
-    FeaturedScreen(),
     SearchScreen(),
+    FeaturedScreen(),
     AccountScreen(),
   ];
 
@@ -52,6 +52,10 @@ class _EntryPointState extends State<EntryPoint> {
                 useLegacyColorScheme: false,
                 selectedLabelStyle: const TextStyle(
                   color: ThemeConstants.primaryColor,
+                  fontSize: 12,
+                ),
+                unselectedLabelStyle: TextStyle(
+                  color: ThemeConstants.primaryColor.withAlpha(100),
                   fontSize: 12,
                 ),
                 // selectedIconTheme: const IconThemeData(
@@ -80,20 +84,20 @@ class _EntryPointState extends State<EntryPoint> {
                   BottomNavigationBarItem(
                     icon: BottomNavigationIcon(
                       path: 'assets/icons/search.svg',
-                      isActive: selectedIndex == 2,
+                      isActive: selectedIndex == 1,
                     ),
                     label: 'Search',
                   ),
                   BottomNavigationBarItem(
                       icon: BottomNavigationIcon(
                         path: 'assets/icons/my-learning.svg',
-                        isActive: selectedIndex == 3,
+                        isActive: selectedIndex == 2,
                       ),
                       label: 'My Learning'),
                   BottomNavigationBarItem(
                       icon: BottomNavigationIcon(
                         path: 'assets/icons/user.svg',
-                        isActive: selectedIndex == 4,
+                        isActive: selectedIndex == 3,
                       ),
                       label: 'Account'),
                 ],

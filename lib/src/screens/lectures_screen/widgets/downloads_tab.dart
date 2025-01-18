@@ -3,6 +3,7 @@ import 'package:app/src/models/active_lesson.dart';
 import 'package:app/src/models/download.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DownloadsTab extends StatefulWidget {
@@ -31,18 +32,39 @@ class _DownloadsTabState extends State<DownloadsTab> {
                   child: Text(
                       "There are no downloads available for this lecture."),
                 )
-              : ListView.builder(
-                  itemCount: downloadObjects.length,
-                  itemBuilder: (_, i) => ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(downloadObjects[i].name),
-                    leading: const Icon(Icons.file_present),
-                    onTap: () =>
-                        _showExternalDownloadAlert(downloadObjects[i].link),
-                    trailing: IconButton(
+              : Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: ThemeConstants.paddingSmall,
+                  ),
+                  child: ListView.separated(
+                    separatorBuilder: (context, index) => const Divider(
+                      height: 0,
+                    ),
+                    itemCount: downloadObjects.length,
+                    itemBuilder: (_, i) => ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(downloadObjects[i].name),
+                      leading: SvgPicture.asset(
+                        "assets/icons/papers.svg",
+                        colorFilter: const ColorFilter.mode(
+                          Colors.black,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                      onTap: () =>
+                          _showExternalDownloadAlert(downloadObjects[i].link),
+                      trailing: IconButton(
                         onPressed: () =>
                             _showExternalDownloadAlert(downloadObjects[i].link),
-                        icon: const Icon(Icons.download_for_offline_outlined)),
+                        icon: SvgPicture.asset(
+                          "assets/icons/download.svg",
+                          colorFilter: const ColorFilter.mode(
+                            ThemeConstants.primaryButtonColor,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 );
         });

@@ -17,7 +17,7 @@ class CourseCardSubtitle extends StatelessWidget {
           formatPrice(course.salePrice),
           style: const TextStyle(
             fontSize: ThemeConstants.fontSizeSmall,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
           ),
         ),
         if (course.regularPrice > 0)
