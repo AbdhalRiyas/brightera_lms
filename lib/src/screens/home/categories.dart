@@ -16,26 +16,11 @@ class Categories extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              "Categories",
-              style: ThemeConstants.headingStyle,
-            ),
-            TextButton(
-              onPressed: () {
-                // Implement view all categories logic here
-              },
-              child: const Text(
-                "View All",
-                style: TextStyle(
-                  color: ThemeConstants.primaryColor,
-                ),
-              ),
-            ),
-          ],
+        const Text(
+          "Categories",
+          style: ThemeConstants.headingStyle,
         ),
+        const SizedBox(height: 10),
         Wrap(
           runSpacing: 5,
           spacing: 10,
