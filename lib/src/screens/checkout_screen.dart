@@ -64,56 +64,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               child: ListView(
                 children: [
                   Text(
-                    "Payment method",
-                    style: _buildSubHeadingStyles(),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(
-                      ThemeConstants.paddingSmall,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(
-                        ThemeConstants.borderRadiusLarge,
-                      ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 10,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: FutureBuilder(
-                      future: _paymentMethods,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          // Show a loading indicator while waiting for the data
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        } else if (snapshot.hasError) {
-                          // Handle the error state
-                          return Center(
-                              child: Text('Error: ${snapshot.error}'));
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
-                          // Handle the case where there's no data
-                          return const Text('No payment methods available');
-                        } else {
-                          // Assuming snapshot.data is a List<PaymentMethod>
-                          final List<PaymentMethod> paymentMethods =
-                              snapshot.data!;
-
-                          // Map each payment method to a Text widget or any other widget you want
-                          return _buildCheckoutWidgets(paymentMethods);
-                        }
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: ThemeConstants.paddingLarge),
-                  Text(
                     "Order details",
                     style: _buildSubHeadingStyles(),
                   ),
@@ -166,7 +116,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       ),
                       boxShadow: const [
                         BoxShadow(
-                          color: Colors.black12,
+                          color: ThemeConstants.primaryShadowColor,
                           blurRadius: 10,
                           offset: Offset(0, 2),
                         ),
@@ -258,6 +208,57 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       ],
                     ),
                   ),
+                  const SizedBox(height: ThemeConstants.paddingLarge),
+                  Text(
+                    "Payment method",
+                    style: _buildSubHeadingStyles(),
+                  ),
+                  const SizedBox(height: ThemeConstants.paddingSmall),
+                  Container(
+                    padding: const EdgeInsets.all(
+                      ThemeConstants.paddingSmall,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(
+                        ThemeConstants.borderRadiusLarge,
+                      ),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: ThemeConstants.primaryShadowColor,
+                          blurRadius: 10,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: FutureBuilder(
+                      future: _paymentMethods,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          // Show a loading indicator while waiting for the data
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        } else if (snapshot.hasError) {
+                          // Handle the error state
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          // Handle the case where there's no data
+                          return const Text('No payment methods available');
+                        } else {
+                          // Assuming snapshot.data is a List<PaymentMethod>
+                          final List<PaymentMethod> paymentMethods =
+                              snapshot.data!;
+
+                          // Map each payment method to a Text widget or any other widget you want
+                          return _buildCheckoutWidgets(paymentMethods);
+                        }
+                      },
+                    ),
+                  ),
                   _buildPaymentSummary(context)
                 ],
               ),
@@ -291,6 +292,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             "Summary",
             style: _buildSubHeadingStyles(),
           ),
+          const SizedBox(height: ThemeConstants.paddingSmall),
           Container(
             height: 100,
             padding: const EdgeInsets.symmetric(
@@ -303,7 +305,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ),
               boxShadow: const [
                 BoxShadow(
-                  color: Colors.black12,
+                  color: ThemeConstants.primaryShadowColor,
                   blurRadius: 10,
                   offset: Offset(0, 2),
                 ),
