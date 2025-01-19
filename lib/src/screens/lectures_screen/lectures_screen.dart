@@ -11,6 +11,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
+import 'widgets/custom_bottom_navigation_bar.dart';
+
 class LecturesArguments {
   final Course course;
 
@@ -98,50 +100,52 @@ class _LecturesScreenState extends State<LecturesScreen>
                                   _syllabusKey.currentState?.nextLesson(),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(
-                              ThemeConstants.paddingSmall,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  widget.course.title,
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(
-                                    height: ThemeConstants.paddingSmall),
-                                if (widget.course.instructorInfo != null)
+                          if (!_isFullScreen)
+                            Padding(
+                              padding: const EdgeInsets.all(
+                                ThemeConstants.paddingSmall,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
                                   Text(
-                                    "By - ${widget.course.instructorInfo?.name}",
-                                    style: TextStyle(
-                                      fontSize: ThemeConstants.fontSizeSmall,
-                                      color: Colors.black.withAlpha(120),
-                                      fontWeight: FontWeight.w300,
+                                    widget.course.title,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                              ],
+                                  const SizedBox(
+                                      height: ThemeConstants.paddingSmall),
+                                  if (widget.course.instructorInfo != null)
+                                    Text(
+                                      "By - ${widget.course.instructorInfo?.name}",
+                                      style: TextStyle(
+                                        fontSize: ThemeConstants.fontSizeSmall,
+                                        color: Colors.black.withAlpha(120),
+                                        fontWeight: FontWeight.w300,
+                                      ),
+                                    ),
+                                ],
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(
-                              ThemeConstants.paddingSmall,
+                          if (!_isFullScreen)
+                            Padding(
+                              padding: const EdgeInsets.all(
+                                ThemeConstants.paddingSmall,
+                              ),
+                              child: ValueListenableBuilder<int>(
+                                valueListenable: _selectedIndex,
+                                builder: (context, value, child) {
+                                  return TabBarContainer(
+                                    selectedIndex: _selectedIndex.value,
+                                    tabController: _tabController,
+                                    onTabSelected: _switchTab,
+                                  );
+                                },
+                              ),
                             ),
-                            child: ValueListenableBuilder<int>(
-                              valueListenable: _selectedIndex,
-                              builder: (context, value, child) {
-                                return TabBarContainer(
-                                  selectedIndex: _selectedIndex.value,
-                                  tabController: _tabController,
-                                  onTabSelected: _switchTab,
-                                );
-                              },
-                            ),
-                          ),
                           Flexible(
                             flex: _isFullScreen
                                 ? 0
@@ -196,15 +200,15 @@ class _LecturesScreenState extends State<LecturesScreen>
           },
         ),
       ),
-      // bottomNavigationBar: Visibility(
-      //   visible: !_isFullScreen,
-      //   maintainState: true,
-      //   child: CustomBottomNavigationBar(
-      //     selectedIndex: _selectedIndex,
-      //     switchTab: _switchTab,
-      //     activeLesson: _activeLesson,
-      //   ),
-      // ),
+      bottomNavigationBar: Visibility(
+        visible: !_isFullScreen,
+        maintainState: true,
+        child: CustomBottomNavigationBar(
+          selectedIndex: _selectedIndex,
+          switchTab: _switchTab,
+          activeLesson: _activeLesson,
+        ),
+      ),
     );
   }
 
