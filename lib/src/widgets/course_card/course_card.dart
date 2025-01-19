@@ -54,11 +54,12 @@ class CourseCard extends StatelessWidget {
           //     trailing: trailing,
           //   )
           Card(
+              margin: const EdgeInsets.symmetric(vertical: 8),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
               elevation: 4,
-              shadowColor: Colors.grey.withAlpha(75),
+              shadowColor: ThemeConstants.primaryShadowColor,
               color: backgroundColor ?? Colors.white,
               child: InkWell(
                 onTap: onTap,
