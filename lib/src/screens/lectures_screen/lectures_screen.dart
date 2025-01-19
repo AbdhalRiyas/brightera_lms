@@ -6,12 +6,11 @@ import 'package:app/src/screens/lectures_screen/widgets/lecture_notes_tab.dart';
 import 'package:app/src/services/firebase_service.dart';
 import 'package:app/src/widgets/syllabus/syllabus_accordion.dart';
 import 'package:app/src/screens/lectures_screen/widgets/youtube_player_widget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-
-import 'widgets/custom_bottom_navigation_bar.dart';
 
 class LecturesArguments {
   final Course course;
@@ -139,9 +138,10 @@ class _LecturesScreenState extends State<LecturesScreen>
                                 valueListenable: _selectedIndex,
                                 builder: (context, value, child) {
                                   return TabBarContainer(
-                                    selectedIndex: _selectedIndex.value,
+                                    selectedIndex: _selectedIndex,
                                     tabController: _tabController,
                                     onTabSelected: _switchTab,
+                                    activeLesson: _activeLesson,
                                   );
                                 },
                               ),
@@ -200,15 +200,15 @@ class _LecturesScreenState extends State<LecturesScreen>
           },
         ),
       ),
-      bottomNavigationBar: Visibility(
-        visible: !_isFullScreen,
-        maintainState: true,
-        child: CustomBottomNavigationBar(
-          selectedIndex: _selectedIndex,
-          switchTab: _switchTab,
-          activeLesson: _activeLesson,
-        ),
-      ),
+      // bottomNavigationBar: Visibility(
+      //   visible: !_isFullScreen,
+      //   maintainState: true,
+      //   child: CustomBottomNavigationBar(
+      //     selectedIndex: _selectedIndex,
+      //     switchTab: _switchTab,
+      //     activeLesson: _activeLesson,
+      //   ),
+      // ),
     );
   }
 
@@ -251,15 +251,17 @@ class _LecturesScreenState extends State<LecturesScreen>
 }
 
 class TabBarContainer extends StatelessWidget {
-  final int selectedIndex;
+  final ValueNotifier<int> selectedIndex;
   final TabController tabController;
   final Function(int) onTabSelected;
+  final ValueListenable<ActiveLesson> activeLesson;
 
   const TabBarContainer({
     super.key,
     required this.selectedIndex,
     required this.tabController,
     required this.onTabSelected,
+    required this.activeLesson,
   });
 
   @override
@@ -300,20 +302,25 @@ class TabBarContainer extends StatelessWidget {
             ),
           ),
           tabs: [
-            TabBarItem(
-              isSelected: selectedIndex == 0,
-              iconPath: "assets/icons/play.svg",
+            const TabBarItem(
+              iconPath: "assets/icons/lectures.svg",
               label: 'Lectures',
             ),
-            TabBarItem(
-              isSelected: selectedIndex == 1,
-              iconPath: "assets/icons/notes.svg",
-              label: 'Notes',
+            ValueListenableBuilder<ActiveLesson>(
+              valueListenable: activeLesson,
+              builder: (context, value, child) => TabBarItem(
+                iconPath: "assets/icons/notes.svg",
+                label: 'Notes',
+                hasNotes: value.notes.isNotEmpty,
+              ),
             ),
-            TabBarItem(
-              isSelected: selectedIndex == 2,
-              iconPath: "assets/icons/downloads.svg",
-              label: 'Downloads',
+            ValueListenableBuilder<ActiveLesson>(
+              valueListenable: activeLesson,
+              builder: (context, value, child) => TabBarItem(
+                iconPath: "assets/icons/downloads.svg",
+                label: 'Downloads',
+                hasNotes: value.downloads.isNotEmpty,
+              ),
             ),
           ],
           onTap: onTabSelected,
@@ -324,36 +331,49 @@ class TabBarContainer extends StatelessWidget {
 }
 
 class TabBarItem extends StatelessWidget {
-  final bool isSelected;
   final String iconPath;
   final String label;
+  final bool hasNotes;
 
   const TabBarItem({
     super.key,
-    required this.isSelected,
     required this.iconPath,
     required this.label,
+    this.hasNotes = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return Tab(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Stack(
         children: [
-          SvgPicture.asset(
-            iconPath,
-            height: 16,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                iconPath,
+                height: 20,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                label,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 10),
-          Text(
-            label,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
+          if (hasNotes)
+            Positioned(
+              top: 0,
+              right: 5,
+              child: CircleAvatar(
+                maxRadius: 5,
+                backgroundColor: ThemeConstants.primaryColor.withAlpha(150),
+              ),
             ),
-          ),
         ],
       ),
     );
