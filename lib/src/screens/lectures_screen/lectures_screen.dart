@@ -1,7 +1,6 @@
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/active_lesson.dart';
 import 'package:app/src/models/course.dart';
-import 'package:app/src/screens/lectures_screen/widgets/custom_bottom_navigation_bar.dart';
 import 'package:app/src/screens/lectures_screen/widgets/downloads_tab.dart';
 import 'package:app/src/screens/lectures_screen/widgets/lecture_notes_tab.dart';
 import 'package:app/src/services/firebase_service.dart';
@@ -118,7 +117,7 @@ class _LecturesScreenState extends State<LecturesScreen>
                                     height: ThemeConstants.paddingSmall),
                                 if (widget.course.instructorInfo != null)
                                   Text(
-                                    "Taught by ${widget.course.instructorInfo?.name}",
+                                    "By - ${widget.course.instructorInfo?.name}",
                                     style: TextStyle(
                                       fontSize: ThemeConstants.fontSizeSmall,
                                       color: Colors.black.withAlpha(120),
@@ -261,8 +260,7 @@ class TabBarContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
+    return DecoratedBox(
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(
           Radius.circular(
@@ -271,38 +269,51 @@ class TabBarContainer extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black12,
-            blurRadius: 10,
+            color: ThemeConstants.primaryShadowColor,
+            blurRadius: 16,
           ),
         ],
         color: Colors.white,
       ),
-      child: TabBar(
-        labelColor: Colors.black,
-        labelPadding: const EdgeInsets.all(0),
-        dividerHeight: 0,
-        indicatorColor: Colors.transparent,
-        indicatorSize: TabBarIndicatorSize.tab,
-        tabAlignment: TabAlignment.fill,
-        controller: tabController,
-        tabs: [
-          TabBarItem(
-            isSelected: selectedIndex == 0,
-            iconPath: "assets/icons/play.svg",
-            label: 'Lectures',
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: ThemeConstants.paddingSmall / 2,
+        ),
+        child: TabBar(
+          labelColor: Colors.black,
+          labelPadding: const EdgeInsets.all(0),
+          dividerHeight: 0,
+          indicatorSize: TabBarIndicatorSize.tab,
+          tabAlignment: TabAlignment.fill,
+          controller: tabController,
+          indicatorWeight: 0,
+          indicatorPadding: const EdgeInsets.only(bottom: 5, top: 5),
+          indicator: BoxDecoration(
+            shape: BoxShape.rectangle,
+            color: const Color(0x3342A5F5),
+            borderRadius: BorderRadius.circular(
+              ThemeConstants.borderRadiusMedium,
+            ),
           ),
-          TabBarItem(
-            isSelected: selectedIndex == 1,
-            iconPath: "assets/icons/notes.svg",
-            label: 'Notes',
-          ),
-          TabBarItem(
-            isSelected: selectedIndex == 2,
-            iconPath: "assets/icons/downloads.svg",
-            label: 'Downloads',
-          ),
-        ],
-        onTap: onTabSelected,
+          tabs: [
+            TabBarItem(
+              isSelected: selectedIndex == 0,
+              iconPath: "assets/icons/play.svg",
+              label: 'Lectures',
+            ),
+            TabBarItem(
+              isSelected: selectedIndex == 1,
+              iconPath: "assets/icons/notes.svg",
+              label: 'Notes',
+            ),
+            TabBarItem(
+              isSelected: selectedIndex == 2,
+              iconPath: "assets/icons/downloads.svg",
+              label: 'Downloads',
+            ),
+          ],
+          onTap: onTabSelected,
+        ),
       ),
     );
   }
@@ -323,59 +334,23 @@ class TabBarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Tab(
-      // child: Flex(
-      //   direction: Axis.horizontal,
-      //   children: [
-      //     Center(
-      //       child: Row(
-      //         children: [
-      //           SvgPicture.asset(
-      //             iconPath,
-      //             colorFilter: ColorFilter.mode(
-      //               isSelected
-      //                   ? ThemeConstants.primaryColor
-      //                   : ThemeConstants.greyColor,
-      //               BlendMode.srcIn,
-      //             ),
-      //           ),
-      //           const SizedBox(width: 5),
-      //           Text(
-      //             label,
-      //             style: TextStyle(
-      //               color:
-      //                   isSelected ? ThemeConstants.primaryColor : Colors.grey,
-      //             ),
-      //           ),
-      //         ],
-      //       ),
-      //     ),
-      //   ],
-      // ),
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 10,
-          vertical: 5,
-        ),
-        decoration: BoxDecoration(
-          shape: BoxShape.rectangle,
-          color: isSelected ? const Color(0x3342A5F5) : Colors.transparent,
-          borderRadius: BorderRadius.circular(
-            ThemeConstants.borderRadiusMedium,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            iconPath,
+            height: 16,
           ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              iconPath,
+          const SizedBox(width: 10),
+          Text(
+            label,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
             ),
-            const SizedBox(width: 10),
-            Text(
-              label,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

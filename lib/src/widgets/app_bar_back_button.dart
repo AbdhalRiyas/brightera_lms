@@ -21,7 +21,7 @@ class AppBarBackButton extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: ThemeConstants.primaryShadowColor,
-              blurRadius: 4,
+              blurRadius: 10,
             ),
           ],
         ),

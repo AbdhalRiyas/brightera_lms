@@ -43,9 +43,9 @@ class CourseSpecContainer extends StatelessWidget {
           Text(
             title,
             style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey,
+              fontSize: 10,
+              fontWeight: FontWeight.w500,
+              color: Color.fromRGBO(0, 0, 0, 0.5),
             ),
           ),
           Text(

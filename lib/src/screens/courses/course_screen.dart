@@ -70,7 +70,7 @@ class _CourseScreenState extends State<CourseScreen>
                         const SizedBox(height: ThemeConstants.paddingSmall),
                         if (widget.course.instructorInfo != null)
                           Text(
-                            "Taught by ${widget.course.instructorInfo?.name}",
+                            "By - ${widget.course.instructorInfo?.name}",
                             style: TextStyle(
                               fontSize: ThemeConstants.fontSizeSmall,
                               color: Colors.black.withAlpha(120),
@@ -112,9 +112,16 @@ class _CourseScreenState extends State<CourseScreen>
                               fontWeight: FontWeight.w600,
                               fontSize: 16,
                             ),
+                            indicator: const UnderlineTabIndicator(
+                              borderSide: BorderSide(
+                                width: 1.0,
+                                color: ThemeConstants.primaryButtonColor,
+                              ),
+                              insets: EdgeInsets.symmetric(horizontal: 16.0),
+                            ),
                             indicatorWeight: 1,
                             indicatorSize: TabBarIndicatorSize.tab,
-                            indicatorColor: ThemeConstants.primaryButtonColor,
+                            indicatorAnimation: TabIndicatorAnimation.elastic,
                             tabs: const [
                               Tab(
                                 text: 'Overview',
@@ -240,12 +247,12 @@ class CourseButton extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
-                        // mainAxisAlignment: MainAxisAlignment.,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
                             formatPrice(widget.course.salePrice),
                             style: const TextStyle(
-                              fontSize: 18,
+                              fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -254,35 +261,34 @@ class CourseButton extends StatelessWidget {
                             Text(
                               formatPrice(widget.course.regularPrice),
                               style: const TextStyle(
-                                color: Colors.grey,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
                                 decoration: TextDecoration.lineThrough,
                               ),
                             ),
                           ]
                         ],
                       ),
-                      Row(
+                      const Row(
                         children: [
-                          const VerticalDivider(
-                            color: Colors.white,
+                          VerticalDivider(
+                            color: ThemeConstants.backgroundColor,
                             thickness: 1,
                           ),
-                          const Text(
+                          SizedBox(width: ThemeConstants.paddingSmall),
+                          Text(
                             "Enroll now",
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(width: 10),
-                          SvgPicture.asset(
-                            "assets/icons/arrow-forward.svg",
-                            colorFilter: const ColorFilter.mode(
-                              Colors.white,
-                              BlendMode.srcIn,
-                            ),
+                          SizedBox(width: 10),
+                          Icon(
+                            Icons.chevron_right_outlined,
+                            size: 32,
+                            color: Colors.white,
                           ),
                         ],
                       ),
