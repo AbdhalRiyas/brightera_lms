@@ -224,7 +224,7 @@ class _CourseScreenState extends State<CourseScreen>
                   ),
                 ),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.1,
+                  height: MediaQuery.sizeOf(context).height * 0.12,
                 ),
               ],
             );
@@ -255,70 +255,72 @@ class CourseButton extends StatelessWidget {
     return ValueListenableBuilder<bool>(
       valueListenable: _activeSubscription,
       builder: (context, hasEnrolled, ch) {
-        return Container(
-          height: 60,
-          padding: const EdgeInsets.symmetric(
-            horizontal: ThemeConstants.paddingMedium,
-          ),
-          child: ElevatedButton(
-            onPressed: () => hasEnrolled
-                ? Navigator.pushNamed(context, '/lectures',
-                    arguments: LecturesArguments(course: widget.course))
-                : Navigator.pushNamed(context, '/checkout',
-                    arguments: CheckoutScreenArguments([widget.course])),
-            child: hasEnrolled
-                ? const Text("Start Learning")
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            formatPrice(widget.course.salePrice),
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          if (widget.course.regularPrice > 0) ...[
-                            const SizedBox(width: 10),
+        return SizedBox(
+          height: 50,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: ThemeConstants.paddingMedium,
+            ),
+            child: ElevatedButton(
+              onPressed: () => hasEnrolled
+                  ? Navigator.pushNamed(context, '/lectures',
+                      arguments: LecturesArguments(course: widget.course))
+                  : Navigator.pushNamed(context, '/checkout',
+                      arguments: CheckoutScreenArguments([widget.course])),
+              child: hasEnrolled
+                  ? const Text("Start Learning")
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
                             Text(
-                              formatPrice(widget.course.regularPrice),
+                              formatPrice(widget.course.salePrice),
                               style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                decoration: TextDecoration.lineThrough,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ]
-                        ],
-                      ),
-                      const Row(
-                        children: [
-                          VerticalDivider(
-                            color: ThemeConstants.backgroundColor,
-                            thickness: 1,
-                          ),
-                          SizedBox(width: ThemeConstants.paddingSmall),
-                          Text(
-                            "Enroll now",
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
+                            if (widget.course.regularPrice > 0) ...[
+                              const SizedBox(width: 10),
+                              Text(
+                                formatPrice(widget.course.regularPrice),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                  decoration: TextDecoration.lineThrough,
+                                ),
+                              ),
+                            ]
+                          ],
+                        ),
+                        const Row(
+                          children: [
+                            VerticalDivider(
+                              color: ThemeConstants.backgroundColor,
+                              thickness: 1,
                             ),
-                          ),
-                          SizedBox(width: 10),
-                          Icon(
-                            Icons.chevron_right_outlined,
-                            size: 32,
-                            color: Colors.white,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                            SizedBox(width: ThemeConstants.paddingSmall),
+                            Text(
+                              "Enroll now",
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            Icon(
+                              Icons.chevron_right_outlined,
+                              size: 32,
+                              color: Colors.white,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+            ),
           ),
         );
       },
