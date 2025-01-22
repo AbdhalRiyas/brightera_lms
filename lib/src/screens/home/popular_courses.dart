@@ -1,4 +1,5 @@
 import 'package:app/src/repositories/course_repository.dart';
+import 'package:app/src/screens/courses/course_screen.dart';
 import 'package:app/src/widgets/course_card/course_card.dart';
 import 'package:flutter/material.dart';
 
@@ -42,6 +43,13 @@ class _PopularCoursesState extends State<PopularCourses> {
                             return CourseCard(
                               course: course,
                               listMode: true,
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  '/course',
+                                  arguments: CourseScreenArguments(course),
+                                );
+                              },
                             );
                           },
                         ),
