@@ -1,12 +1,11 @@
 // home_screen.dart
 import 'package:app/src/config/theme_constants.dart';
-import 'package:app/src/models/course.dart';
 import 'package:app/src/screens/featured_screen/widgets/carousel.dart';
 import 'package:app/src/screens/featured_screen/widgets/courses/courses.dart';
 import 'package:app/src/screens/home/categories.dart';
+import 'package:app/src/screens/home/popular_courses.dart';
+import 'package:app/src/screens/notifications/notifications_screen.dart';
 import 'package:app/src/services/auth_manager.dart';
-import 'package:app/src/services/notification_service.dart';
-import 'package:app/src/widgets/course_card/course_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -51,111 +50,80 @@ class WelcomeHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: AuthManager().getUserDetails(),
-      builder: (context, snapshot) =>
-          snapshot.connectionState == ConnectionState.waiting
-              ? const Center(child: CircularProgressIndicator())
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      builder: (context, snapshot) => snapshot.connectionState ==
+              ConnectionState.waiting
+          ? const Center(child: CircularProgressIndicator())
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Welcome Back!',
-                          style: TextStyle(
-                            color: Color.fromRGBO(0, 0, 0, 0.5),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                        if (AuthManager().userDetails != null)
-                          Text(
-                            "Hey, ${AuthManager().userDetails!['name']} 👋 ",
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                      ],
+                    const Text(
+                      'Welcome Back!',
+                      style: TextStyle(
+                        color: Color.fromRGBO(0, 0, 0, 0.5),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            NotificationService().showNotification(
-                              title: 'Test',
-                              body: 'This is a test notification',
-                            );
-                          },
-                          icon: Container(
-                            padding: const EdgeInsets.all(6),
-                            width: 36,
-                            height: 36,
-                            decoration: const ShapeDecoration(
-                              color: Colors.white,
-                              shape: OvalBorder(),
-                              shadows: [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 10,
-                                ),
-                              ],
-                            ),
-                            child: SvgPicture.asset(
-                              'assets/icons/bell.svg',
-                              // color: ThemeConstants.primaryColor,
-                            ),
-                          ),
+                    if (AuthManager().userDetails != null)
+                      Text(
+                        "Hey, ${AuthManager().userDetails!['name']} 👋 ",
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                         ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: CircleAvatar(
-                            radius: 25,
-                            backgroundImage: Image.asset(
-                              'assets/images/profile-avatar.png',
-                            ).image,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
                   ],
                 ),
-    );
-  }
-}
-
-class PopularCourses extends StatelessWidget {
-  const PopularCourses({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Popular Courses',
-          style: ThemeConstants.headingStyle,
-        ),
-        CourseCard(
-          course: Course(
-            id: '1',
-            title: 'Maths',
-            language: 'English',
-            image:
-                'https://firebasestorage.googleapis.com/v0/b/arzam-physics-app.appspot.com/o/images%2F1726386727792_469221.jpeg?alt=media&token=0dbbe78f-dab9-4c49-a978-161ef47d6785',
-            description: 'Learn Maths from the basics to advanced level',
-            subject: null,
-            salePrice: 0,
-            regularPrice: 0,
-            durationInHours: 0,
-            previewVideo: '',
-            instructor: null,
-            isFeatured: true,
-            isPublished: true,
-          ),
-          listMode: true,
-        ),
-      ],
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const NotificationsScreen(),
+                          ),
+                        );
+                        // NotificationService().showNotification(
+                        //   title: 'Test',
+                        //   body: 'This is a test notification',
+                        // );
+                      },
+                      icon: Container(
+                        padding: const EdgeInsets.all(6),
+                        width: 36,
+                        height: 36,
+                        decoration: const ShapeDecoration(
+                          color: Colors.white,
+                          shape: OvalBorder(),
+                          shadows: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 10,
+                            ),
+                          ],
+                        ),
+                        child: SvgPicture.asset(
+                          'assets/icons/bell.svg',
+                          // color: ThemeConstants.primaryColor,
+                        ),
+                      ),
+                    ),
+                    // IconButton(
+                    //   onPressed: () {},
+                    //   icon: CircleAvatar(
+                    //     radius: 25,
+                    //     backgroundImage: Image.asset(
+                    //       'assets/images/profile-avatar.png',
+                    //     ).image,
+                    //   ),
+                    // ),
+                  ],
+                ),
+              ],
+            ),
     );
   }
 }

@@ -221,9 +221,43 @@ class CourseRepository {
   }
 
   Future<List<Course>> getCourses() {
+    // final userDetails = AuthManager().userDetails;
     return _firebaseService.getCollection(
       collection: 'courses',
       fromFirestore: Course.fromFirestore,
+      // comparisonField:
+      //     userDetails?['userRole'] != UserRole.admin ? 'instructor' : null,
+      // referenceCollection: 'users',
+      // referenceId: userDetails?['userRole'] != UserRole.admin
+      //     ? _firebaseService.currentUser?.uid
+      //     : null,
     );
+  }
+
+  Future<List<String>> getPopularCourseIds() async {
+    final popularCourseIds =
+        await _firebaseService.getDocumentById("popularCourses", "home");
+    return popularCourseIds.data()?['courseIds']?.cast<String>() ?? [];
+  }
+
+  Future<Result> updatePopularCourses(List<String> courseIds) async {
+    return await _firebaseService.updateDocument(
+      collection: 'home',
+      documentId: 'popularCourses',
+      data: {'courseIds': courseIds},
+    );
+  }
+
+  Future<List<Course>> getPopularCourses() async {
+    final popularCourseIds = await getPopularCourseIds();
+    final List<Course> popularCourses = [];
+
+    for (var courseId in popularCourseIds) {
+      final course = await getCourseDetails(courseId);
+      if (course != null) {
+        popularCourses.add(course);
+      }
+    }
+    return popularCourses;
   }
 }
