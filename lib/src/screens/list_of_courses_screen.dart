@@ -6,7 +6,6 @@ import 'package:app/src/screens/courses/course_screen.dart';
 import 'package:app/src/widgets/app_bar_back_button.dart';
 import 'package:app/src/widgets/course_card/course_card.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class ListOfCoursesScreen extends StatefulWidget {
   const ListOfCoursesScreen(
@@ -105,7 +104,7 @@ class ListOfCoursesScreenState extends State<ListOfCoursesScreen> {
                       itemCount: _courses.length,
                       itemBuilder: (_, i) => CourseCard(
                         key: Key(_courses[i].id),
-                      course: _courses[i],
+                        course: _courses[i],
                         listMode: true,
                         onTap: () => Navigator.pushNamed(
                           context,

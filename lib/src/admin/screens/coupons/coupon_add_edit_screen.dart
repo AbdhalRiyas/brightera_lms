@@ -8,8 +8,8 @@ import 'package:app/src/utils/result.dart';
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/admin/screens/coupons/coupon_course_selector.dart';
 
-class CouponAddEditDialog extends StatefulWidget {
-  const CouponAddEditDialog({
+class CouponAddEditScreen extends StatefulWidget {
+  const CouponAddEditScreen({
     super.key,
     required this.repository,
     this.coupon,
@@ -19,10 +19,10 @@ class CouponAddEditDialog extends StatefulWidget {
   final Coupon? coupon;
 
   @override
-  State<CouponAddEditDialog> createState() => _CouponAddEditDialogState();
+  State<CouponAddEditScreen> createState() => _CouponAddEditScreenState();
 }
 
-class _CouponAddEditDialogState extends State<CouponAddEditDialog> {
+class _CouponAddEditScreenState extends State<CouponAddEditScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _studentIdsController = TextEditingController();
   final TextEditingController _couponCodeController = TextEditingController();
@@ -201,13 +201,14 @@ class _CouponAddEditDialogState extends State<CouponAddEditDialog> {
                             _selectedCourses.value = [];
                           } else {
                             _selectedCourses.value =
-                                widget.coupon?.courseIds ?? [];
+                                _selectedCourses.value.contains('*')
+                                    ? []
+                                    : _selectedCourses.value;
                           }
                         },
                       );
                     },
                   ),
-
                   ValueListenableBuilder<bool>(
                     valueListenable: _appliesToAllCourses,
                     builder: (context, appliesToAllCourses, _) {
