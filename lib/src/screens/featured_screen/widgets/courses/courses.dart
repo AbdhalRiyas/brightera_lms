@@ -1,11 +1,8 @@
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/course.dart';
-import 'package:app/src/models/subject.dart';
 import 'package:app/src/repositories/course_repository.dart';
-import 'package:app/src/repositories/subject_repository.dart';
 import 'package:app/src/screens/courses/course_screen.dart';
 import 'package:app/src/screens/list_of_courses_screen.dart';
-import 'package:app/src/screens/featured_screen/widgets/courses/subject_button.dart';
 import 'package:app/src/widgets/course_card/course_card.dart';
 import 'package:flutter/material.dart';
 
@@ -17,10 +14,9 @@ class FeaturedCourses extends StatefulWidget {
 }
 
 class _FeaturedCoursesState extends State<FeaturedCourses> {
-  // final SubjectRepository _repository = SubjectRepository();
   final List<String> languages = ['All', 'English', 'தமிழ்', 'සිංහල'];
   final ValueNotifier<String> _selectedLanguage = ValueNotifier('All');
-  List<Course> _courses = [];
+  final ValueNotifier<List<Course>> _courses = ValueNotifier([]);
   final CourseRepository _repository = CourseRepository();
 
   void _switchLanguage(String language) {
@@ -30,12 +26,10 @@ class _FeaturedCoursesState extends State<FeaturedCourses> {
   }
 
   Future<void> fetchFeaturedCourses() async {
-    final courses = await _repository.getHomeCourses(
-      "featuredCourses",
+    final courses = await _repository.getFeaturedCoursesByLanguage(
+      _selectedLanguage.value,
     );
-    setState(() {
-      _courses = courses;
-    });
+    _courses.value = courses;
   }
 
   @override
@@ -115,12 +109,11 @@ class _FeaturedCoursesState extends State<FeaturedCourses> {
                       selected: selectedLanguage == languages[index],
                       onSelected: (bool selected) async {
                         _switchLanguage(languages[index]);
-                        final courses = await _repository.getCoursesByLanguage(
-                          languages[index],
+                        final courses =
+                            await _repository.getFeaturedCoursesByLanguage(
+                          _selectedLanguage.value,
                         );
-                        setState(() {
-                          _courses = courses;
-                        });
+                        _courses.value = courses;
                       },
                       selectedColor: ThemeConstants.primaryColor,
                     ),
@@ -131,85 +124,92 @@ class _FeaturedCoursesState extends State<FeaturedCourses> {
           },
         ),
         const SizedBox(height: 10),
-        _courses.isNotEmpty
-            ? Builder(builder: (context) {
-                return SizedBox(
-                  height: 250,
-                  child: LayoutBuilder(builder: (context, constraints) {
-                    return ListView.separated(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, i) => i == _courses.length
-                          ? SizedBox(
-                              width: constraints.maxWidth <= 400
-                                  ? constraints.maxWidth / 2
-                                  : 250,
-                              // child: TextButton(
-                              //   onPressed: () => Navigator.pushNamed(
-                              //     context,
-                              //     '/all-courses',
-                              //     arguments: ListOfCoursesScreenArguments(
-                              //         widget.subject),
-                              //   ),
-                              //   style: TextButton.styleFrom(
-                              //     shape: RoundedRectangleBorder(
-                              //       borderRadius: BorderRadius.circular(
-                              //           ThemeConstants.borderRadiusLarge),
-                              //     ),
-                              //   ),
-                              //   child: const Text(
-                              //     "See All",
-                              //     style: TextStyle(fontSize: 18),
-                              //   ),
-                              // ),
-                            )
-                          : CourseCard(
-                              course: _courses[i],
-                              maxWidth: 450,
-                              maxHeight: 250,
-                              onTap: () => Navigator.pushNamed(
-                                context,
-                                '/course',
-                                arguments: CourseScreenArguments(_courses[i]),
-                              ),
-                            ),
-                      separatorBuilder: (context, i) =>
-                          const SizedBox(width: 10),
-                      itemCount: _courses.length + 1,
+        ValueListenableBuilder<List<Course>>(
+          valueListenable: _courses,
+          builder: (context, courses, child) {
+            return courses.isNotEmpty
+                ? Builder(builder: (context) {
+                    return SizedBox(
+                      height: 250,
+                      child: LayoutBuilder(builder: (context, constraints) {
+                        return ListView.separated(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, i) => i == courses.length
+                              ? SizedBox(
+                                  width: constraints.maxWidth <= 400
+                                      ? constraints.maxWidth / 2
+                                      : 250,
+                                  child: TextButton(
+                                    onPressed: () => Navigator.pushNamed(
+                                      context,
+                                      '/all-courses',
+                                      arguments: ListOfCoursesScreenArguments(
+                                        language: _selectedLanguage.value,
+                                      ),
+                                    ),
+                                    style: TextButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            ThemeConstants.borderRadiusLarge),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      "See All",
+                                      style: TextStyle(fontSize: 18),
+                                    ),
+                                  ),
+                                )
+                              : CourseCard(
+                                  course: courses[i],
+                                  maxWidth: 450,
+                                  maxHeight: 250,
+                                  onTap: () => Navigator.pushNamed(
+                                    context,
+                                    '/course',
+                                    arguments:
+                                        CourseScreenArguments(courses[i]),
+                                  ),
+                                ),
+                          separatorBuilder: (context, i) =>
+                              const SizedBox(width: 10),
+                          itemCount: courses.length + 1,
+                        );
+                      }),
                     );
-                  }),
-                );
-              })
-            : const Text(
-                "No courses have been featured for this subject yet.",
-              )
-        // const SizedBox(height: 10),
-        // if (_subjects.length > 1) ...[
-        //   SizedBox(
-        //     height: 38,
-        //     child: ListView.separated(
-        //       scrollDirection: Axis.horizontal,
-        //       shrinkWrap: true,
-        //       itemCount: _subjects.length,
-        //       itemBuilder: (context, i) => SubjectButton(
-        //         onTap: () => _switchSubject(_subjects[i]),
-        //         selectedSubject: _selectedSubject?.id ?? '',
-        //         subject: _subjects[i],
-        //       ),
-        //       separatorBuilder: (BuildContext context, int index) =>
-        //           const SizedBox(
-        //         width: 10,
-        //       ),
-        //     ),
-        //   ),
-        //   const SizedBox(height: 20),
-        // ],
-        // ListOfCoursesScreen(
-        //   key: _key,
-        //   language: _selectedLanguage,
-        //   // subject: _selectedSubject,
-        //   featuredCoursesOnly: true,
-        // ),
+                  })
+                : const Text(
+                    "No courses have been featured for this subject yet.",
+                  );
+            // const SizedBox(height: 10),
+            // if (_subjects.length > 1) ...[
+            //   SizedBox(
+            //     height: 38,
+            //     child: ListView.separated(
+            //       scrollDirection: Axis.horizontal,
+            //       shrinkWrap: true,
+            //       itemCount: _subjects.length,
+            //       itemBuilder: (context, i) => SubjectButton(
+            //         onTap: () => _switchSubject(_subjects[i]),
+            //         selectedSubject: _selectedSubject?.id ?? '',
+            //         subject: _subjects[i],
+            //       ),
+            //       separatorBuilder: (BuildContext context, int index) =>
+            //           const SizedBox(
+            //         width: 10,
+            //       ),
+            //     ),
+            //   ),
+            //   const SizedBox(height: 20),
+            // ],
+            // ListOfCoursesScreen(
+            //   key: _key,
+            //   language: _selectedLanguage,
+            //   // subject: _selectedSubject,
+            //   featuredCoursesOnly: true,
+            // ),
+          },
+        ),
       ],
     );
   }

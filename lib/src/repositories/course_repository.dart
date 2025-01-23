@@ -52,12 +52,13 @@ class CourseRepository {
   Future<Result> updateSection(
       {required String courseId, required Section section}) async {
     return await _firebaseService.updateDocument(
-        collection: 'courses',
-        subCollectionPaths: [
-          {"subCollection": "sections", "subDocumentId": section.id},
-        ],
-        documentId: courseId,
-        data: section.toFirestore());
+      collection: 'courses',
+      subCollectionPaths: [
+        {"subCollection": "sections", "subDocumentId": section.id},
+      ],
+      documentId: courseId,
+      data: section.toFirestore(),
+    );
   }
 
   Future<Result> deleteSection({
@@ -221,7 +222,7 @@ class CourseRepository {
   }
 
   Future<List<Course>> getCourses() {
-    final userDetails = AuthManager().userDetails;
+    // final userDetails = AuthManager().userDetails;
     return _firebaseService.getCollection(
       collection: 'courses',
       fromFirestore: Course.fromFirestore,
@@ -253,6 +254,15 @@ class CourseRepository {
     );
   }
 
+  Future<Result> removeCourseFromHome(
+    String courseId,
+    String documentId,
+  ) async {
+    final courseIds = await getHomeCourseIds(documentId);
+    courseIds.remove(courseId);
+    return await updateHomeCourses(courseIds, documentId);
+  }
+
   Future<List<Course>> getHomeCourses(
     String documentId,
   ) async {
@@ -268,6 +278,16 @@ class CourseRepository {
       }
     }
     return homeCourses;
+  }
+
+  // get home courses by language
+  Future<List<Course>> getFeaturedCoursesByLanguage(String language) async {
+    final homeCourses = await getHomeCourses(
+      'featuredCourses',
+    );
+    return language == 'All'
+        ? homeCourses
+        : homeCourses.where((course) => course.language == language).toList();
   }
 
   Future<List<Course>> getCoursesByLanguage(String language) {

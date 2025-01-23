@@ -1,3 +1,4 @@
+import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/repositories/course_repository.dart';
 import 'package:app/src/screens/courses/course_screen.dart';
 import 'package:app/src/widgets/course_card/course_card.dart';
@@ -31,12 +32,8 @@ class _PopularCoursesState extends State<PopularCourses> {
                       children: [
                         const Text(
                           'Popular Courses',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: ThemeConstants.headingStyle,
                         ),
-                        const SizedBox(height: 16),
                         ListView.builder(
                           shrinkWrap: true,
                           itemCount: snapshot.data!.length,
