@@ -221,7 +221,7 @@ class CourseRepository {
   }
 
   Future<List<Course>> getCourses() {
-    // final userDetails = AuthManager().userDetails;
+    final userDetails = AuthManager().userDetails;
     return _firebaseService.getCollection(
       collection: 'courses',
       fromFirestore: Course.fromFirestore,
@@ -234,30 +234,48 @@ class CourseRepository {
     );
   }
 
-  Future<List<String>> getPopularCourseIds() async {
+  Future<List<String>> getHomeCourseIds(
+    String documentId,
+  ) async {
     final popularCourseIds =
-        await _firebaseService.getDocumentById("popularCourses", "home");
+        await _firebaseService.getDocumentById(documentId, 'home');
     return popularCourseIds.data()?['courseIds']?.cast<String>() ?? [];
   }
 
-  Future<Result> updatePopularCourses(List<String> courseIds) async {
+  Future<Result> updateHomeCourses(
+    List<String> courseIds,
+    String documentId,
+  ) async {
     return await _firebaseService.updateDocument(
-      collection: 'home',
-      documentId: 'popularCourses',
+      collection: "home",
+      documentId: documentId,
       data: {'courseIds': courseIds},
     );
   }
 
-  Future<List<Course>> getPopularCourses() async {
-    final popularCourseIds = await getPopularCourseIds();
-    final List<Course> popularCourses = [];
+  Future<List<Course>> getHomeCourses(
+    String documentId,
+  ) async {
+    final homeCourseIds = await getHomeCourseIds(
+      documentId,
+    );
+    final List<Course> homeCourses = [];
 
-    for (var courseId in popularCourseIds) {
+    for (var courseId in homeCourseIds) {
       final course = await getCourseDetails(courseId);
       if (course != null) {
-        popularCourses.add(course);
+        homeCourses.add(course);
       }
     }
-    return popularCourses;
+    return homeCourses;
+  }
+
+  Future<List<Course>> getCoursesByLanguage(String language) {
+    return _firebaseService.getCollection(
+      collection: 'courses',
+      fromFirestore: Course.fromFirestore,
+      comparisonField: language == 'All' ? null : 'language',
+      comparisonValue: language,
+    );
   }
 }

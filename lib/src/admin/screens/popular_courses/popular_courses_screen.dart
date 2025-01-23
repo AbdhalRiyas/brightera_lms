@@ -22,7 +22,9 @@ class _PopularCoursesScreenState extends State<PopularCoursesScreen> {
   }
 
   Future<void> fetchPopularCourses() async {
-    final popularCourses = await CourseRepository().getPopularCourseIds();
+    final popularCourses = await CourseRepository().getHomeCourseIds(
+      "popularCourses",
+    );
     setState(() {
       _selectedCourseIds = popularCourses;
     });
@@ -66,8 +68,10 @@ class _PopularCoursesScreenState extends State<PopularCoursesScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: ElevatedButton(
           onPressed: () async {
-            Result result = await CourseRepository()
-                .updatePopularCourses(_selectedCourseIds);
+            Result result = await CourseRepository().updateHomeCourses(
+              _selectedCourseIds,
+              "popularCourses",
+            );
 
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(

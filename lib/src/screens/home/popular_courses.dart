@@ -14,7 +14,9 @@ class _PopularCoursesState extends State<PopularCourses> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: CourseRepository().getPopularCourses(),
+      future: CourseRepository().getHomeCourses(
+        "popularCourses",
+      ),
       builder: (context, snapshot) =>
           snapshot.connectionState == ConnectionState.waiting
               ? const Center(
