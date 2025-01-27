@@ -103,10 +103,11 @@ class CourseRepository {
         data: lecture.toFirestore());
   }
 
-  Future<Result> deleteLecture(
-      {required String courseId,
-      required String sectionId,
-      required Lecture lecture}) async {
+  Future<Result> deleteLecture({
+    required String courseId,
+    required String sectionId,
+    required Lecture lecture,
+  }) async {
     return await _firebaseService.deleteDocument(
       collection: 'courses',
       documentId: courseId,
@@ -297,5 +298,23 @@ class CourseRepository {
       comparisonField: language == 'All' ? null : 'language',
       comparisonValue: language,
     );
+  }
+
+  // search courses by title
+  Future<List<Course>> searchCourses(String query) async {
+    final data = await _firebaseService.searchCoursesByTitle(query);
+    final List<Course> courses = [];
+
+    if (data != null) {
+      for (var doc in data.docs) {
+        Course course = Course.fromFirestore(doc);
+        if (course.instructor != null) {
+          User? instructor = await _getInstructorInfo(course.instructor!);
+          course = course.copyWith(instructorInfo: instructor);
+        }
+        courses.add(course);
+      }
+    }
+    return courses;
   }
 }
