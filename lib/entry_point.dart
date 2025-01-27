@@ -2,6 +2,7 @@ import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/screens/account/account_screen.dart';
 import 'package:app/src/screens/featured_screen/featured_screen.dart';
 import 'package:app/src/screens/home/home_screen.dart';
+import 'package:app/src/screens/my_learning/my_learning_screen.dart';
 import 'package:app/src/screens/search_screen.dart';
 import 'package:app/src/widgets/bottom_navigation_icon.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -39,7 +40,8 @@ class _EntryPointState extends State<EntryPoint> {
   final List<Widget> _tabs = const [
     HomeScreen(),
     SearchScreen(),
-    FeaturedScreen(),
+    MyLearningScreen(),
+    // FeaturedScreen(),
     AccountScreen(),
   ];
 

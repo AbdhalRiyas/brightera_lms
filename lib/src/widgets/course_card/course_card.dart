@@ -15,6 +15,9 @@ class CourseCard extends StatelessWidget {
     this.onTap,
     this.trailing,
     this.backgroundColor,
+    this.isEnrolled = false,
+    this.isActive = false,
+    this.progress,
   }) : _course = course;
 
   final double? maxWidth, maxHeight;
@@ -23,6 +26,9 @@ class CourseCard extends StatelessWidget {
   final VoidCallback? onTap;
   final Widget? trailing;
   final Color? backgroundColor;
+  final bool isEnrolled;
+  final bool? isActive;
+  final double? progress;
 
   @override
   Widget build(BuildContext context) {
@@ -111,12 +117,82 @@ class CourseCard extends StatelessWidget {
                                 ],
                               ),
                               const SizedBox(height: 8),
-                              CourseCardSubtitle(course: _course),
+                              isEnrolled
+                                  ? Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal:
+                                                ThemeConstants.paddingSmall,
+                                            vertical:
+                                                ThemeConstants.paddingSmall / 2,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: isActive!
+                                                ? Colors.green.withAlpha(50)
+                                                : Colors.red.withAlpha(50),
+                                            borderRadius: BorderRadius.circular(
+                                              ThemeConstants.borderRadiusSmall,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            isActive! ? 'Active' : 'Expired',
+                                            style: TextStyle(
+                                              color: isActive!
+                                                  ? Colors.green
+                                                  : Colors.red,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          "Expires in 2 days",
+                                          style: TextStyle(
+                                            color: Colors.black.withAlpha(150),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w300,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : CourseCardSubtitle(course: _course),
                             ],
                           ),
                         ),
                       ),
-                      trailing ?? Container(),
+                      isEnrolled
+                          ? SizedBox(
+                              width: 40,
+                              height: 40,
+                              child: Stack(
+                                fit: StackFit.expand,
+                                alignment: Alignment.center,
+                                children: [
+                                  CircularProgressIndicator(
+                                    value: progress,
+                                    backgroundColor: Colors.grey[200],
+                                    valueColor:
+                                        const AlwaysStoppedAnimation<Color>(
+                                      ThemeConstants.primaryColor,
+                                    ),
+                                    strokeWidth: 4,
+                                  ),
+                                  Center(
+                                    child: Text(
+                                      '${(progress! * 100).toInt()}%',
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : trailing ?? Container()
                     ],
                   ),
                 ),
