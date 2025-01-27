@@ -1,6 +1,7 @@
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/course.dart';
 import 'package:app/src/repositories/course_repository.dart';
+import 'package:app/src/route/screen_exports.dart';
 import 'package:app/src/widgets/course_card/course_card.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +13,7 @@ class MyLearningScreen extends StatefulWidget {
 }
 
 class _MyLearningScreenState extends State<MyLearningScreen> {
+  final CourseRepository courseRepository = CourseRepository();
   final List<String> tabs = ["All", "Active", "Expired"];
   final List<Course> courses = [];
   final ValueNotifier<int> selectedTab = ValueNotifier(0);
@@ -22,17 +24,18 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
     }
   }
 
-  void fetchCourses() async {
-    final List<Course> allCourses = await CourseRepository().getCourses();
+  void fetchEnrolledCourses() async {
+    final enrolledCourses = await courseRepository.getEnrolledCourses();
     setState(() {
-      courses.addAll(allCourses);
+      courses.clear();
+      courses.addAll(enrolledCourses);
     });
   }
 
   @override
   initState() {
     super.initState();
-    fetchCourses();
+    fetchEnrolledCourses();
   }
 
   @override
@@ -107,6 +110,15 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
                     isEnrolled: true,
                     isActive: true,
                     progress: 0.5,
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/course',
+                        arguments: CourseScreenArguments(
+                          courses[index],
+                        ),
+                      );
+                    },
                   );
                 },
               ),

@@ -317,4 +317,29 @@ class CourseRepository {
     }
     return courses;
   }
+
+  Future getEnrollments() async {
+    final userDetails = AuthManager().userDetails;
+    final enrollments = await _firebaseService.getCollection(
+      collection: 'enrollments',
+      fromFirestore: (doc) => doc.data(),
+      comparisonField: 'userId',
+      comparisonValue: userDetails?['userId'],
+    );
+    return enrollments;
+  }
+
+  Future<List<Course>> getEnrolledCourses() async {
+    final enrollments = await getEnrollments();
+    final List<Course> courses = [];
+
+    for (var enrollment in enrollments) {
+      final courseId = enrollment['courseId'].id;
+      final course = await getCourseDetails(courseId);
+      if (course != null) {
+        courses.add(course);
+      }
+    }
+    return courses;
+  }
 }
