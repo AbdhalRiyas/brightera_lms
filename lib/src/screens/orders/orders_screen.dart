@@ -1,7 +1,11 @@
+import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/order.dart';
 import 'package:app/src/repositories/order_repository.dart';
 import 'package:app/src/repositories/user_repository.dart';
 import 'package:app/src/screens/orders/order_details_screen.dart';
+import 'package:app/src/utils/format_price.dart';
+import 'package:app/src/widgets/course_card/course_card_image.dart';
+import 'package:app/src/widgets/course_card/course_card_title.dart';
 import 'package:flutter/material.dart';
 
 class OrdersScreen extends StatelessWidget {
@@ -46,70 +50,125 @@ class OrdersScreen extends StatelessWidget {
               itemCount: orders.length,
               itemBuilder: (context, index) {
                 final Order order = orders[index];
-                return Container(
-                  margin: const EdgeInsets.all(8),
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
+                final Map<String, dynamic> courseData = order.course;
+                return InkWell(
+                  child: Card(
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 16,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 4,
+                    shadowColor: ThemeConstants.primaryShadowColor,
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.grey,
-                        offset: Offset(0.0, 1.0),
-                        blurRadius: 6.0,
-                      ),
-                    ],
-                  ),
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${order.course['title']}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Total: LKR ${order.total}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Payment Status: ${order.paymentStatus}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Date: ${order.createdAt}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Center(
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      OrderDetailsScreen(order: order),
+                    child: InkWell(
+                      // onTap: onTap,
+                      borderRadius: BorderRadius.circular(12),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            CourseCardImage(
+                              imageUrl: courseData['image'],
+                              maxHeight: 180,
+                              maxWidth: 110,
+                              listMode: true,
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    CourseCardTitle(title: courseData['title']),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.person,
+                                          color: Colors.grey,
+                                          size: 16,
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          "by Mohamed",
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.black.withAlpha(150),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Text(
+                                          courseData['durationInHours'] != null
+                                              ? '${courseData['durationInHours']} hours'
+                                              : '',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.black.withAlpha(150),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          formatPrice(
+                                              order.course['salePrice']),
+                                          style: const TextStyle(
+                                            fontSize:
+                                                ThemeConstants.fontSizeSmall,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal:
+                                                ThemeConstants.paddingSmall,
+                                            vertical:
+                                                ThemeConstants.paddingSmall / 2,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.green,
+                                            borderRadius: BorderRadius.circular(
+                                              ThemeConstants.borderRadiusSmall,
+                                            ),
+                                          ),
+                                          child: const Text(
+                                            'Purchased',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                              );
-                            },
-                            child: const Text('View Details'),
-                          ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => OrderDetailsScreen(order: order),
+                      ),
+                    );
+                  },
                 );
               },
             );
