@@ -7,6 +7,7 @@ import 'package:app/src/services/firebase_service.dart';
 import 'package:app/src/utils/num_extension.dart';
 import 'package:app/src/utils/string_extension.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -71,9 +72,13 @@ class _SyllabusLessonState extends State<SyllabusLesson> {
       contentPadding: const EdgeInsets.only(left: ThemeConstants.paddingLarge),
       trailing:
           widget.youtubePlayerController == null && widget.lecture.freePreview
-              ? const Icon(
-                  Icons.play_circle_outline_sharp,
-                  color: ThemeConstants.primaryButtonColor,
+              ? SvgPicture.asset(
+                  'assets/icons/play-filled.svg',
+                  height: 30,
+                  colorFilter: const ColorFilter.mode(
+                    ThemeConstants.primaryButtonColor,
+                    BlendMode.srcIn,
+                  ),
                 )
               : _firebaseService.currentUser == null ||
                       widget.youtubePlayerController == null

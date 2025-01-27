@@ -1,6 +1,8 @@
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/screens/account/account_screen.dart';
 import 'package:app/src/screens/featured_screen/featured_screen.dart';
+import 'package:app/src/screens/home/home_screen.dart';
+import 'package:app/src/screens/my_learning/my_learning_screen.dart';
 import 'package:app/src/screens/search_screen.dart';
 import 'package:app/src/widgets/bottom_navigation_icon.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -36,8 +38,10 @@ class _EntryPointState extends State<EntryPoint> {
   final ValueNotifier<int> _selectedIndex = ValueNotifier(0);
   final PageController _pageController = PageController();
   final List<Widget> _tabs = const [
-    FeaturedScreen(),
+    HomeScreen(),
     SearchScreen(),
+    MyLearningScreen(),
+    // FeaturedScreen(),
     AccountScreen(),
   ];
 
@@ -49,20 +53,36 @@ class _EntryPointState extends State<EntryPoint> {
               bottomNavigationBar: BottomNavigationBar(
                 useLegacyColorScheme: false,
                 selectedLabelStyle: const TextStyle(
-                  color: Colors.black,
+                  color: ThemeConstants.primaryColor,
                   fontSize: 12,
                 ),
-                backgroundColor: ThemeConstants.backgroundColor,
+                unselectedLabelStyle: TextStyle(
+                  color: ThemeConstants.primaryColor.withAlpha(100),
+                  fontSize: 12,
+                ),
+                // selectedIconTheme: const IconThemeData(
+                //   color: ThemeConstants.primaryColor,
+                //   size: 2,
+                // ),
+                // selectedItemColor: ThemeConstants.primaryColor,
+                backgroundColor: Colors.white,
                 elevation: 0,
                 type: BottomNavigationBarType.fixed,
                 items: [
                   BottomNavigationBarItem(
                     icon: BottomNavigationIcon(
-                      path: 'assets/icons/favourite.svg',
+                      path: 'assets/icons/home.svg',
                       isActive: selectedIndex == 0,
                     ),
-                    label: 'Featured',
+                    label: 'Home',
                   ),
+                  // BottomNavigationBarItem(
+                  //   icon: BottomNavigationIcon(
+                  //     path: 'assets/icons/favourite.svg',
+                  //     isActive: selectedIndex == 1,
+                  //   ),
+                  //   label: 'Featured',
+                  // ),
                   BottomNavigationBarItem(
                     icon: BottomNavigationIcon(
                       path: 'assets/icons/search.svg',
@@ -72,8 +92,14 @@ class _EntryPointState extends State<EntryPoint> {
                   ),
                   BottomNavigationBarItem(
                       icon: BottomNavigationIcon(
-                        path: 'assets/icons/user.svg',
+                        path: 'assets/icons/my-learning.svg',
                         isActive: selectedIndex == 2,
+                      ),
+                      label: 'My Learning'),
+                  BottomNavigationBarItem(
+                      icon: BottomNavigationIcon(
+                        path: 'assets/icons/user.svg',
+                        isActive: selectedIndex == 3,
                       ),
                       label: 'Account'),
                 ],

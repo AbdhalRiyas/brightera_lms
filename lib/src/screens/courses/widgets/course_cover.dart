@@ -16,16 +16,22 @@ class CourseCover extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      borderRadius: BorderRadius.circular(ThemeConstants.borderRadiusMedium),
+      borderRadius: const BorderRadius.only(
+        bottomLeft: Radius.circular(50),
+        bottomRight: Radius.circular(50),
+      ),
       onTap: course.previewVideo.isEmpty
           ? null
           : () => showFreePreview(context, course.previewVideo),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(ThemeConstants.borderRadiusMedium),
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(50),
+          bottomRight: Radius.circular(50),
+        ),
         child: Stack(
           children: [
             AspectRatio(
-              aspectRatio: 16 / 9,
+              aspectRatio: 4 / 3,
               child: CachedNetworkImage(
                 imageUrl: course.image,
                 width: double.maxFinite,
@@ -43,26 +49,28 @@ class CourseCover extends StatelessWidget {
                     children: [
                       SvgPicture.asset(
                         'assets/icons/play-filled.svg',
-                        height: 50,
+                        height: 40,
                         colorFilter: const ColorFilter.mode(
                           Colors.white,
                           BlendMode.srcIn,
                         ),
                       ),
-                      const SizedBox(height: ThemeConstants.paddingMedium),
+                      const SizedBox(height: ThemeConstants.paddingSmall),
                       Text(
                         "Preview this course",
                         style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            shadows: [
-                              BoxShadow(
-                                  offset: const Offset(1, 1),
-                                  blurRadius: 10,
-                                  spreadRadius: 10,
-                                  color: Colors.grey.shade500),
-                            ]),
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          shadows: [
+                            BoxShadow(
+                              offset: const Offset(1, 1),
+                              blurRadius: 10,
+                              spreadRadius: 10,
+                              color: Colors.grey.shade500,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

@@ -1,5 +1,4 @@
 import 'package:app/src/config/theme_constants.dart';
-import 'package:app/src/models/coupon.dart';
 import 'package:app/src/models/course.dart';
 import 'package:app/src/models/order.dart';
 import 'package:app/src/models/payment_method.dart';
@@ -12,6 +11,8 @@ import 'package:app/src/screens/orders/orders_screen.dart';
 import 'package:app/src/services/pay_here_service.dart';
 import 'package:app/src/utils/format_price.dart';
 import 'package:app/src/utils/result.dart';
+import 'package:app/src/widgets/app_bar_back_button.dart';
+import 'package:app/src/widgets/course_card/course_card.dart';
 import 'package:app/src/widgets/primary_button.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -52,6 +53,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           child: Scaffold(
             appBar: AppBar(
               title: const Text("Checkout"),
+              leading: const AppBarBackButton(),
             ),
             body: Padding(
               padding: EdgeInsets.only(
@@ -62,82 +64,46 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               child: ListView(
                 children: [
                   Text(
-                    "Payment method",
-                    style: _buildSubHeadingStyles(),
-                  ),
-                  FutureBuilder(
-                    future: _paymentMethods,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        // Show a loading indicator while waiting for the data
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        // Handle the error state
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        // Handle the case where there's no data
-                        return const Text('No payment methods available');
-                      } else {
-                        // Assuming snapshot.data is a List<PaymentMethod>
-                        final List<PaymentMethod> paymentMethods =
-                            snapshot.data!;
-
-                        // Map each payment method to a Text widget or any other widget you want
-                        return _buildCheckoutWidgets(paymentMethods);
-                      }
-                    },
-                  ),
-                  const SizedBox(height: ThemeConstants.paddingLarge),
-                  Text(
                     "Order details",
                     style: _buildSubHeadingStyles(),
                   ),
                   ...List.generate(
                     widget.courses.length,
-                    (int index) => ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 0),
-                      leading: CachedNetworkImage(
-                        imageUrl: widget.courses[index].image,
-                        width: 50,
-                        height: 50,
-                      ),
-                      title: Text(
-                        widget.courses[index].title,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      trailing: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            formatPrice(widget.courses[index].salePrice),
-                            style: const TextStyle(
-                              fontSize: 13,
-                            ),
-                          ),
-                          if (widget.courses[index].regularPrice != 0.00)
-                            Text(
-                              formatPrice(widget.courses[index].regularPrice),
-                              style: const TextStyle(
-                                  decoration: TextDecoration.lineThrough),
-                            ),
-                        ],
-                      ),
+                    (int index) => CourseCard(
+                      course: widget.courses[index],
+                      listMode: true,
                     ),
                   ),
                   const SizedBox(height: ThemeConstants.paddingLarge),
-                  Text(
-                    "Promotions",
-                    style: _buildSubHeadingStyles(),
-                  ),
-                  SizedBox(
-                    height: 40,
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(
+                        ThemeConstants.borderRadiusMedium,
+                      ),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: ThemeConstants.primaryShadowColor,
+                          blurRadius: 10,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    height: 50,
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: SvgPicture.asset(
+                            "assets/icons/coupon.svg",
+                            colorFilter: const ColorFilter.mode(
+                              Colors.grey,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
                         Expanded(
                           child: TextField(
                             controller: _couponCodeController,
@@ -149,45 +115,147 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                               contentPadding: EdgeInsets.all(
                                 ThemeConstants.paddingSmall,
                               ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(
-                                    ThemeConstants.borderRadiusSmall,
-                                  ),
-                                  bottomLeft: Radius.circular(
-                                    ThemeConstants.borderRadiusSmall,
-                                  ),
-                                ),
-                              ),
+                              disabledBorder: InputBorder.none,
+                              border: InputBorder.none,
                             ),
                           ),
                         ),
-                        Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(
-                                    ThemeConstants.borderRadiusSmall,
-                                  ),
-                                  bottomRight: Radius.circular(
-                                    ThemeConstants.borderRadiusSmall,
+                        TextButton(
+                          onPressed: () async {
+                            final couponCode = _couponCodeController.text;
+                            final result = await CouponRepository().applyCoupon(
+                              couponCode,
+                              widget.courses[0].id,
+                            );
+                            if (result.isSuccess) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Coupon applied successfully"),
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    result.error ?? "An error occurred",
                                   ),
                                 ),
-                              ),
-                            ),
-                            onPressed: () async {
-                              final couponCode = _couponCodeController.text;
-                              final result =
-                                  await CouponRepository().applyCoupon(
-                                couponCode,
-                                widget.courses[0].id,
                               );
+                            }
+                          },
+                          child: const Text(
+                            "Apply Coupon",
+                            style: TextStyle(
+                              color: ThemeConstants.primaryButtonColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: ThemeConstants.paddingLarge),
+                  Text(
+                    "Payment method",
+                    style: _buildSubHeadingStyles(),
+                  ),
+                  const SizedBox(height: ThemeConstants.paddingSmall),
+                  Container(
+                    padding: const EdgeInsets.all(
+                      ThemeConstants.paddingSmall,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(
+                        ThemeConstants.borderRadiusLarge,
+                      ),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: ThemeConstants.primaryShadowColor,
+                          blurRadius: 10,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: FutureBuilder(
+                      future: _paymentMethods,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          // Show a loading indicator while waiting for the data
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        } else if (snapshot.hasError) {
+                          // Handle the error state
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          // Handle the case where there's no data
+                          return const Text('No payment methods available');
+                        } else {
+                          // Assuming snapshot.data is a List<PaymentMethod>
+                          final List<PaymentMethod> paymentMethods =
+                              snapshot.data!;
+
+                          // Map each payment method to a Text widget or any other widget you want
+                          return _buildCheckoutWidgets(paymentMethods);
+                        }
+                      },
+                    ),
+                  ),
+                  _buildPaymentSummary(context),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.1,
+                  ),
+                ],
+              ),
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: Padding(
+              padding: const EdgeInsets.all(ThemeConstants.paddingSmall),
+              child: ValueListenableBuilder<int>(
+                valueListenable: _selectedPg,
+                builder: (BuildContext context, int value, Widget? child) =>
+                    PrimaryButton(
+                  text: value == -1 ? "Choose a payment method" : "Proceed",
+                  onPressed: value != -1
+                      ? () async {
+                          final paymentMethods = await _paymentMethods;
+                          switch (paymentMethods[_selectedPg.value].type) {
+                            case 'payhere':
+                              PayHereService()
+                                  .processPayment(_togglePaymentOverlay);
+                              break;
+                            case 'bank':
+                              Order order = Order(
+                                id: '123456',
+                                userId: UserRepository().getUserReference(
+                                    UserRepository().currentUserUid),
+                                status: 'pending',
+                                courseId: CourseRepository()
+                                    .getCourseReference(widget.courses[0].id),
+                                createdAt: DateTime.now(),
+                                paymentMethod:
+                                    paymentMethods[_selectedPg.value].name,
+                                paymentStatus: 'pending',
+                                total: widget.courses[0].salePrice * 1,
+                                course: widget.courses[0].toFirestore(),
+                              );
+                              Result result =
+                                  await OrderRepository().createOrder(order);
                               if (result.isSuccess) {
+                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const OrdersScreen(),
+                                  ),
+                                );
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content:
-                                        Text("Coupon applied successfully"),
+                                    content: Text("Order created successfully"),
                                   ),
                                 );
                               } else {
@@ -199,15 +267,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                   ),
                                 );
                               }
-                            },
-                            child: const Text("Apply"),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  _buildPaymentSummary(context)
-                ],
+                              break;
+                            default:
+                              break;
+                          }
+                        }
+                      : null,
+                ),
               ),
             ),
           ),
@@ -233,83 +299,109 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ThemeConstants.paddingSmall + MediaQuery.paddingOf(context).bottom,
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             "Summary",
             style: _buildSubHeadingStyles(),
           ),
           const SizedBox(height: ThemeConstants.paddingSmall),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Original Price:",
-                style: _buildSubHeadingStyles(14, FontWeight.w500),
-              ),
-              Builder(builder: (context) {
-                num total = 0.00;
-                for (Course course in widget.courses) {
-                  total += course.salePrice;
-                }
-                return Text(
-                  formatPrice(total),
-                  style: _buildSubHeadingStyles(14),
-                );
-              }),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Discounts:",
-                style: _buildSubHeadingStyles(14, FontWeight.w500),
-              ),
-              Builder(builder: (context) {
-                num totalSalePrice = 0.00;
-                num totalRegularPrice = 0.00;
-                for (Course course in widget.courses) {
-                  totalSalePrice += course.salePrice;
-                  totalRegularPrice += course.regularPrice;
-                }
-                return Text(
-                  formatPrice(totalRegularPrice - totalSalePrice, true),
-                  style: _buildSubHeadingStyles(14),
-                );
-              }),
-            ],
-          ),
-          const Padding(
-            padding:
-                EdgeInsets.symmetric(vertical: ThemeConstants.paddingSmall),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(color: ThemeConstants.borderColor),
-                ),
-              ),
+          Container(
+            height: 100,
+            padding: const EdgeInsets.symmetric(
+              horizontal: ThemeConstants.paddingSmall,
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Total:",
-                style: _buildSubHeadingStyles(14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(
+                ThemeConstants.borderRadiusLarge,
               ),
-              Builder(builder: (context) {
-                num total = 0.00;
-                for (Course course in widget.courses) {
-                  total += course.salePrice;
-                }
-                return Text(
-                  formatPrice(total),
-                  style: _buildSubHeadingStyles(14),
-                );
-              }),
-            ],
+              boxShadow: const [
+                BoxShadow(
+                  color: ThemeConstants.primaryShadowColor,
+                  blurRadius: 10,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Original Price",
+                      style: _buildSubHeadingStyles(14, FontWeight.w500),
+                    ),
+                    Builder(builder: (context) {
+                      num total = 0.00;
+                      for (Course course in widget.courses) {
+                        total += course.salePrice;
+                      }
+                      return Text(
+                        formatPrice(total),
+                        style: _buildSubHeadingStyles(14),
+                      );
+                    }),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Discounts",
+                      style: _buildSubHeadingStyles(14, FontWeight.w500),
+                    ),
+                    Builder(builder: (context) {
+                      num totalSalePrice = 0.00;
+                      num totalRegularPrice = 0.00;
+                      for (Course course in widget.courses) {
+                        totalSalePrice += course.salePrice;
+                        totalRegularPrice += course.regularPrice;
+                      }
+                      return Text(
+                        formatPrice(totalRegularPrice - totalSalePrice, true),
+                        style: _buildSubHeadingStyles(14),
+                      );
+                    }),
+                  ],
+                ),
+                // const Padding(
+                //   padding: EdgeInsets.symmetric(
+                //       vertical: ThemeConstants.paddingSmall),
+                //   child: DecoratedBox(
+                //     decoration: BoxDecoration(
+                //       border: Border(
+                //         top: BorderSide(color: ThemeConstants.borderColor),
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Total",
+                      style: _buildSubHeadingStyles(
+                        16,
+                      ),
+                    ),
+                    Builder(builder: (context) {
+                      num total = 0.00;
+                      for (Course course in widget.courses) {
+                        total += course.salePrice;
+                      }
+                      return Text(
+                        formatPrice(total),
+                        style: _buildSubHeadingStyles(16),
+                      );
+                    }),
+                  ],
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: ThemeConstants.paddingSmall),
           const Text(
@@ -317,67 +409,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             style: TextStyle(
               fontSize: 11,
               color: Colors.grey,
-            ),
-          ),
-          const SizedBox(height: ThemeConstants.paddingSmall),
-          ValueListenableBuilder<int>(
-            valueListenable: _selectedPg,
-            builder: (BuildContext context, int value, Widget? child) =>
-                PrimaryButton(
-              text: value == -1 ? "Choose a payment method" : "Proceed",
-              onPressed: value != -1
-                  ? () async {
-                      final paymentMethods = await _paymentMethods;
-                      switch (paymentMethods[_selectedPg.value].type) {
-                        case 'payhere':
-                          PayHereService()
-                              .processPayment(_togglePaymentOverlay);
-                          break;
-                        case 'bank':
-                          Order order = Order(
-                            id: '123456',
-                            userId: UserRepository().getUserReference(
-                                UserRepository().currentUserUid),
-                            status: 'pending',
-                            courseId: CourseRepository()
-                                .getCourseReference(widget.courses[0].id),
-                            createdAt: DateTime.now(),
-                            paymentMethod:
-                                paymentMethods[_selectedPg.value].name,
-                            paymentStatus: 'pending',
-                            total: widget.courses[0].salePrice * 1,
-                            course: widget.courses[0].toFirestore(),
-                          );
-                          Result result =
-                              await OrderRepository().createOrder(order);
-                          if (result.isSuccess) {
-                            Navigator.pop(context);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const OrdersScreen(),
-                              ),
-                            );
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Order created successfully"),
-                              ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  result.error ?? "An error occurred",
-                                ),
-                              ),
-                            );
-                          }
-                          break;
-                        default:
-                          break;
-                      }
-                    }
-                  : null,
             ),
           ),
         ],
@@ -388,119 +419,154 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Column _buildCheckoutWidgets(List<PaymentMethod> paymentMethods) {
     return Column(
       children: List.generate(
-          paymentMethods.length,
-          (i) => ValueListenableBuilder(
-              valueListenable: _selectedPg,
-              builder: (context, value, ch) {
-                return Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: ThemeConstants.paddingSmall),
-                  decoration: value == i
-                      ? BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                              ThemeConstants.borderRadiusSmall),
-                          color: const Color(0xFFEBE0EB),
-                        )
-                      : null,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      ListTile(
-                        contentPadding:
-                            const EdgeInsets.symmetric(horizontal: 0),
-                        leading: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(value == i
-                                ? Icons.radio_button_checked
-                                : Icons.radio_button_off),
-                            paymentMethods[i].icon.endsWith('.svg')
-                                ? SvgPicture.network(
-                                    paymentMethods[i].icon,
-                                  )
-                                : CachedNetworkImage(
-                                    imageUrl: paymentMethods[i].icon,
-                                    width: 38,
-                                    fit: BoxFit.contain,
-                                  ),
-                          ],
-                        ),
-                        title: Text(
-                          paymentMethods[i].name,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        trailing: SizedBox(
-                          width: 100,
-                          height: 30,
-                          child: ListView.separated(
-                            addAutomaticKeepAlives: false,
-                            scrollDirection: Axis.horizontal,
-                            itemCount: paymentMethods[i].images.length,
-                            itemBuilder: (context, index) =>
-                                paymentMethods[i].images[i].isEmpty
-                                    ? null
-                                    : ClipRRect(
-                                        borderRadius: BorderRadius.circular(1),
-                                        child: (paymentMethods[i]
-                                                .images[index]
-                                                .toString()
-                                                .endsWith('.svg')
-                                            ? SvgPicture.network(
-                                                paymentMethods[i].images[index],
-                                                height: 18,
-                                              )
-                                            : CachedNetworkImage(
-                                                imageUrl: paymentMethods[i]
-                                                    .images[index],
-                                                height: 18,
-                                              )),
-                                      ),
-                            separatorBuilder:
-                                (BuildContext context, int index) =>
-                                    const SizedBox(
-                              width: ThemeConstants.paddingSmall,
-                            ),
-                          ),
-                        ),
-                        onTap: () {
-                          _selectedPg.value = i;
-                        },
+        paymentMethods.length,
+        (i) => ValueListenableBuilder(
+          valueListenable: _selectedPg,
+          builder: (context, value, ch) {
+            return Container(
+              decoration: value == i
+                  ? BoxDecoration(
+                      borderRadius: BorderRadius.circular(
+                        ThemeConstants.borderRadiusMedium,
                       ),
-                      if (value == i)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
+                      border: Border.all(
+                        color: ThemeConstants.borderColor,
+                        width: ThemeConstants.borderSizeLarge,
+                      ),
+                      color: const Color(0x1942A5F5),
+                    )
+                  : null,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.symmetric(
+                      vertical: ThemeConstants.paddingSmall / 2,
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: ThemeConstants.paddingSmall,
+                    ),
+                    decoration: value != i
+                        ? BoxDecoration(
+                            borderRadius: BorderRadius.circular(
+                              ThemeConstants.borderRadiusMedium,
+                            ),
+                            border: Border.all(
+                              color: ThemeConstants.borderColor,
+                              width: ThemeConstants.borderSizeLarge,
+                            ),
+                          )
+                        : null,
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+                      leading: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          paymentMethods[i].icon.endsWith('.svg')
+                              ? SvgPicture.network(
+                                  paymentMethods[i].icon,
+                                )
+                              : CachedNetworkImage(
+                                  imageUrl: paymentMethods[i].icon,
+                                  width: 38,
+                                  fit: BoxFit.contain,
+                                ),
+                        ],
+                      ),
+                      title: Text(
+                        paymentMethods[i].name,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      trailing: Icon(
+                        value == i
+                            ? Icons.radio_button_checked
+                            : Icons.radio_button_off,
+                        color: ThemeConstants.primaryButtonColor,
+                      ),
+                      // trailing: SizedBox(
+                      //   width: 100,
+                      //   height: 30,
+                      //   child: ListView.separated(
+                      //     addAutomaticKeepAlives: false,
+                      //     scrollDirection: Axis.horizontal,
+                      //     itemCount: paymentMethods[i].images.length,
+                      //     itemBuilder: (context, index) => paymentMethods[i]
+                      //             .images[i]
+                      //             .isEmpty
+                      //         ? null
+                      //         : ClipRRect(
+                      //             borderRadius: BorderRadius.circular(1),
+                      //             child: (paymentMethods[i]
+                      //                     .images[index]
+                      //                     .toString()
+                      //                     .endsWith('.svg')
+                      //                 ? SvgPicture.network(
+                      //                     paymentMethods[i].images[index],
+                      //                     height: 18,
+                      //                   )
+                      //                 : CachedNetworkImage(
+                      //                     imageUrl: paymentMethods[i]
+                      //                         .images[index],
+                      //                     height: 18,
+                      //                   )),
+                      //           ),
+                      //     separatorBuilder:
+                      //         (BuildContext context, int index) =>
+                      //             const SizedBox(
+                      //       width: ThemeConstants.paddingSmall,
+                      //     ),
+                      //   ),
+                      // ),
+                      onTap: () {
+                        _selectedPg.value = i;
+                      },
+                    ),
+                  ),
+                  if (value == i)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: ThemeConstants.paddingSmall),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          if (paymentMethods[i].type == "bank")
+                            const Text(
+                              "Please transfer the total amount to the bank account below. After completing the transfer, tap \"Proceed\" to upload your payment slip. We will confirm and notify you once your order is completed.",
+                            ),
+                          ...[
                             if (paymentMethods[i].type == "bank")
-                              const Text(
-                                "Please transfer the total amount to the bank account below. After completing the transfer, tap \"Proceed\" to upload your payment slip. We will confirm and notify you once your order is completed.",
-                              ),
-                            ...[
-                              if (paymentMethods[i].type == "bank")
-                                const SizedBox(
-                                    height: ThemeConstants.paddingSmall),
-                              Text(
-                                paymentMethods[i].description,
-                              ),
-                            ],
+                              const SizedBox(
+                                  height: ThemeConstants.paddingSmall),
+                            Text(
+                              paymentMethods[i].description,
+                            ),
                             const SizedBox(height: ThemeConstants.paddingSmall),
                           ],
-                        ),
-                    ],
-                  ),
-                );
-              })).toList(),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            );
+          },
+        ),
+      ).toList(),
     );
   }
 
-  TextStyle _buildSubHeadingStyles(
-      [double fontSize = 16, FontWeight fontWeight = FontWeight.w600]) {
+  TextStyle _buildSubHeadingStyles([
+    double fontSize = 16,
+    FontWeight fontWeight = FontWeight.w600,
+    Color color = Colors.black,
+  ]) {
     return TextStyle(
       fontSize: fontSize,
       fontWeight: fontWeight,
+      color: color,
     );
   }
 }

@@ -1,6 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
-<svg fill="currentColor" width="800px" height="800px" viewBox="0 0 256 256" id="Flat"
-  xmlns="http://www.w3.org/2000/svg">
-  <path
-    d="M239.96875,128a15.9,15.9,0,0,1-7.65625,13.65625L88.34375,229.64062A15.9978,15.9978,0,0,1,64,215.99219V40.00781A15.99781,15.99781,0,0,1,88.34375,26.35937L232.3125,114.34375A15.9,15.9,0,0,1,239.96875,128Z" />
+<svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="mask0_725_5619" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="2" y="2" width="34" height="34">
+<path d="M19.0001 34.8334C27.7448 34.8334 34.8334 27.7448 34.8334 19.0001C34.8334 10.2553 27.7448 3.16675 19.0001 3.16675C10.2553 3.16675 3.16675 10.2553 3.16675 19.0001C3.16675 27.7448 10.2553 34.8334 19.0001 34.8334Z" fill="white" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+<path d="M15.8335 19V13.5154L20.5835 16.2577L25.3335 19L20.5835 21.7424L15.8335 24.4847V19Z" fill="black" stroke="black" stroke-width="2" stroke-linejoin="round"/>
+</mask>
+<g mask="url(#mask0_725_5619)">
+<path d="M0 0H38V38H0V0Z" fill="#F4FAFF"/>
+</g>
 </svg>

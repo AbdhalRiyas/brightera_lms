@@ -161,94 +161,106 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return ListView(
-      physics: widget._scrollPhysics,
-      shrinkWrap: true,
-      controller: widget.syllabusScrollController,
-      children: [
-        _isLoading
-            ? const Center(child: CircularProgressIndicator.adaptive())
-            : Accordion(
-                paddingListTop: 0,
-                contentVerticalPadding: ThemeConstants.paddingSmall,
-                disableScrolling: true,
-                rightIcon: const Icon(
-                  Icons.keyboard_arrow_down,
-                  color: Colors.black,
-                  size: 22,
-                ),
-                headerBorderRadius: ThemeConstants.borderRadiusSmall,
-                headerBorderWidth: 0,
-                paddingListHorizontal: 0,
-                headerBorderColorOpened: Colors.transparent,
-                headerBackgroundColor: Colors.transparent,
-                headerBackgroundColorOpened: Colors.transparent,
-                contentBackgroundColor: Colors.transparent,
-                contentBorderWidth: 0,
-                contentHorizontalPadding: 0,
-                scaleWhenAnimating: false,
-                openAndCloseAnimation: true,
-                headerPadding: const EdgeInsets.symmetric(vertical: 7),
-                sectionOpeningHapticFeedback: SectionHapticFeedback.heavy,
-                sectionClosingHapticFeedback: SectionHapticFeedback.light,
-                children: List.generate(
-                  _sections.length,
-                  (i) => AccordionSection(
-                    contentBackgroundColor: ThemeConstants.backgroundColor,
-                    onOpenSection: () {
-                      _changeOpenedIndex(i);
-                    },
-                    key: Key(_sections[i].id),
-                    isOpen: i == _openedSection,
-                    contentVerticalPadding: ThemeConstants.paddingSmall,
-                    header: Text(
-                      _sections[i].title,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    content: ListView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      children: List.generate(
-                        _sections[i].lectures.length,
-                        (j) => Material(
-                          child: widget.activeLesson != null
-                              ? ValueListenableBuilder<ActiveLesson>(
-                                  valueListenable: widget.activeLesson!,
-                                  builder: (BuildContext context,
-                                          ActiveLesson value, Widget? child) =>
-                                      SyllabusLesson(
-                                    key: Key(_sections[i].lectures[j].id),
-                                    courseProgressBox: widget.courseProgressBox,
-                                    course: widget.course,
-                                    index: j,
-                                    sectionIndex: i,
-                                    lecture: _sections[i].lectures[j],
-                                    activeLesson: widget.activeLesson,
-                                    youtubePlayerController:
-                                        widget.youtubePlayerController,
-                                  ),
-                                )
-                              : SyllabusLesson(
-                                  key: Key(_sections[i].lectures[j].id),
-                                  courseProgressBox: widget.courseProgressBox,
-                                  course: widget.course,
-                                  index: j,
-                                  sectionIndex: i,
-                                  lecture: _sections[i].lectures[j],
-                                  activeLesson: widget.activeLesson,
-                                  youtubePlayerController:
-                                      widget.youtubePlayerController,
-                                ),
-                        ),
-                      ),
+    return widget._scrollPhysics is NeverScrollableScrollPhysics
+        ? Column(children: _buildSyllubusList)
+        : ListView(
+            physics: widget._scrollPhysics,
+            shrinkWrap: true,
+            controller: widget.syllabusScrollController,
+            children: _buildSyllubusList,
+          );
+  }
+
+  List<Widget> get _buildSyllubusList {
+    return [
+      _isLoading
+          ? const Center(child: CircularProgressIndicator.adaptive())
+          : Accordion(
+              paddingListTop: 0,
+              contentVerticalPadding: ThemeConstants.paddingSmall,
+              disableScrolling: true,
+              rightIcon: const Icon(
+                Icons.keyboard_arrow_down,
+                color: Colors.black,
+                size: 22,
+              ),
+              headerBorderRadius: ThemeConstants.borderRadiusSmall,
+              headerBorderWidth: 0,
+              paddingListHorizontal: 0,
+              headerBorderColorOpened: Colors.transparent,
+              headerBackgroundColor: Colors.transparent,
+              headerBackgroundColorOpened: Colors.transparent,
+              contentBackgroundColor: Colors.transparent,
+              contentBorderWidth: 0,
+              contentHorizontalPadding: 0,
+              scaleWhenAnimating: false,
+              openAndCloseAnimation: true,
+              headerPadding: const EdgeInsets.symmetric(vertical: 7),
+              sectionOpeningHapticFeedback: SectionHapticFeedback.heavy,
+              sectionClosingHapticFeedback: SectionHapticFeedback.light,
+              children: List.generate(
+                _sections.length,
+                (i) => AccordionSection(
+                  contentBackgroundColor: ThemeConstants.backgroundColor,
+                  onOpenSection: () {
+                    _changeOpenedIndex(i);
+                  },
+                  key: Key(_sections[i].id),
+                  isOpen: i == _openedSection,
+                  contentVerticalPadding: ThemeConstants.paddingSmall,
+                  header: Text(
+                    _sections[i].title,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
+                  content: widget._scrollPhysics is NeverScrollableScrollPhysics
+                      ? Column(
+                          children: _buildSubList(i),
+                        )
+                      : ListView(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          children: _buildSubList(i),
+                        ),
                 ),
               ),
-      ],
+            ),
+    ];
+  }
+
+  List<Widget> _buildSubList(int i) {
+    return List.generate(
+      _sections[i].lectures.length,
+      (j) => Material(
+        child: widget.activeLesson != null
+            ? ValueListenableBuilder<ActiveLesson>(
+                valueListenable: widget.activeLesson!,
+                builder:
+                    (BuildContext context, ActiveLesson value, Widget? child) =>
+                        SyllabusLesson(
+                  key: Key(_sections[i].lectures[j].id),
+                  courseProgressBox: widget.courseProgressBox,
+                  course: widget.course,
+                  index: j,
+                  sectionIndex: i,
+                  lecture: _sections[i].lectures[j],
+                  activeLesson: widget.activeLesson,
+                  youtubePlayerController: widget.youtubePlayerController,
+                ),
+              )
+            : SyllabusLesson(
+                key: Key(_sections[i].lectures[j].id),
+                courseProgressBox: widget.courseProgressBox,
+                course: widget.course,
+                index: j,
+                sectionIndex: i,
+                lecture: _sections[i].lectures[j],
+                activeLesson: widget.activeLesson,
+                youtubePlayerController: widget.youtubePlayerController,
+              ),
+      ),
     );
   }
 

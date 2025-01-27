@@ -1,5 +1,7 @@
 import 'package:app/src/admin/screens/coupons/coupons_screen.dart';
 import 'package:app/src/admin/screens/courses/courses_screen.dart';
+import 'package:app/src/admin/screens/featured_courses/featured_courses_screen.dart';
+import 'package:app/src/admin/screens/popular_courses/popular_courses_screen.dart';
 import 'package:app/src/admin/screens/subjects/subjects_screen.dart';
 import 'package:app/src/widgets/custom_app_bar.dart';
 import 'package:app/src/widgets/seperator.dart';
@@ -28,6 +30,16 @@ class _LmsScreenState extends State<LmsScreen> {
       "title": "Coupons",
       "icon": Icons.card_giftcard,
       "navigation": const CouponsScreen(),
+    },
+    {
+      "title": "Featured Courses",
+      "icon": Icons.book,
+      "navigation": const FeaturedCoursesScreen(),
+    },
+    {
+      "title": "Popular Courses",
+      "icon": Icons.star,
+      "navigation": const PopularCoursesScreen(),
     }
   ];
 

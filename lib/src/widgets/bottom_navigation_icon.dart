@@ -21,7 +21,11 @@ class BottomNavigationIcon extends StatelessWidget {
         SvgPicture.asset(
           path,
           colorFilter: ColorFilter.mode(
-              isActive ? Colors.black : Colors.black54, BlendMode.srcIn),
+            isActive
+                ? ThemeConstants.primaryColor
+                : ThemeConstants.primaryColor.withAlpha(100),
+            BlendMode.srcIn,
+          ),
         ),
         if (hasNotes)
           const Positioned(
@@ -29,7 +33,7 @@ class BottomNavigationIcon extends StatelessWidget {
             right: 0,
             child: CircleAvatar(
               maxRadius: 5,
-              backgroundColor: ThemeConstants.primaryColor,
+              backgroundColor: Colors.red,
             ),
           ),
       ],

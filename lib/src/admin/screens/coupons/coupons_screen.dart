@@ -26,7 +26,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) =>
-                  CouponAddEditDialog(repository: _repository),
+                  CouponAddEditScreen(repository: _repository),
             ),
           );
         },
@@ -87,7 +87,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => CouponAddEditDialog(
+                          builder: (context) => CouponAddEditScreen(
                             coupon: coupon,
                             repository: _repository,
                           ),

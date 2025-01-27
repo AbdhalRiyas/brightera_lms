@@ -52,12 +52,13 @@ class CourseRepository {
   Future<Result> updateSection(
       {required String courseId, required Section section}) async {
     return await _firebaseService.updateDocument(
-        collection: 'courses',
-        subCollectionPaths: [
-          {"subCollection": "sections", "subDocumentId": section.id},
-        ],
-        documentId: courseId,
-        data: section.toFirestore());
+      collection: 'courses',
+      subCollectionPaths: [
+        {"subCollection": "sections", "subDocumentId": section.id},
+      ],
+      documentId: courseId,
+      data: section.toFirestore(),
+    );
   }
 
   Future<Result> deleteSection({
@@ -102,10 +103,11 @@ class CourseRepository {
         data: lecture.toFirestore());
   }
 
-  Future<Result> deleteLecture(
-      {required String courseId,
-      required String sectionId,
-      required Lecture lecture}) async {
+  Future<Result> deleteLecture({
+    required String courseId,
+    required String sectionId,
+    required Lecture lecture,
+  }) async {
     return await _firebaseService.deleteDocument(
       collection: 'courses',
       documentId: courseId,
@@ -221,9 +223,98 @@ class CourseRepository {
   }
 
   Future<List<Course>> getCourses() {
+    // final userDetails = AuthManager().userDetails;
     return _firebaseService.getCollection(
       collection: 'courses',
       fromFirestore: Course.fromFirestore,
+      // comparisonField:
+      //     userDetails?['userRole'] != UserRole.admin ? 'instructor' : null,
+      // referenceCollection: 'users',
+      // referenceId: userDetails?['userRole'] != UserRole.admin
+      //     ? _firebaseService.currentUser?.uid
+      //     : null,
     );
+  }
+
+  Future<List<String>> getHomeCourseIds(
+    String documentId,
+  ) async {
+    final popularCourseIds =
+        await _firebaseService.getDocumentById(documentId, 'home');
+    return popularCourseIds.data()?['courseIds']?.cast<String>() ?? [];
+  }
+
+  Future<Result> updateHomeCourses(
+    List<String> courseIds,
+    String documentId,
+  ) async {
+    return await _firebaseService.updateDocument(
+      collection: "home",
+      documentId: documentId,
+      data: {'courseIds': courseIds},
+    );
+  }
+
+  Future<Result> removeCourseFromHome(
+    String courseId,
+    String documentId,
+  ) async {
+    final courseIds = await getHomeCourseIds(documentId);
+    courseIds.remove(courseId);
+    return await updateHomeCourses(courseIds, documentId);
+  }
+
+  Future<List<Course>> getHomeCourses(
+    String documentId,
+  ) async {
+    final homeCourseIds = await getHomeCourseIds(
+      documentId,
+    );
+    final List<Course> homeCourses = [];
+
+    for (var courseId in homeCourseIds) {
+      final course = await getCourseDetails(courseId);
+      if (course != null) {
+        homeCourses.add(course);
+      }
+    }
+    return homeCourses;
+  }
+
+  // get home courses by language
+  Future<List<Course>> getFeaturedCoursesByLanguage(String language) async {
+    final homeCourses = await getHomeCourses(
+      'featuredCourses',
+    );
+    return language == 'All'
+        ? homeCourses
+        : homeCourses.where((course) => course.language == language).toList();
+  }
+
+  Future<List<Course>> getCoursesByLanguage(String language) {
+    return _firebaseService.getCollection(
+      collection: 'courses',
+      fromFirestore: Course.fromFirestore,
+      comparisonField: language == 'All' ? null : 'language',
+      comparisonValue: language,
+    );
+  }
+
+  // search courses by title
+  Future<List<Course>> searchCourses(String query) async {
+    final data = await _firebaseService.searchCoursesByTitle(query);
+    final List<Course> courses = [];
+
+    if (data != null) {
+      for (var doc in data.docs) {
+        Course course = Course.fromFirestore(doc);
+        if (course.instructor != null) {
+          User? instructor = await _getInstructorInfo(course.instructor!);
+          course = course.copyWith(instructorInfo: instructor);
+        }
+        courses.add(course);
+      }
+    }
+    return courses;
   }
 }

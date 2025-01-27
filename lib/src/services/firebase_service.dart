@@ -292,6 +292,24 @@ class FirebaseService {
     }
   }
 
+  // search courses by title
+  Future<QuerySnapshot<Map<String, dynamic>>?> searchCoursesByTitle(
+      String title) async {
+    try {
+      // Query the courses collection where the title field matches the search term
+      Query<Map<String, dynamic>> query = _firestore
+          .collection('courses')
+          .where('title', isGreaterThanOrEqualTo: title)
+          .where('title', isLessThanOrEqualTo: '$title\uf8ff');
+
+      return await query.get();
+    } catch (e) {
+      // Handle any errors here
+      debugPrint('Error searching courses by title: $e');
+      return null;
+    }
+  }
+
   Future<QuerySnapshot<Map<String, dynamic>>?> getSectionsForCourse(
       String courseId) async {
     try {

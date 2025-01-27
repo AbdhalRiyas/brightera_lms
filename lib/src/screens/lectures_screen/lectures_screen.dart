@@ -1,13 +1,14 @@
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/active_lesson.dart';
 import 'package:app/src/models/course.dart';
-import 'package:app/src/screens/lectures_screen/widgets/custom_bottom_navigation_bar.dart';
 import 'package:app/src/screens/lectures_screen/widgets/downloads_tab.dart';
 import 'package:app/src/screens/lectures_screen/widgets/lecture_notes_tab.dart';
 import 'package:app/src/services/firebase_service.dart';
 import 'package:app/src/widgets/syllabus/syllabus_accordion.dart';
 import 'package:app/src/screens/lectures_screen/widgets/youtube_player_widget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -26,13 +27,15 @@ class LecturesScreen extends StatefulWidget {
   State<LecturesScreen> createState() => _LecturesScreenState();
 }
 
-class _LecturesScreenState extends State<LecturesScreen> {
+class _LecturesScreenState extends State<LecturesScreen>
+    with TickerProviderStateMixin {
   final FirebaseService _firebaseService = FirebaseService();
   final GlobalKey<SyllabusAccordionState> _syllabusKey =
       GlobalKey<SyllabusAccordionState>();
 
   final ScrollController _syllabusScrollController = ScrollController();
   final PageController _pageController = PageController();
+  late TabController _tabController;
 
   final ValueNotifier<ActiveLesson> _activeLesson =
       ValueNotifier(const ActiveLesson());
@@ -48,6 +51,7 @@ class _LecturesScreenState extends State<LecturesScreen> {
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 3, vsync: this);
 
     _courseProgressBox = Hive.openBox(
         "${_firebaseService.currentUser?.uid}_${widget.course.id}"); // used to store student's progress locally
@@ -77,38 +81,86 @@ class _LecturesScreenState extends State<LecturesScreen> {
                 ? const Center(
                     child: CircularProgressIndicator.adaptive(),
                   )
-                : LayoutBuilder(builder: (context, constraints) {
-                    return Column(
-                      children: [
-                        Flexible(
-                          flex: _isFullScreen
-                              ? int.parse(
-                                  (constraints.maxHeight).toStringAsFixed(0))
-                              : int.parse((constraints.maxHeight * 0.8)
-                                  .toStringAsFixed(0)),
-                          child: YoutubePlayerWidget(
-                            controller: _controller,
-                            prevVideo: () =>
-                                _syllabusKey.currentState?.prevLesson(),
-                            nextVideo: () =>
-                                _syllabusKey.currentState?.nextLesson(),
+                : LayoutBuilder(
+                    builder: (context, constraints) {
+                      return Column(
+                        children: [
+                          Flexible(
+                            flex: _isFullScreen
+                                ? int.parse(
+                                    (constraints.maxHeight).toStringAsFixed(0))
+                                : int.parse((constraints.maxHeight * 0.8)
+                                    .toStringAsFixed(0)),
+                            child: YoutubePlayerWidget(
+                              controller: _controller,
+                              prevVideo: () =>
+                                  _syllabusKey.currentState?.prevLesson(),
+                              nextVideo: () =>
+                                  _syllabusKey.currentState?.nextLesson(),
+                            ),
                           ),
-                        ),
-                        Flexible(
-                          flex: _isFullScreen
-                              ? 0
-                              : constraints.maxHeight < 540
-                                  ? int.parse((constraints.maxHeight * 1)
-                                      .toStringAsFixed(0))
-                                  : int.parse((constraints.maxHeight * 1.6)
-                                      .toStringAsFixed(0)),
-                          child: Visibility(
-                            visible: !_isFullScreen,
-                            maintainState: true,
-                            child: Padding(
+                          if (!_isFullScreen)
+                            Padding(
                               padding: const EdgeInsets.all(
-                                  ThemeConstants.paddingSmall),
+                                ThemeConstants.paddingSmall,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    widget.course.title,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                      height: ThemeConstants.paddingSmall),
+                                  if (widget.course.instructorInfo != null)
+                                    Text(
+                                      "By - ${widget.course.instructorInfo?.name}",
+                                      style: TextStyle(
+                                        fontSize: ThemeConstants.fontSizeSmall,
+                                        color: Colors.black.withAlpha(120),
+                                        fontWeight: FontWeight.w300,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          if (!_isFullScreen)
+                            Padding(
+                              padding: const EdgeInsets.all(
+                                ThemeConstants.paddingSmall,
+                              ),
                               child: ValueListenableBuilder<int>(
+                                valueListenable: _selectedIndex,
+                                builder: (context, value, child) {
+                                  return TabBarContainer(
+                                    selectedIndex: _selectedIndex,
+                                    tabController: _tabController,
+                                    onTabSelected: _switchTab,
+                                    activeLesson: _activeLesson,
+                                  );
+                                },
+                              ),
+                            ),
+                          Flexible(
+                            flex: _isFullScreen
+                                ? 0
+                                : constraints.maxHeight < 540
+                                    ? int.parse((constraints.maxHeight * 1)
+                                        .toStringAsFixed(0))
+                                    : int.parse((constraints.maxHeight * 1.6)
+                                        .toStringAsFixed(0)),
+                            child: Visibility(
+                              visible: !_isFullScreen,
+                              maintainState: true,
+                              child: Padding(
+                                padding: const EdgeInsets.all(
+                                    ThemeConstants.paddingSmall),
+                                child: ValueListenableBuilder<int>(
                                   valueListenable: _selectedIndex,
                                   builder: (context, selectedIndex, child) {
                                     return SizedBox(
@@ -136,25 +188,27 @@ class _LecturesScreenState extends State<LecturesScreen> {
                                         ],
                                       ),
                                     );
-                                  }),
+                                  },
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    );
-                  });
+                        ],
+                      );
+                    },
+                  );
           },
         ),
       ),
-      bottomNavigationBar: Visibility(
-        visible: !_isFullScreen,
-        maintainState: true,
-        child: CustomBottomNavigationBar(
-          selectedIndex: _selectedIndex,
-          switchTab: _switchTab,
-          activeLesson: _activeLesson,
-        ),
-      ),
+      // bottomNavigationBar: Visibility(
+      //   visible: !_isFullScreen,
+      //   maintainState: true,
+      //   child: CustomBottomNavigationBar(
+      //     selectedIndex: _selectedIndex,
+      //     switchTab: _switchTab,
+      //     activeLesson: _activeLesson,
+      //   ),
+      // ),
     );
   }
 
@@ -193,5 +247,135 @@ class _LecturesScreenState extends State<LecturesScreen> {
     _controller.removeListener(_ytPlayerListener);
     _controller.dispose();
     super.dispose();
+  }
+}
+
+class TabBarContainer extends StatelessWidget {
+  final ValueNotifier<int> selectedIndex;
+  final TabController tabController;
+  final Function(int) onTabSelected;
+  final ValueListenable<ActiveLesson> activeLesson;
+
+  const TabBarContainer({
+    super.key,
+    required this.selectedIndex,
+    required this.tabController,
+    required this.onTabSelected,
+    required this.activeLesson,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(
+          Radius.circular(
+            ThemeConstants.borderRadiusMedium,
+          ),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: ThemeConstants.primaryShadowColor,
+            blurRadius: 16,
+          ),
+        ],
+        color: Colors.white,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: ThemeConstants.paddingSmall / 2,
+        ),
+        child: TabBar(
+          labelColor: Colors.black,
+          labelPadding: const EdgeInsets.all(0),
+          dividerHeight: 0,
+          indicatorSize: TabBarIndicatorSize.tab,
+          tabAlignment: TabAlignment.fill,
+          controller: tabController,
+          indicatorWeight: 0,
+          indicatorPadding: const EdgeInsets.only(bottom: 5, top: 5),
+          indicator: BoxDecoration(
+            shape: BoxShape.rectangle,
+            color: const Color(0x3342A5F5),
+            borderRadius: BorderRadius.circular(
+              ThemeConstants.borderRadiusMedium,
+            ),
+          ),
+          tabs: [
+            const TabBarItem(
+              iconPath: "assets/icons/lectures.svg",
+              label: 'Lectures',
+            ),
+            ValueListenableBuilder<ActiveLesson>(
+              valueListenable: activeLesson,
+              builder: (context, value, child) => TabBarItem(
+                iconPath: "assets/icons/notes.svg",
+                label: 'Notes',
+                hasNotes: value.notes.isNotEmpty,
+              ),
+            ),
+            ValueListenableBuilder<ActiveLesson>(
+              valueListenable: activeLesson,
+              builder: (context, value, child) => TabBarItem(
+                iconPath: "assets/icons/downloads.svg",
+                label: 'Downloads',
+                hasNotes: value.downloads.isNotEmpty,
+              ),
+            ),
+          ],
+          onTap: onTabSelected,
+        ),
+      ),
+    );
+  }
+}
+
+class TabBarItem extends StatelessWidget {
+  final String iconPath;
+  final String label;
+  final bool hasNotes;
+
+  const TabBarItem({
+    super.key,
+    required this.iconPath,
+    required this.label,
+    this.hasNotes = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Tab(
+      child: Stack(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                iconPath,
+                height: 20,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                label,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
+          ),
+          if (hasNotes)
+            Positioned(
+              top: 0,
+              right: 5,
+              child: CircleAvatar(
+                maxRadius: 5,
+                backgroundColor: ThemeConstants.primaryColor.withAlpha(150),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }
