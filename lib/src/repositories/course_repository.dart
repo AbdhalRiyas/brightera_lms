@@ -319,20 +319,18 @@ class CourseRepository {
   }
 
   Future getEnrollments() async {
-    final userDetails = AuthManager().userDetails;
     final enrollments = await _firebaseService.getCollection(
-      collection: 'enrollments',
-      fromFirestore: (doc) => doc.data(),
-      comparisonField: 'userId',
-      comparisonValue: userDetails?['userId'],
-    );
+        collection: 'enrollments',
+        fromFirestore: (doc) => doc.data(),
+        comparisonField: 'userId',
+        referenceCollection: 'users',
+        referenceId: _firebaseService.currentUser?.uid);
     return enrollments;
   }
 
   Future<List<Course>> getEnrolledCourses() async {
     final enrollments = await getEnrollments();
     final List<Course> courses = [];
-
     for (var enrollment in enrollments) {
       final courseId = enrollment['courseId'].id;
       final course = await getCourseDetails(courseId);

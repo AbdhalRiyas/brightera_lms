@@ -13,22 +13,27 @@ class MyLearningScreen extends StatefulWidget {
 }
 
 class _MyLearningScreenState extends State<MyLearningScreen> {
-  final CourseRepository courseRepository = CourseRepository();
-  final List<String> tabs = ["All", "Active", "Expired"];
-  final List<Course> courses = [];
-  final ValueNotifier<int> selectedTab = ValueNotifier(0);
+  final CourseRepository _courseRepository = CourseRepository();
+  final List<String> _tabs = ["All", "Active", "Expired"];
+  final List _enrollments = [];
+  final List<Course> _courses = [];
+  final ValueNotifier<int> _selectedTab = ValueNotifier(0);
 
   void switchTab(int index) {
-    if (selectedTab.value != index) {
-      selectedTab.value = index;
+    if (_selectedTab.value != index) {
+      _selectedTab.value = index;
     }
   }
 
   void fetchEnrolledCourses() async {
-    final enrolledCourses = await courseRepository.getEnrolledCourses();
+    final enrollments = await _courseRepository.getEnrollments();
     setState(() {
-      courses.clear();
-      courses.addAll(enrolledCourses);
+      _enrollments.addAll(enrollments);
+    });
+    print(_enrollments);
+    final enrolledCourses = await _courseRepository.getEnrolledCourses();
+    setState(() {
+      _courses.addAll(enrolledCourses);
     });
   }
 
@@ -54,12 +59,12 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
               height: 50,
               alignment: Alignment.center,
               child: ValueListenableBuilder<int>(
-                valueListenable: selectedTab,
+                valueListenable: _selectedTab,
                 builder: (context, value, child) {
                   return ListView.separated(
                     scrollDirection: Axis.horizontal,
                     shrinkWrap: true,
-                    itemCount: tabs.length,
+                    itemCount: _tabs.length,
                     itemBuilder: (context, index) {
                       return FilterChip(
                         color: WidgetStateProperty.all(
@@ -79,7 +84,7 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
                         ),
                         showCheckmark: false,
                         label: Text(
-                          tabs[index],
+                          _tabs[index],
                           style: TextStyle(
                             color: value == index ? Colors.white : Colors.black,
                             fontSize: ThemeConstants.fontSizeMedium,
@@ -102,20 +107,26 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
             Expanded(
               child: ListView.builder(
                 scrollDirection: Axis.vertical,
-                itemCount: courses.length,
+                itemCount: _courses.length,
                 itemBuilder: (context, index) {
                   return CourseCard(
-                    course: courses[index],
+                    course: _courses[index],
                     listMode: true,
                     isEnrolled: true,
-                    isActive: true,
+                    expiresAt: _enrollments[index]['endDate']
+                        .toDate()
+                        .difference(DateTime.now())
+                        .inDays,
+                    isActive: _enrollments[index]['status'] == 'active'
+                        ? true
+                        : false,
                     progress: 0.5,
                     onTap: () {
                       Navigator.pushNamed(
                         context,
                         '/course',
                         arguments: CourseScreenArguments(
-                          courses[index],
+                          _courses[index],
                         ),
                       );
                     },
