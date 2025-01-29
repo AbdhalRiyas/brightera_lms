@@ -256,8 +256,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             const SizedBox(height: 12),
             _buildOrderDetailRow('Payment Status', order.paymentStatus),
             const SizedBox(height: 12),
-            _buildOrderDetailRow(
-                'Total', 'LKR ${order.total.toStringAsFixed(2)}'),
+            _buildOrderDetailRow('Total', formatPrice(order.total)),
             const SizedBox(height: 12),
             _buildOrderDetailRow(
                 'Discount', 'LKR ${order.discount.toStringAsFixed(2)}'),

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/course.dart';
 import 'package:app/src/repositories/course_repository.dart';
@@ -30,7 +32,7 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
     setState(() {
       _enrollments.addAll(enrollments);
     });
-    print(_enrollments);
+    log(_enrollments.toString());
     final enrolledCourses = await _courseRepository.getEnrolledCourses();
     setState(() {
       _courses.addAll(enrolledCourses);
@@ -120,8 +122,11 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
                     isActive: _enrollments[index]['status'] == 'active'
                         ? true
                         : false,
-                    progress: 0.5,
+                    progress: _courses[index].sections != null
+                        ? _courses[index].sections!.length.toDouble()
+                        : 0,
                     onTap: () {
+                      print(_courses[index].sections);
                       Navigator.pushNamed(
                         context,
                         '/course',
