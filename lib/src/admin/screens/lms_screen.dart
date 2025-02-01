@@ -1,5 +1,6 @@
 import 'package:app/src/admin/screens/coupons/coupons_screen.dart';
 import 'package:app/src/admin/screens/courses/courses_screen.dart';
+import 'package:app/src/admin/screens/enrollments/enrollments_screen.dart';
 import 'package:app/src/admin/screens/featured_courses/featured_courses_screen.dart';
 import 'package:app/src/admin/screens/popular_courses/popular_courses_screen.dart';
 import 'package:app/src/admin/screens/subjects/subjects_screen.dart';
@@ -40,6 +41,11 @@ class _LmsScreenState extends State<LmsScreen> {
       "title": "Popular Courses",
       "icon": Icons.star,
       "navigation": const PopularCoursesScreen(),
+    },
+    {
+      "title": "Enrollments",
+      "icon": Icons.highlight,
+      "navigation": const EnrollmentsScreen(),
     }
   ];
 

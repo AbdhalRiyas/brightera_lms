@@ -236,18 +236,36 @@ class FirebaseService {
     String? comparisonValue,
     String? referenceCollection,
     String? referenceId,
+    Map<String, dynamic>? filters,
+    int limit = 10, // Pagination limit
+    DocumentSnapshot? lastDocument, // Last fetched document for pagination
   }) async {
     Query<Map<String, dynamic>> query = _firestore.collection(collection);
 
+    // Single field filtering
     if (comparisonField != null) {
       if (referenceCollection != null && referenceId != null) {
-        DocumentReference? docRef =
+        DocumentReference docRef =
             _firestore.collection(referenceCollection).doc(referenceId);
-
         query = query.where(comparisonField, isEqualTo: docRef);
       } else {
         query = query.where(comparisonField, isEqualTo: comparisonValue);
       }
+    }
+
+    // Multiple field filtering
+    if (filters != null) {
+      filters.forEach((field, value) {
+        if (value != null) {
+          query = query.where(field, isEqualTo: value);
+        }
+      });
+    }
+
+    // Add pagination
+    query = query.limit(limit);
+    if (lastDocument != null) {
+      query = query.startAfterDocument(lastDocument);
     }
 
     final snapshot = await query.get();

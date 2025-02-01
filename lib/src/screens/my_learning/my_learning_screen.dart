@@ -1,11 +1,11 @@
 import 'dart:developer';
-
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/course.dart';
 import 'package:app/src/repositories/course_repository.dart';
 import 'package:app/src/route/screen_exports.dart';
 import 'package:app/src/widgets/course_card/course_card.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MyLearningScreen extends StatefulWidget {
   const MyLearningScreen({super.key});
@@ -16,33 +16,75 @@ class MyLearningScreen extends StatefulWidget {
 
 class _MyLearningScreenState extends State<MyLearningScreen> {
   final CourseRepository _courseRepository = CourseRepository();
-  final List<String> _tabs = ["All", "Active", "Expired"];
-  final List _enrollments = [];
-  final List<Course> _courses = [];
+  final List<String> _tabs = ["Active", "Expired"];
   final ValueNotifier<int> _selectedTab = ValueNotifier(0);
+  final List<Map<String, dynamic>?> _enrollments = [];
+  final List<Course> _courses = [];
+  DocumentSnapshot? _lastDocument;
+  bool _isLoading = false;
+  bool _hasMore = true;
+  final ScrollController _scrollController = ScrollController();
+  final int _limit = 10;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchEnrolledCourses();
+    _scrollController.addListener(_scrollListener);
+  }
 
   void switchTab(int index) {
     if (_selectedTab.value != index) {
       _selectedTab.value = index;
+      fetchEnrolledCourses(reset: true);
     }
   }
 
-  void fetchEnrolledCourses() async {
-    final enrollments = await _courseRepository.getEnrollments();
-    setState(() {
-      _enrollments.addAll(enrollments);
-    });
-    log(_enrollments.toString());
-    final enrolledCourses = await _courseRepository.getEnrolledCourses();
-    setState(() {
-      _courses.addAll(enrolledCourses);
-    });
+  Future<void> fetchEnrolledCourses({bool reset = false}) async {
+    if (_isLoading) return;
+    setState(() => _isLoading = true);
+
+    if (reset) {
+      setState(() {
+        _enrollments.clear();
+        _courses.clear();
+        _lastDocument = null;
+        _hasMore = true;
+      });
+    }
+
+    final status = _tabs[_selectedTab.value].toLowerCase();
+
+    try {
+      final enrollments = await _courseRepository.getEnrollments(status,
+          limit: _limit, lastDoc: _lastDocument);
+      final enrolledCourses = await _courseRepository.getEnrolledCourses(status,
+          limit: _limit, lastDoc: _lastDocument);
+
+      if (enrollments.isNotEmpty) {
+        setState(() {
+          _enrollments.addAll(enrollments);
+          _courses.addAll(enrolledCourses);
+          _lastDocument = enrollments
+              .last['docSnapshot']; // Store last document for pagination
+        });
+      } else {
+        setState(() => _hasMore = false);
+      }
+    } catch (e) {
+      log("Error fetching courses: $e");
+    }
+
+    setState(() => _isLoading = false);
   }
 
-  @override
-  initState() {
-    super.initState();
-    fetchEnrolledCourses();
+  void _scrollListener() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      if (_hasMore && !_isLoading) {
+        fetchEnrolledCourses();
+      }
+    }
   }
 
   @override
@@ -52,9 +94,8 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
         title: const Text('My Learning'),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: ThemeConstants.paddingSmall,
-        ),
+        padding:
+            const EdgeInsets.symmetric(horizontal: ThemeConstants.paddingSmall),
         child: Column(
           children: [
             Container(
@@ -108,37 +149,45 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
             ),
             Expanded(
               child: ListView.builder(
-                scrollDirection: Axis.vertical,
-                itemCount: _courses.length,
+                controller: _scrollController,
+                itemCount: _courses.length + (_isLoading ? 1 : 0),
                 itemBuilder: (context, index) {
+                  if (index == _courses.length) {
+                    return const Center(
+                      heightFactor: 4,
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  final courseId = _courses[index].id;
+                  final enrollment = _enrollments.firstWhere(
+                      (e) => e!['courseId'].id == courseId,
+                      orElse: () => null);
+
                   return CourseCard(
                     course: _courses[index],
                     listMode: true,
                     isEnrolled: true,
-                    expiresAt: _enrollments[index]['endDate']
-                        .toDate()
-                        .difference(DateTime.now())
-                        .inDays,
-                    isActive: _enrollments[index]['status'] == 'active'
-                        ? true
-                        : false,
+                    expiresAt: enrollment?['endDate']
+                            ?.toDate()
+                            ?.difference(DateTime.now())
+                            .inDays ??
+                        0,
+                    isActive: enrollment?['status'] == 'active',
                     progress: _courses[index].sections != null
                         ? _courses[index].sections!.length.toDouble()
                         : 0,
                     onTap: () {
-                      print(_courses[index].sections);
                       Navigator.pushNamed(
                         context,
                         '/course',
-                        arguments: CourseScreenArguments(
-                          _courses[index],
-                        ),
+                        arguments: CourseScreenArguments(_courses[index]),
                       );
                     },
                   );
                 },
               ),
-            )
+            ),
           ],
         ),
       ),

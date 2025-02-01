@@ -318,19 +318,26 @@ class CourseRepository {
     return courses;
   }
 
-  Future getEnrollments() async {
-    final enrollments = await _firebaseService.getCollection(
-        collection: 'enrollments',
-        fromFirestore: (doc) => doc.data(),
-        comparisonField: 'userId',
-        referenceCollection: 'users',
-        referenceId: _firebaseService.currentUser?.uid);
-    return enrollments;
+  Future<List<Map<String, dynamic>>> getEnrollments(String activeStatus,
+      {int limit = 10, DocumentSnapshot? lastDoc}) async {
+    return await _firebaseService.getCollection(
+      collection: 'enrollments',
+      fromFirestore: (doc) => doc.data()!,
+      comparisonField: 'userId',
+      referenceCollection: 'users',
+      referenceId: _firebaseService.currentUser?.uid,
+      filters: {'status': activeStatus},
+      limit: limit,
+      lastDocument: lastDoc,
+    );
   }
 
-  Future<List<Course>> getEnrolledCourses() async {
-    final enrollments = await getEnrollments();
+  Future<List<Course>> getEnrolledCourses(String activeStatus,
+      {int limit = 10, DocumentSnapshot? lastDoc}) async {
+    final enrollments =
+        await getEnrollments(activeStatus, limit: limit, lastDoc: lastDoc);
     final List<Course> courses = [];
+
     for (var enrollment in enrollments) {
       final courseId = enrollment['courseId'].id;
       final course = await getCourseDetails(courseId);
