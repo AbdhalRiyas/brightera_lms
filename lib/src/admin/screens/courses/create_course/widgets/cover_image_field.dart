@@ -17,10 +17,10 @@ class CoverImageField extends StatelessWidget {
       valueListenable: _coverPicture,
       builder: (_, value, ch) => Column(
         children: [
-          buildCoverImage(context, value),
+          buildImage(context, value),
           TextButton(
             onPressed: () async {
-              final coverPic = await pickCourseCover(context);
+              final coverPic = await pickImage(context);
               _coverPicture.value =
                   coverPic?.files.single.path ?? _coverPicture.value;
             },

@@ -69,13 +69,20 @@ class _CreateUpdateCourseScreenState extends State<CreateUpdateCourseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.course != null ? "Edit Course" : "Create a Course"),
-      ),
-      body: GestureDetector(
-        onTap: FocusManager.instance.primaryFocus?.unfocus,
-        child: StreamBuilder<User?>(
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            widget.course != null ? "Edit Course" : "Create a Course",
+          ),
+        ),
+        body: StreamBuilder<User?>(
             stream: FirebaseService().authStateChanges,
             builder: (context, snapshot) {
               return Padding(
