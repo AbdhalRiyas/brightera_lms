@@ -1,4 +1,5 @@
 import 'package:app/src/models/course.dart';
+import 'package:app/src/models/enrollment.dart';
 import 'package:app/src/models/lecture.dart';
 import 'package:app/src/models/section.dart';
 import 'package:app/src/models/user.dart';
@@ -318,11 +319,19 @@ class CourseRepository {
     return courses;
   }
 
-  Future<List<Map<String, dynamic>>> getEnrollments(String activeStatus,
-      {int limit = 10, DocumentSnapshot? lastDoc}) async {
-    return await _firebaseService.getCollection(
+  Future<List<Enrollment>> getAllEnrollments() async {
+    final enrollments = await _firebaseService.getCollection(
       collection: 'enrollments',
-      fromFirestore: (doc) => doc.data()!,
+      fromFirestore: Enrollment.fromFirestore,
+    );
+    return enrollments;
+  }
+
+  Future<List<Enrollment>> getUserEnrollments(String activeStatus,
+      {int limit = 10, DocumentSnapshot? lastDoc}) async {
+    final data = await _firebaseService.getCollection(
+      collection: 'enrollments',
+      fromFirestore: Enrollment.fromFirestore,
       comparisonField: 'userId',
       referenceCollection: 'users',
       referenceId: _firebaseService.currentUser?.uid,
@@ -330,21 +339,13 @@ class CourseRepository {
       limit: limit,
       lastDocument: lastDoc,
     );
-  }
-
-  Future<List<Course>> getEnrolledCourses(String activeStatus,
-      {int limit = 10, DocumentSnapshot? lastDoc}) async {
-    final enrollments =
-        await getEnrollments(activeStatus, limit: limit, lastDoc: lastDoc);
-    final List<Course> courses = [];
-
-    for (var enrollment in enrollments) {
-      final courseId = enrollment['courseId'].id;
-      final course = await getCourseDetails(courseId);
-      if (course != null) {
-        courses.add(course);
-      }
+    final List<Enrollment> enrollments = [];
+    for (var doc in data) {
+      Enrollment enrollment = doc;
+      Course? course = await getCourseDetails(enrollment.course.id);
+      enrollment = enrollment.copyWith(courseInfo: course);
+      enrollments.add(enrollment);
     }
-    return courses;
+    return enrollments;
   }
 }

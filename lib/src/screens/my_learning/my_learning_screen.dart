@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/course.dart';
+import 'package:app/src/models/enrollment.dart';
 import 'package:app/src/repositories/course_repository.dart';
 import 'package:app/src/route/screen_exports.dart';
 import 'package:app/src/widgets/course_card/course_card.dart';
@@ -18,8 +19,7 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
   final CourseRepository _courseRepository = CourseRepository();
   final List<String> _tabs = ["Active", "Expired"];
   final ValueNotifier<int> _selectedTab = ValueNotifier(0);
-  final List<Map<String, dynamic>?> _enrollments = [];
-  final List<Course> _courses = [];
+  final List<Enrollment?> _enrollments = [];
   DocumentSnapshot? _lastDocument;
   bool _isLoading = false;
   bool _hasMore = true;
@@ -47,7 +47,6 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
     if (reset) {
       setState(() {
         _enrollments.clear();
-        _courses.clear();
         _lastDocument = null;
         _hasMore = true;
       });
@@ -56,17 +55,17 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
     final status = _tabs[_selectedTab.value].toLowerCase();
 
     try {
-      final enrollments = await _courseRepository.getEnrollments(status,
-          limit: _limit, lastDoc: _lastDocument);
-      final enrolledCourses = await _courseRepository.getEnrolledCourses(status,
-          limit: _limit, lastDoc: _lastDocument);
+      final enrollments = await _courseRepository.getUserEnrollments(
+        status,
+        limit: _limit,
+        lastDoc: _lastDocument,
+      );
 
       if (enrollments.isNotEmpty) {
         setState(() {
           _enrollments.addAll(enrollments);
-          _courses.addAll(enrolledCourses);
-          _lastDocument = enrollments
-              .last['docSnapshot']; // Store last document for pagination
+          _lastDocument =
+              enrollments.last.snapshot; // Store last document for pagination
         });
       } else {
         setState(() => _hasMore = false);
@@ -150,38 +149,35 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
             Expanded(
               child: ListView.builder(
                 controller: _scrollController,
-                itemCount: _courses.length + (_isLoading ? 1 : 0),
+                itemCount: _enrollments.length + (_isLoading ? 1 : 0),
                 itemBuilder: (context, index) {
-                  if (index == _courses.length) {
+                  if (index == _enrollments.length) {
                     return const Center(
                       heightFactor: 4,
                       child: CircularProgressIndicator(),
                     );
                   }
 
-                  final courseId = _courses[index].id;
-                  final enrollment = _enrollments.firstWhere(
-                      (e) => e!['courseId'].id == courseId,
-                      orElse: () => null);
+                  final enrollment = _enrollments[index];
 
                   return CourseCard(
-                    course: _courses[index],
+                    course: enrollment?.courseInfo as Course,
                     listMode: true,
                     isEnrolled: true,
-                    expiresAt: enrollment?['endDate']
-                            ?.toDate()
-                            ?.difference(DateTime.now())
+                    expiresAt: enrollment?.endDate
+                            .toDate()
+                            .difference(DateTime.now())
                             .inDays ??
                         0,
-                    isActive: enrollment?['status'] == 'active',
-                    progress: _courses[index].sections != null
-                        ? _courses[index].sections!.length.toDouble()
-                        : 0,
+                    isActive: enrollment?.status == 'active',
+                    progress: 0,
                     onTap: () {
                       Navigator.pushNamed(
                         context,
                         '/course',
-                        arguments: CourseScreenArguments(_courses[index]),
+                        arguments: CourseScreenArguments(
+                          enrollment?.courseInfo as Course,
+                        ),
                       );
                     },
                   );

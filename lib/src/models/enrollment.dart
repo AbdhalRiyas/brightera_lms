@@ -1,3 +1,4 @@
+import 'package:app/src/models/course.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Enrollment {
@@ -6,21 +7,57 @@ class Enrollment {
   final Timestamp startDate;
   final Timestamp endDate;
   final String status;
+  final DocumentSnapshot? snapshot;
+  final Course? courseInfo;
 
-  Enrollment(
-      {required this.course,
-      required this.user,
-      required this.startDate,
-      required this.endDate,
-      required this.status});
+  Enrollment({
+    required this.course,
+    required this.user,
+    required this.startDate,
+    required this.endDate,
+    required this.status,
+    this.snapshot,
+    this.courseInfo,
+  });
 
   factory Enrollment.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     return Enrollment(
-      course: doc.data()?['course'] as DocumentReference,
-      user: doc.data()?['user'] as DocumentReference,
+      course: doc.data()?['courseId'] as DocumentReference,
+      user: doc.data()?['userId'] as DocumentReference,
       startDate: doc.data()?['startDate'],
       endDate: doc.data()?['endDate'],
       status: doc.data()?['status'],
+      snapshot: doc,
+    );
+  }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'course': course,
+      'user': user,
+      'startDate': startDate,
+      'endDate': endDate,
+      'status': status,
+    };
+  }
+
+  Enrollment copyWith({
+    DocumentReference? course,
+    DocumentReference? user,
+    Timestamp? startDate,
+    Timestamp? endDate,
+    String? status,
+    DocumentSnapshot? snapshot,
+    Course? courseInfo,
+  }) {
+    return Enrollment(
+      course: course ?? this.course,
+      user: user ?? this.user,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+      status: status ?? this.status,
+      snapshot: snapshot ?? this.snapshot,
+      courseInfo: courseInfo ?? this.courseInfo,
     );
   }
 }
