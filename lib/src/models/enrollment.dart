@@ -2,6 +2,7 @@ import 'package:app/src/models/course.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Enrollment {
+  final String id;
   final DocumentReference course;
   final DocumentReference user;
   final Timestamp startDate;
@@ -11,6 +12,7 @@ class Enrollment {
   final Course? courseInfo;
 
   Enrollment({
+    required this.id,
     required this.course,
     required this.user,
     required this.startDate,
@@ -22,6 +24,7 @@ class Enrollment {
 
   factory Enrollment.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     return Enrollment(
+      id: doc.id,
       course: doc.data()?['courseId'] as DocumentReference,
       user: doc.data()?['userId'] as DocumentReference,
       startDate: doc.data()?['startDate'],
@@ -33,8 +36,8 @@ class Enrollment {
 
   Map<String, dynamic> toFirestore() {
     return {
-      'course': course,
-      'user': user,
+      'courseId': course,
+      'userId': user,
       'startDate': startDate,
       'endDate': endDate,
       'status': status,
@@ -42,6 +45,7 @@ class Enrollment {
   }
 
   Enrollment copyWith({
+    String? id,
     DocumentReference? course,
     DocumentReference? user,
     Timestamp? startDate,
@@ -51,6 +55,7 @@ class Enrollment {
     Course? courseInfo,
   }) {
     return Enrollment(
+      id: id ?? this.id,
       course: course ?? this.course,
       user: user ?? this.user,
       startDate: startDate ?? this.startDate,

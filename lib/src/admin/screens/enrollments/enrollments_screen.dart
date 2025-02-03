@@ -1,5 +1,6 @@
+import 'package:app/src/admin/screens/enrollments/enrollment_add_edit_dialog.dart';
 import 'package:app/src/models/enrollment.dart';
-import 'package:app/src/repositories/course_repository.dart';
+import 'package:app/src/repositories/enrollment_repository.dart';
 import 'package:flutter/material.dart';
 
 class EnrollmentsScreen extends StatefulWidget {
@@ -10,7 +11,7 @@ class EnrollmentsScreen extends StatefulWidget {
 }
 
 class _EnrollmentsScreenState extends State<EnrollmentsScreen> {
-  final CourseRepository _repository = CourseRepository();
+  final EnrollmentRepository _repository = EnrollmentRepository();
   List<Enrollment> _enrollments = [];
 
   Future<void> _fetchEnrollments() async {
@@ -36,26 +37,40 @@ class _EnrollmentsScreenState extends State<EnrollmentsScreen> {
         itemCount: _enrollments.length,
         itemBuilder: (_, index) {
           final enrollment = _enrollments[index];
-          return Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            margin: const EdgeInsets.all(8),
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          return ListTile(
+            title: Text('Course: ${enrollment.courseInfo!.title}'),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Course: ${enrollment.course.id}'),
                 Text('User: ${enrollment.user.id}'),
+                Text('Status: ${enrollment.status}'),
+                Text(
+                    'Enrolled At: ${enrollment.startDate.toDate().day}/${enrollment.startDate.toDate().month}/${enrollment.startDate.toDate().year}'),
+                Text(
+                    'Expires At: ${enrollment.endDate.toDate().day}/${enrollment.endDate.toDate().month}/${enrollment.endDate.toDate().year}'),
               ],
             ),
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return EnrollmentAddEditDialog(
+                    enrollment: enrollment,
+                  );
+                },
+              );
+            },
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Add your onPressed code here!
+          showDialog(
+            context: context,
+            builder: (context) {
+              return const EnrollmentAddEditDialog();
+            },
+          );
         },
         child: const Icon(Icons.add),
       ),
