@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/course.dart';
 import 'package:app/src/models/enrollment.dart';
-import 'package:app/src/repositories/course_repository.dart';
+import 'package:app/src/repositories/enrollment_repository.dart';
 import 'package:app/src/route/screen_exports.dart';
 import 'package:app/src/widgets/course_card/course_card.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +16,7 @@ class MyLearningScreen extends StatefulWidget {
 }
 
 class _MyLearningScreenState extends State<MyLearningScreen> {
-  final CourseRepository _courseRepository = CourseRepository();
+  final EnrollmentRepository _enrollmentRepository = EnrollmentRepository();
   final List<String> _tabs = ["Active", "Expired"];
   final ValueNotifier<int> _selectedTab = ValueNotifier(0);
   final List<Enrollment?> _enrollments = [];
@@ -55,7 +55,7 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
     final status = _tabs[_selectedTab.value].toLowerCase();
 
     try {
-      final enrollments = await _courseRepository.getUserEnrollments(
+      final enrollments = await _enrollmentRepository.getUserEnrollments(
         status,
         limit: _limit,
         lastDoc: _lastDocument,

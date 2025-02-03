@@ -1,5 +1,4 @@
 import 'package:app/src/models/course.dart';
-import 'package:app/src/models/enrollment.dart';
 import 'package:app/src/models/lecture.dart';
 import 'package:app/src/models/section.dart';
 import 'package:app/src/models/user.dart';
@@ -317,35 +316,5 @@ class CourseRepository {
       }
     }
     return courses;
-  }
-
-  Future<List<Enrollment>> getAllEnrollments() async {
-    final enrollments = await _firebaseService.getCollection(
-      collection: 'enrollments',
-      fromFirestore: Enrollment.fromFirestore,
-    );
-    return enrollments;
-  }
-
-  Future<List<Enrollment>> getUserEnrollments(String activeStatus,
-      {int limit = 10, DocumentSnapshot? lastDoc}) async {
-    final data = await _firebaseService.getCollection(
-      collection: 'enrollments',
-      fromFirestore: Enrollment.fromFirestore,
-      comparisonField: 'userId',
-      referenceCollection: 'users',
-      referenceId: _firebaseService.currentUser?.uid,
-      filters: {'status': activeStatus},
-      limit: limit,
-      lastDocument: lastDoc,
-    );
-    final List<Enrollment> enrollments = [];
-    for (var doc in data) {
-      Enrollment enrollment = doc;
-      Course? course = await getCourseDetails(enrollment.course.id);
-      enrollment = enrollment.copyWith(courseInfo: course);
-      enrollments.add(enrollment);
-    }
-    return enrollments;
   }
 }
