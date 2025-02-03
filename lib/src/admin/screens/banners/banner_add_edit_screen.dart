@@ -1,11 +1,11 @@
 import 'package:app/src/admin/screens/courses/create_course/widgets/build_cover_image.dart';
 import 'package:app/src/admin/screens/courses/create_course/widgets/pick_course_cover.dart';
-import 'package:app/src/admin/screens/lms_screen.dart';
 import 'package:app/src/config/app_contants.dart';
 import 'package:app/src/models/app_banner.dart';
 import 'package:app/src/repositories/banner_respository.dart';
 import 'package:app/src/utils/result.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class BannerAddEditScreen extends StatefulWidget {
   const BannerAddEditScreen({super.key, this.appbanner});
@@ -20,9 +20,10 @@ class _BannerAddEditScreenState extends State<BannerAddEditScreen> {
   final _formKey = GlobalKey<FormState>();
   final BannerRespository _repository = BannerRespository();
 
+  final TextEditingController _orderController = TextEditingController();
+
   final ValueNotifier<String> _banner = ValueNotifier('');
   final ValueNotifier<bool> _isHidden = ValueNotifier(false);
-  final ValueNotifier<int> _order = ValueNotifier(1);
   final ValueNotifier<String> _link = ValueNotifier('');
 
   @override
@@ -33,8 +34,8 @@ class _BannerAddEditScreenState extends State<BannerAddEditScreen> {
             ? AppContants.courseCoverPlaceHolder
             : widget.appbanner!.imagePath;
     _isHidden.value = widget.appbanner?.isHidden ?? false;
-    _order.value = widget.appbanner?.order ?? 0;
     _link.value = widget.appbanner?.link ?? '';
+    _orderController.text = widget.appbanner?.order.toString() ?? '';
   }
 
   @override
@@ -100,19 +101,19 @@ class _BannerAddEditScreenState extends State<BannerAddEditScreen> {
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
-                      initialValue: widget.appbanner?.order.toString() ?? '',
                       decoration: const InputDecoration(
                         labelText: 'Order',
                       ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter an order';
                         }
                         return null;
                       },
-                      onChanged: (value) {
-                        _order.value = int.parse(value);
-                      },
+                      controller: _orderController,
                     ),
                     const SizedBox(height: 16),
                     ValueListenableBuilder<bool>(
@@ -156,24 +157,20 @@ class _BannerAddEditScreenState extends State<BannerAddEditScreen> {
                                     imagePath: _banner.value,
                                     isHidden: _isHidden.value,
                                     link: _link.value,
-                                    order: _order.value,
+                                    order: int.parse(_orderController.text),
                                   )
                                 : widget.appbanner!.copyWith(
                                     imagePath: _banner.value,
                                     isHidden: _isHidden.value,
                                     link: _link.value,
-                                    order: _order.value,
+                                    order: int.parse(_orderController.text),
                                   );
                             final Result result = widget.appbanner != null
                                 ? await _repository.updateBanner(newBanner)
                                 : await _repository.addBanner(newBanner);
 
                             if (result.isSuccess) {
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (context) => const LmsScreen(),
-                                ),
-                              );
+                              Navigator.of(context).pop();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(

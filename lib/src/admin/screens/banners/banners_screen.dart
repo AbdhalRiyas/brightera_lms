@@ -59,7 +59,7 @@ class _BannersScreenState extends State<BannersScreen> {
                   children: [
                     Text('Order: ${banner.order}'),
                     Text('Link: ${banner.link}'),
-                    Text('Hidden: ${banner.isHidden}'),
+                    Text(banner.isHidden ? 'Hidden' : 'Visible'),
                   ],
                 ),
                 IconButton(
