@@ -2,6 +2,7 @@ import 'package:app/src/admin/screens/enrollments/enrollment_add_edit_dialog.dar
 import 'package:app/src/models/enrollment.dart';
 import 'package:app/src/repositories/enrollment_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class EnrollmentsScreen extends StatefulWidget {
   const EnrollmentsScreen({super.key});
@@ -12,20 +13,6 @@ class EnrollmentsScreen extends StatefulWidget {
 
 class _EnrollmentsScreenState extends State<EnrollmentsScreen> {
   final EnrollmentRepository _repository = EnrollmentRepository();
-  List<Enrollment> _enrollments = [];
-
-  Future<void> _fetchEnrollments() async {
-    final enrollments = await _repository.getAllEnrollments();
-    setState(() {
-      _enrollments = enrollments;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchEnrollments();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,29 +20,45 @@ class _EnrollmentsScreenState extends State<EnrollmentsScreen> {
       appBar: AppBar(
         title: const Text('Enrollments'),
       ),
-      body: ListView.builder(
-        itemCount: _enrollments.length,
-        itemBuilder: (_, index) {
-          final enrollment = _enrollments[index];
-          return ListTile(
-            title: Text('Course: ${enrollment.courseInfo!.title}'),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('User: ${enrollment.user.id}'),
-                Text('Status: ${enrollment.status}'),
-                Text(
-                    'Enrolled At: ${enrollment.startDate.toDate().day}/${enrollment.startDate.toDate().month}/${enrollment.startDate.toDate().year}'),
-                Text(
-                    'Expires At: ${enrollment.endDate.toDate().day}/${enrollment.endDate.toDate().month}/${enrollment.endDate.toDate().year}'),
-              ],
-            ),
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return EnrollmentAddEditDialog(
-                    enrollment: enrollment,
+      body: FutureBuilder<List<Enrollment>>(
+        future: _repository.getAllEnrollments(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator.adaptive());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text("Error: ${snapshot.error}"));
+          }
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text("No enrollments found"));
+          }
+
+          final enrollments = snapshot.data!;
+          return ListView.builder(
+            itemCount: enrollments.length,
+            itemBuilder: (_, index) {
+              final enrollment = enrollments[index];
+              return ListTile(
+                title: Text('Course: ${enrollment.courseInfo!.title}'),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('User: ${enrollment.user.id}'),
+                    Text('Status: ${enrollment.status}'),
+                    Text(
+                        'Enrolled At: ${DateFormat('dd MMM yyyy').format(enrollment.startDate.toDate())}'),
+                    Text(
+                        'Expires At: ${DateFormat('dd MMM yyyy').format(enrollment.endDate.toDate())}'),
+                  ],
+                ),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return EnrollmentAddEditDialog(
+                        enrollment: enrollment,
+                      );
+                    },
                   );
                 },
               );

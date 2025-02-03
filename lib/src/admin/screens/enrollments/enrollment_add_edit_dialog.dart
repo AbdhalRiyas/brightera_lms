@@ -81,6 +81,13 @@ class _EnrollmentAddEditDialogState extends State<EnrollmentAddEditDialog> {
                           items: (filter, loadProps) => snapshot.data!
                               .map((course) => course.title)
                               .toList(),
+                          selectedItem: snapshot.data!
+                              .firstWhere(
+                                (course) =>
+                                    "courses/${course.id}" == _course.value,
+                                orElse: () => snapshot.data!.first,
+                              )
+                              .title,
                           popupProps: const PopupPropsMultiSelection.menu(
                             showSearchBox: true,
                             searchFieldProps: TextFieldProps(
@@ -203,6 +210,15 @@ class _EnrollmentAddEditDialogState extends State<EnrollmentAddEditDialog> {
         actions: [
           ElevatedButton(
             onPressed: () async {
+              if (_course.value == null || _course.value!.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    backgroundColor: Colors.red,
+                    content: Text('Please select a course'),
+                  ),
+                );
+                return;
+              }
               if (_formKey.currentState!.validate()) {
                 final enrollment = Enrollment(
                   id: widget.enrollment?.id ?? '',
