@@ -20,8 +20,8 @@ class _EnrollmentsScreenState extends State<EnrollmentsScreen> {
       appBar: AppBar(
         title: const Text('Enrollments'),
       ),
-      body: FutureBuilder<List<Enrollment>>(
-        future: _repository.getAllEnrollments(),
+      body: StreamBuilder<List<Enrollment>>(
+        stream: _repository.getEnrollmentsStream(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator.adaptive());
@@ -39,7 +39,7 @@ class _EnrollmentsScreenState extends State<EnrollmentsScreen> {
             itemBuilder: (_, index) {
               final enrollment = enrollments[index];
               return ListTile(
-                title: Text('Course: ${enrollment.courseInfo!.title}'),
+                title: Text(enrollment.courseInfo!.title),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

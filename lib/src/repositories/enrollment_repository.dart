@@ -64,4 +64,22 @@ class EnrollmentRepository {
     );
     return result;
   }
+
+  Stream<List<Enrollment>> getEnrollmentsStream() {
+    return _firebaseService
+        .getCollectionStream(
+      collection: 'enrollments',
+      fromFirestore: Enrollment.fromFirestore,
+    )
+        .asyncMap((docs) async {
+      List<Enrollment> enrollments = [];
+      for (var doc in docs) {
+        Enrollment enrollment = doc;
+        Course? course =
+            await _courseRepository.getCourseDetails(enrollment.course.id);
+        enrollments.add(enrollment.copyWith(courseInfo: course));
+      }
+      return enrollments;
+    });
+  }
 }
