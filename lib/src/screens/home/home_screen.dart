@@ -48,8 +48,9 @@ class WelcomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AuthManager authManager = AuthManager();
     return FutureBuilder(
-      future: AuthManager().getUserDetails(),
+      future: authManager.getUserDetails(),
       builder: (context, snapshot) => snapshot.connectionState ==
               ConnectionState.waiting
           ? const Center(child: CircularProgressIndicator())
@@ -67,9 +68,9 @@ class WelcomeHeader extends StatelessWidget {
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                    if (AuthManager().userDetails != null)
+                    if (authManager.userDetails != null)
                       Text(
-                        "Hey, ${AuthManager().userDetails!['name']} 👋 ",
+                        "Hey, ${authManager.userDetails!['name']} 👋 ",
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
