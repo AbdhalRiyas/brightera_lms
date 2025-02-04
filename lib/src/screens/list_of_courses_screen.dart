@@ -68,9 +68,11 @@ class ListOfCoursesScreenState extends State<ListOfCoursesScreen> {
                 ),
               ),
             )
-          : const Center(
+          : Center(
               child: Text(
-                "No courses have been featured for this subject yet.",
+                widget.subject != null
+                    ? "No courses have been featured for this subject yet."
+                    : "No courses have been featured for this language yet.",
               ),
             ),
     );
