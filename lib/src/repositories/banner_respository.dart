@@ -70,4 +70,11 @@ class BannerRespository {
     }
     return banners;
   }
+
+  Stream<List<Appbanner>> getBannersStream() {
+    return _firebaseService.getCollectionStream(
+      collection: 'banners',
+      fromFirestore: (doc) => Appbanner.fromFirestore(doc),
+    );
+  }
 }
