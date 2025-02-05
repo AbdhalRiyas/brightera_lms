@@ -1,8 +1,8 @@
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/course.dart';
 import 'package:app/src/repositories/course_repository.dart';
-import 'package:app/src/screens/courses/course_screen.dart';
-import 'package:app/src/screens/list_of_courses_screen.dart';
+import 'package:app/src/screens/courses/show_course_screen.dart';
+import 'package:app/src/screens/courses/all_courses_screen.dart';
 import 'package:app/src/widgets/course_card/course_card.dart';
 import 'package:flutter/material.dart';
 

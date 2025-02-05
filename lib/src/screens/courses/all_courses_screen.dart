@@ -1,13 +1,13 @@
 import 'package:app/src/models/course.dart';
 import 'package:app/src/models/subject.dart';
 import 'package:app/src/repositories/course_repository.dart';
-import 'package:app/src/screens/courses/course_screen.dart';
+import 'package:app/src/screens/courses/show_course_screen.dart';
 import 'package:app/src/widgets/app_bar_back_button.dart';
 import 'package:app/src/widgets/course_card/course_card.dart';
 import 'package:flutter/material.dart';
 
-class ListOfCoursesScreen extends StatelessWidget {
-  const ListOfCoursesScreen({super.key, this.subject, this.language});
+class AllCoursesScreen extends StatelessWidget {
+  const AllCoursesScreen({super.key, this.subject, this.language});
 
   final Subject? subject;
   final String? language;
@@ -24,7 +24,7 @@ class ListOfCoursesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("${subject?.name ?? language} Courses"),
-        centerTitle: false,
+        centerTitle: true,
         leading: const AppBarBackButton(),
       ),
       body: FutureBuilder<List<Course>>(

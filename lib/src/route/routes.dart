@@ -64,7 +64,7 @@ class RouteManager {
   static Route<dynamic>? _allCoursesRoute(RouteSettings settings) {
     final args = settings.arguments as ListOfCoursesScreenArguments?;
     return MaterialPageRoute(
-      builder: (context) => ListOfCoursesScreen(
+      builder: (context) => AllCoursesScreen(
         subject: args?.subject,
         language: args?.language,
       ),
@@ -74,7 +74,7 @@ class RouteManager {
   static Route<dynamic>? _courseRoute(RouteSettings settings) {
     final args = settings.arguments as CourseScreenArguments?;
     return MaterialPageRoute(
-      builder: (context) => CourseScreen(course: args!.course),
+      builder: (context) => ShowCourseScreen(course: args!.course),
     );
   }
 
