@@ -1,6 +1,7 @@
 import 'package:app/src/models/course.dart';
 import 'package:app/src/models/lecture.dart';
 import 'package:app/src/models/section.dart';
+import 'package:app/src/models/subject.dart';
 import 'package:app/src/models/user.dart';
 import 'package:app/src/services/auth_manager.dart';
 import 'package:app/src/utils/generate_unique_file_name.dart';
@@ -211,6 +212,24 @@ class CourseRepository {
     }
   }
 
+  Future<Subject?> _getSubjectInfo(DocumentReference subjectRef) async {
+    try {
+      // Fetch the document snapshot
+      DocumentSnapshot<Map<String, dynamic>> doc =
+          await subjectRef.get() as DocumentSnapshot<Map<String, dynamic>>;
+
+      if (doc.exists) {
+        return Subject.fromFirestore(doc);
+      } else {
+        debugPrint('Subject document does not exist');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Error fetching subject data: $e');
+      return null;
+    }
+  }
+
   Future<Course?> getCourseDetails(String courseId) async {
     final courseData =
         await _firebaseService.getDocumentById(courseId, 'courses');
@@ -274,8 +293,9 @@ class CourseRepository {
 
     for (var courseId in homeCourseIds) {
       final course = await getCourseDetails(courseId);
-      if (course != null) {
-        homeCourses.add(course);
+      if (course != null && course.instructor != null) {
+        final instructor = await _getInstructorInfo(course.instructor!);
+        homeCourses.add(course.copyWith(instructorInfo: instructor));
       }
     }
     return homeCourses;
@@ -283,21 +303,38 @@ class CourseRepository {
 
   // get home courses by language
   Future<List<Course>> getFeaturedCoursesByLanguage(String language) async {
-    final homeCourses = await getHomeCourses(
-      'featuredCourses',
-    );
-    return language == 'All'
+    List<Course> homeCourses = await getHomeCourses('featuredCourses');
+
+    homeCourses = language == 'All'
         ? homeCourses
         : homeCourses.where((course) => course.language == language).toList();
+
+    for (int i = 0; i < homeCourses.length; i++) {
+      if (homeCourses[i].subject != null) {
+        Subject? subject = await _getSubjectInfo(homeCourses[i].subject!);
+        homeCourses[i] = homeCourses[i].copyWith(subjectInfo: subject);
+      }
+    }
+
+    return homeCourses;
   }
 
-  Future<List<Course>> getCoursesByLanguage(String language) {
-    return _firebaseService.getCollection(
+  Future<List<Course>> getCoursesByLanguage(String language) async {
+    List<Course> courses = await _firebaseService.getCollection(
       collection: 'courses',
       fromFirestore: Course.fromFirestore,
       comparisonField: language == 'All' ? null : 'language',
       comparisonValue: language,
     );
+
+    // instructor info
+    for (int i = 0; i < courses.length; i++) {
+      if (courses[i].instructor != null) {
+        User? instructor = await _getInstructorInfo(courses[i].instructor!);
+        courses[i] = courses[i].copyWith(instructorInfo: instructor);
+      }
+    }
+    return courses;
   }
 
   // search courses by title

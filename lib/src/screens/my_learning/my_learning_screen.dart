@@ -140,49 +140,61 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
                       );
                     },
                     separatorBuilder: (context, index) {
-                      return const SizedBox(width: ThemeConstants.paddingSmall);
+                      return const SizedBox(
+                        width: ThemeConstants.paddingSmall,
+                      );
                     },
                   );
                 },
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                controller: _scrollController,
-                itemCount: _enrollments.length + (_isLoading ? 1 : 0),
-                itemBuilder: (context, index) {
-                  if (index == _enrollments.length) {
-                    return const Center(
-                      heightFactor: 4,
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-
-                  final enrollment = _enrollments[index];
-
-                  return CourseCard(
-                    course: enrollment?.courseInfo as Course,
-                    listMode: true,
-                    isEnrolled: true,
-                    expiresAt: enrollment?.endDate
-                            .toDate()
-                            .difference(DateTime.now())
-                            .inDays ??
-                        0,
-                    isActive: enrollment?.status == 'active',
-                    progress: 0,
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        '/course',
-                        arguments: CourseScreenArguments(
-                          enrollment?.courseInfo as Course,
+              child: _enrollments.isEmpty && !_isLoading
+                  ? const Center(
+                      child: Text(
+                        'No courses found.',
+                        style: TextStyle(
+                          fontSize: ThemeConstants.fontSizeMedium,
+                          color: Colors.grey,
                         ),
-                      );
-                    },
-                  );
-                },
-              ),
+                      ),
+                    )
+                  : ListView.builder(
+                      controller: _scrollController,
+                      itemCount: _enrollments.length + (_isLoading ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index == _enrollments.length) {
+                          return const Center(
+                            heightFactor: 4,
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        final enrollment = _enrollments[index];
+
+                        return CourseCard(
+                          course: enrollment?.courseInfo as Course,
+                          listMode: true,
+                          isEnrolled: true,
+                          expiresAt: enrollment?.endDate
+                                  .toDate()
+                                  .difference(DateTime.now())
+                                  .inDays ??
+                              0,
+                          isActive: enrollment?.status == 'active',
+                          progress: 0,
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              '/course',
+                              arguments: CourseScreenArguments(
+                                enrollment?.courseInfo as Course,
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
             ),
           ],
         ),

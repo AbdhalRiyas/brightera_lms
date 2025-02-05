@@ -1,4 +1,5 @@
 import 'package:app/src/models/section.dart';
+import 'package:app/src/models/subject.dart';
 import 'package:app/src/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -15,6 +16,7 @@ class Course {
   final num regularPrice;
   final num? durationInHours;
   final List<Section>? sections;
+  final Subject? subjectInfo;
   final User? instructorInfo;
   final bool isFeatured, isPublished;
 
@@ -31,6 +33,7 @@ class Course {
     this.durationInHours,
     required this.salePrice,
     this.sections,
+    this.subjectInfo,
     this.instructorInfo,
     required this.isFeatured,
     required this.isPublished,
@@ -85,6 +88,7 @@ class Course {
     num? regularPrice,
     num? durationInHours,
     String? language,
+    Subject? subjectInfo,
     User? instructorInfo,
     bool? isFeatured,
     bool? isPublished,
@@ -102,6 +106,7 @@ class Course {
       durationInHours: durationInHours ?? this.durationInHours,
       sections: sections,
       language: language ?? this.language,
+      subjectInfo: subjectInfo ?? this.subjectInfo,
       instructorInfo: instructorInfo ?? this.instructorInfo,
       isFeatured: isFeatured ?? this.isFeatured,
       isPublished: isPublished ?? this.isPublished,

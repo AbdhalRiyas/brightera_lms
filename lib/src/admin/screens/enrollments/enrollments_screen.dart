@@ -39,11 +39,16 @@ class _EnrollmentsScreenState extends State<EnrollmentsScreen> {
             itemBuilder: (_, index) {
               final enrollment = enrollments[index];
               return ListTile(
-                title: Text(enrollment.courseInfo!.title),
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(enrollment.user.id),
+                    Text(enrollment.courseInfo!.title),
+                  ],
+                ),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('User: ${enrollment.user.id}'),
                     Text('Status: ${enrollment.status}'),
                     Text(
                         'Enrolled At: ${DateFormat('dd MMM yyyy').format(enrollment.startDate.toDate())}'),

@@ -179,7 +179,7 @@ class _FeaturedCoursesState extends State<FeaturedCourses> {
                     );
                   })
                 : const Text(
-                    "No courses have been featured for this subject yet.",
+                    "No courses have been featured in this language yet.",
                   );
             // const SizedBox(height: 10),
             // if (_subjects.length > 1) ...[
