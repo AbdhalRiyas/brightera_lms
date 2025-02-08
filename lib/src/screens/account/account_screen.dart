@@ -5,7 +5,7 @@ import 'package:app/src/services/firebase_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../orders/orders_screen.dart';
+import '../orders/your_orders_screen.dart';
 import 'profile_menu_list_tile.dart';
 
 class AccountScreen extends StatefulWidget {
@@ -70,7 +70,8 @@ class _AccountScreenState extends State<AccountScreen> {
                               press: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const OrdersScreen(),
+                                  builder: (context) =>
+                                      const YourOrdersScreen(),
                                 ),
                               ),
                             ),

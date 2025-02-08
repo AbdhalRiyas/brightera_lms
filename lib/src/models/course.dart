@@ -19,6 +19,7 @@ class Course {
   final Subject? subjectInfo;
   final User? instructorInfo;
   final bool isFeatured, isPublished;
+  final int expiresInDays;
 
   Course({
     required this.id,
@@ -37,6 +38,7 @@ class Course {
     this.instructorInfo,
     required this.isFeatured,
     required this.isPublished,
+    required this.expiresInDays,
   });
 
   factory Course.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc,
@@ -56,6 +58,7 @@ class Course {
       instructor: doc.data()?['instructor'] ?? '',
       isFeatured: doc.data()?['isFeatured'] ?? false,
       isPublished: doc.data()?['isPublished'] ?? false,
+      expiresInDays: doc.data()?['expiresInDays'] ?? 0,
     );
   }
 
@@ -73,6 +76,7 @@ class Course {
       'instructor': instructor,
       'isFeatured': isFeatured,
       'isPublished': isPublished,
+      'expiresInDays': expiresInDays,
     };
   }
 
@@ -92,6 +96,7 @@ class Course {
     User? instructorInfo,
     bool? isFeatured,
     bool? isPublished,
+    int? expiresInDays,
   }) {
     return Course(
       id: id ?? this.id,
@@ -110,6 +115,31 @@ class Course {
       instructorInfo: instructorInfo ?? this.instructorInfo,
       isFeatured: isFeatured ?? this.isFeatured,
       isPublished: isPublished ?? this.isPublished,
+      expiresInDays: expiresInDays ?? this.expiresInDays,
+    );
+  }
+
+  factory Course.fromMap(Map<String, dynamic>? data) {
+    if (data == null) {
+      throw ArgumentError("Course data is null");
+    }
+
+    return Course(
+      id: data['id'] ?? '',
+      title: data['title'] ?? '',
+      language: data['language'] ?? 'Tamil',
+      image: data['image'] ?? '',
+      description: data['description'] ?? '',
+      subject: data['subject'],
+      salePrice: data['salePrice'] ?? 0,
+      regularPrice: data['regularPrice'] ?? 0,
+      durationInHours: data['durationInHours'],
+      sections: null, // Sections should be loaded separately if needed
+      previewVideo: data['previewVideo'] ?? '',
+      instructor: data['instructor'],
+      isFeatured: data['isFeatured'] ?? false,
+      isPublished: data['isPublished'] ?? false,
+      expiresInDays: data['expiresInDays'] ?? 0,
     );
   }
 }
