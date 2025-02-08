@@ -29,7 +29,7 @@ class _CouponCourseSelectorState extends State<CouponCourseSelector> {
         final course = widget.availableCourses.firstWhere(
           (course) => course.id == id,
         );
-        return course.title.split(" ").first;
+        return course.title.split("-").first;
       }).toList(),
       popupProps: const PopupPropsMultiSelection.menu(
         showSearchBox: true,

@@ -36,9 +36,18 @@ class _OrderApproveScreenState extends State<OrderApproveScreen> {
         ),
         child: ListView(
           children: [
-            Text('Course: ${widget.order.course.title}'),
-            Text('Amount: ${widget.order.total}'),
-            Text('User ID: ${widget.order.userId.id}'),
+            Text(
+              'Course: ${widget.order.course.title}',
+              style: ThemeConstants.headingStyle,
+            ),
+            Text(
+              'Amount: ${widget.order.total}',
+              style: ThemeConstants.headingStyle,
+            ),
+            Text(
+              'User ID: ${widget.order.userId.id}',
+              style: ThemeConstants.headingStyle,
+            ),
             widget.order.paymentProof != null
                 ? Image.network(
                     widget.order.paymentProof!,
