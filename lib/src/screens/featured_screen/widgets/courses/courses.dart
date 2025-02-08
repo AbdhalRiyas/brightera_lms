@@ -1,8 +1,8 @@
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/course.dart';
 import 'package:app/src/repositories/course_repository.dart';
-import 'package:app/src/screens/courses/course_screen.dart';
-import 'package:app/src/screens/list_of_courses_screen.dart';
+import 'package:app/src/screens/courses/show_course_screen.dart';
+import 'package:app/src/screens/courses/all_courses_screen.dart';
 import 'package:app/src/widgets/course_card/course_card.dart';
 import 'package:flutter/material.dart';
 
@@ -179,7 +179,7 @@ class _FeaturedCoursesState extends State<FeaturedCourses> {
                     );
                   })
                 : const Text(
-                    "No courses have been featured for this subject yet.",
+                    "No courses have been featured in this language yet.",
                   );
             // const SizedBox(height: 10),
             // if (_subjects.length > 1) ...[

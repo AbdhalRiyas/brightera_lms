@@ -1,5 +1,4 @@
-import 'package:app/src/config/theme_constants.dart';
-import 'package:app/src/services/notification_service.dart';
+import 'package:app/src/screens/notifications/notifications_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -13,38 +12,55 @@ class CustomAppBar extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: ThemeConstants.paddingSmall),
-          child: Image.asset(
-            'assets/images/logo.webp',
-            height: 24.0, // Adjust this height as needed
+        SvgPicture.asset(
+          "assets/images/logo.svg",
+          width: 120,
+          colorFilter: ColorFilter.mode(
+            Theme.of(context).primaryColor,
+            BlendMode.srcIn,
           ),
         ),
         Row(
           children: [
             IconButton(
               onPressed: () {
-                NotificationService().showNotification(
-                  title: 'Test',
-                  body: 'This is a test notification',
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const NotificationsScreen(),
+                  ),
                 );
+                // NotificationService().showNotification(
+                //   title: 'Test',
+                //   body: 'This is a test notification',
+                // );
               },
-              icon: SvgPicture.asset(
-                'assets/icons/notification.svg',
-                colorFilter: const ColorFilter.mode(
-                  Colors.black,
-                  BlendMode.srcIn,
+              icon: Container(
+                padding: const EdgeInsets.all(6),
+                width: 36,
+                height: 36,
+                decoration: const ShapeDecoration(
+                  color: Colors.white,
+                  shape: OvalBorder(),
+                  shadows: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 10,
+                    ),
+                  ],
+                ),
+                child: SvgPicture.asset(
+                  'assets/icons/bell.svg',
+                  // color: ThemeConstants.primaryColor,
                 ),
               ),
             ),
             // IconButton(
             //   onPressed: () {},
-            //   icon: SvgPicture.asset(
-            //     'assets/icons/search.svg',
-            //     colorFilter: const ColorFilter.mode(
-            //       Colors.black,
-            //       BlendMode.srcIn,
-            //     ),
+            //   icon: CircleAvatar(
+            //     radius: 25,
+            //     backgroundImage: Image.asset(
+            //       'assets/images/profile-avatar.png',
+            //     ).image,
             //   ),
             // ),
           ],

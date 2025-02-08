@@ -18,6 +18,7 @@ class CourseCard extends StatelessWidget {
     this.isEnrolled = false,
     this.isActive = false,
     this.progress,
+    this.expiresAt,
   }) : _course = course;
 
   final double? maxWidth, maxHeight;
@@ -29,6 +30,7 @@ class CourseCard extends StatelessWidget {
   final bool isEnrolled;
   final bool? isActive;
   final double? progress;
+  final int? expiresAt;
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +100,7 @@ class CourseCard extends StatelessWidget {
                                   ),
                                   const SizedBox(width: 5),
                                   Text(
-                                    "by Mohamed",
+                                    "by ${_course.instructorInfo!.name}",
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: Colors.black.withAlpha(150),
@@ -149,7 +151,9 @@ class CourseCard extends StatelessWidget {
                                           ),
                                         ),
                                         Text(
-                                          "Expires in 2 days",
+                                          expiresAt! > 0
+                                              ? "Expires in $expiresAt days"
+                                              : "Expired ${expiresAt! * -1} days ago",
                                           style: TextStyle(
                                             color: Colors.black.withAlpha(150),
                                             fontSize: 12,
@@ -235,9 +239,9 @@ class CourseCard extends StatelessWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text(
-                                    "Subject",
-                                    style: TextStyle(
+                                  Text(
+                                    _course.subjectInfo!.name,
+                                    style: const TextStyle(
                                       fontSize: ThemeConstants.fontSizeSmall,
                                       color: ThemeConstants.primaryColor,
                                       fontWeight: FontWeight.w500,

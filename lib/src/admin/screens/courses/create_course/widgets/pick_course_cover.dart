@@ -3,7 +3,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
-Future<FilePickerResult?> pickCourseCover(BuildContext context) async {
+Future<FilePickerResult?> pickImage(BuildContext context) async {
   final result = await FilePicker.platform.pickFiles(
     type: FileType.image,
     allowCompression: true,
@@ -14,7 +14,7 @@ Future<FilePickerResult?> pickCourseCover(BuildContext context) async {
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('No cover picture selected.'),
+        content: Text('No picture selected.'),
         backgroundColor: Colors.red,
       ),
     );
@@ -22,7 +22,7 @@ Future<FilePickerResult?> pickCourseCover(BuildContext context) async {
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Cover picture has has been selected.'),
+        content: Text('Picture has has been selected.'),
         backgroundColor: Colors.green,
       ),
     );

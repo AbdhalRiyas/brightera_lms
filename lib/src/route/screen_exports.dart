@@ -1,9 +1,9 @@
 export 'package:app/src/screens/login_screen/login_screen.dart';
 export 'package:app/src/admin/screens/dashboard_screen.dart';
 export 'package:app/src/screens/account/account_screen.dart';
-export 'package:app/src/screens/courses/course_screen.dart';
+export 'package:app/src/screens/courses/show_course_screen.dart';
 export 'package:app/src/screens/lectures_screen/lectures_screen.dart';
-export 'package:app/src/screens/list_of_courses_screen.dart';
+export 'package:app/src/screens/courses/all_courses_screen.dart';
 export 'package:app/src/services/auth_manager.dart';
 export 'package:app/src/screens/checkout_screen.dart';
 export 'package:app/entry_point.dart';

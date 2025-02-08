@@ -5,7 +5,6 @@ import 'package:app/src/repositories/order_repository.dart';
 import 'package:app/src/screens/orders/widgets/pick_payment_proof.dart';
 import 'package:app/src/utils/format_price.dart';
 import 'package:app/src/widgets/course_card/course_card_image.dart';
-import 'package:app/src/widgets/course_card/course_card_subtitle.dart';
 import 'package:app/src/widgets/course_card/course_card_title.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
@@ -256,8 +255,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             const SizedBox(height: 12),
             _buildOrderDetailRow('Payment Status', order.paymentStatus),
             const SizedBox(height: 12),
-            _buildOrderDetailRow(
-                'Total', 'LKR ${order.total.toStringAsFixed(2)}'),
+            _buildOrderDetailRow('Total', formatPrice(order.total)),
             const SizedBox(height: 12),
             _buildOrderDetailRow(
                 'Discount', 'LKR ${order.discount.toStringAsFixed(2)}'),

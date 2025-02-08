@@ -1,6 +1,6 @@
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/course.dart';
-import 'package:app/src/screens/courses/widgets/show_free_preview.dart';
+import 'package:app/src/screens/courses/components/show_free_preview.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';

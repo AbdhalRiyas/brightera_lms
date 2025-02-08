@@ -2,8 +2,8 @@ import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/course.dart';
 import 'package:app/src/repositories/course_repository.dart';
 import 'package:app/src/screens/checkout_screen.dart';
-import 'package:app/src/screens/courses/widgets/course_cover.dart';
-import 'package:app/src/screens/courses/widgets/course_spec_container.dart';
+import 'package:app/src/screens/courses/components/course_cover.dart';
+import 'package:app/src/screens/courses/components/course_spec_container.dart';
 import 'package:app/src/services/firebase_service.dart';
 import 'package:app/src/widgets/app_bar_back_button.dart';
 import 'package:app/src/widgets/syllabus/syllabus_accordion.dart';
@@ -13,16 +13,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:readmore/readmore.dart';
 
-class CourseScreen extends StatefulWidget {
-  const CourseScreen({super.key, required this.course});
+class ShowCourseScreen extends StatefulWidget {
+  const ShowCourseScreen({super.key, required this.course});
 
   final Course course;
 
   @override
-  State<CourseScreen> createState() => _CourseScreenState();
+  State<ShowCourseScreen> createState() => _ShowCourseScreenState();
 }
 
-class _CourseScreenState extends State<CourseScreen>
+class _ShowCourseScreenState extends State<ShowCourseScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
   final CourseRepository _repository = CourseRepository();
@@ -248,7 +248,7 @@ class CourseButton extends StatelessWidget {
   }) : _activeSubscription = activeSubscription;
 
   final ValueNotifier<bool> _activeSubscription;
-  final CourseScreen widget;
+  final ShowCourseScreen widget;
 
   @override
   Widget build(BuildContext context) {

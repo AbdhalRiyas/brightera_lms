@@ -67,6 +67,13 @@ class _CouponAddEditScreenState extends State<CouponAddEditScreen> {
     _expiryDateController.dispose();
     _maxUsageController.dispose();
     _studentIdsController.dispose();
+    _selectedDate.dispose();
+    _couponType.dispose();
+    _appliesToAllCourses.dispose();
+    _isActive.dispose();
+    _selectedStudents.dispose();
+    _selectedCourses.dispose();
+    _availableCourses.dispose();
     super.dispose();
   }
 

@@ -58,50 +58,62 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
   }
 
   void _fetchSectionsAndLectures() async {
-    _sections = await _repository.fetchSectionsForCourse(widget.course.id);
-
-    Map<dynamic, dynamic>? lastLectureDetail =
-        widget.courseProgressBox?.get("lastLecture");
-
-    int lastSection =
-        lastLectureDetail == null ? 0 : lastLectureDetail['section'];
-    int lastLecture =
-        lastLectureDetail == null ? 0 : lastLectureDetail['lecture'];
-
-    if (lastSection >= _sections.length) {
-      lastSection = 0;
-      lastLecture = 0;
-    }
-
-    if (lastLecture >= _sections[lastSection].lectures.length) {
-      lastLecture = 0;
-    }
-
-    String videoId = YoutubePlayer.convertUrlToId(
-            _sections[lastSection].lectures[lastLecture].source) ??
-        '';
-
-    _openedSection = lastSection;
-
-    final lectures = _sections[lastSection].lectures;
-
-    widget.activeLesson?.value = ActiveLesson.fromJson({
-      "section": lastSection,
-      "lecture": lastLecture,
-      "source": YoutubePlayer.convertUrlToId(videoId),
-      "notes":
-          lectures.length > lastLecture ? lectures[lastLecture].pdfNotes : "",
-      "downloads":
-          lectures.length > lastLecture ? lectures[lastLecture].downloads : [],
-    });
-
     setState(() {
-      _isLoading = false;
+      _isLoading = true; // Ensure loading state before fetching data
     });
 
-    Future.delayed(const Duration(milliseconds: 2000), () {
-      widget.youtubePlayerController?.load(videoId);
-    });
+    try {
+      _sections = await _repository.fetchSectionsForCourse(widget.course.id);
+
+      if (_sections.isNotEmpty) {
+        Map<dynamic, dynamic>? lastLectureDetail =
+            widget.courseProgressBox?.get("lastLecture");
+
+        int lastSection =
+            lastLectureDetail == null ? 0 : lastLectureDetail['section'];
+        int lastLecture =
+            lastLectureDetail == null ? 0 : lastLectureDetail['lecture'];
+
+        if (lastSection >= _sections.length) {
+          lastSection = 0;
+          lastLecture = 0;
+        }
+
+        if (lastLecture >= _sections[lastSection].lectures.length) {
+          lastLecture = 0;
+        }
+
+        String videoId = YoutubePlayer.convertUrlToId(
+                _sections[lastSection].lectures[lastLecture].source) ??
+            '';
+
+        _openedSection = lastSection;
+
+        final lectures = _sections[lastSection].lectures;
+
+        widget.activeLesson?.value = ActiveLesson.fromJson({
+          "section": lastSection,
+          "lecture": lastLecture,
+          "source": videoId,
+          "notes": lectures.length > lastLecture
+              ? lectures[lastLecture].pdfNotes
+              : "",
+          "downloads": lectures.length > lastLecture
+              ? lectures[lastLecture].downloads
+              : [],
+        });
+
+        Future.delayed(const Duration(milliseconds: 2000), () {
+          widget.youtubePlayerController?.load(videoId);
+        });
+      }
+    } catch (error) {
+      debugPrint("Error fetching sections: $error");
+    } finally {
+      setState(() {
+        _isLoading = false; // Ensure loading stops after data fetch
+      });
+    }
   }
 
   void _changeLesson(int lectureDelta) {
@@ -162,71 +174,79 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
   Widget build(BuildContext context) {
     super.build(context);
     return widget._scrollPhysics is NeverScrollableScrollPhysics
-        ? Column(children: _buildSyllubusList)
+        ? Column(children: _buildSyllabusList)
         : ListView(
             physics: widget._scrollPhysics,
             shrinkWrap: true,
             controller: widget.syllabusScrollController,
-            children: _buildSyllubusList,
+            children: _buildSyllabusList,
           );
   }
 
-  List<Widget> get _buildSyllubusList {
+  List<Widget> get _buildSyllabusList {
+    if (_isLoading) {
+      return [
+        const Center(child: CircularProgressIndicator()),
+      ];
+    }
+
+    if (_sections.isEmpty) {
+      return [
+        const Center(child: Text("No syllabus available for this course.")),
+      ];
+    }
+
     return [
-      _isLoading
-          ? const Center(child: CircularProgressIndicator.adaptive())
-          : Accordion(
-              paddingListTop: 0,
-              contentVerticalPadding: ThemeConstants.paddingSmall,
-              disableScrolling: true,
-              rightIcon: const Icon(
-                Icons.keyboard_arrow_down,
-                color: Colors.black,
-                size: 22,
-              ),
-              headerBorderRadius: ThemeConstants.borderRadiusSmall,
-              headerBorderWidth: 0,
-              paddingListHorizontal: 0,
-              headerBorderColorOpened: Colors.transparent,
-              headerBackgroundColor: Colors.transparent,
-              headerBackgroundColorOpened: Colors.transparent,
-              contentBackgroundColor: Colors.transparent,
-              contentBorderWidth: 0,
-              contentHorizontalPadding: 0,
-              scaleWhenAnimating: false,
-              openAndCloseAnimation: true,
-              headerPadding: const EdgeInsets.symmetric(vertical: 7),
-              sectionOpeningHapticFeedback: SectionHapticFeedback.heavy,
-              sectionClosingHapticFeedback: SectionHapticFeedback.light,
-              children: List.generate(
-                _sections.length,
-                (i) => AccordionSection(
-                  contentBackgroundColor: ThemeConstants.backgroundColor,
-                  onOpenSection: () {
-                    _changeOpenedIndex(i);
-                  },
-                  key: Key(_sections[i].id),
-                  isOpen: i == _openedSection,
-                  contentVerticalPadding: ThemeConstants.paddingSmall,
-                  header: Text(
-                    _sections[i].title,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  content: widget._scrollPhysics is NeverScrollableScrollPhysics
-                      ? Column(
-                          children: _buildSubList(i),
-                        )
-                      : ListView(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          children: _buildSubList(i),
-                        ),
-                ),
+      Accordion(
+        paddingListTop: 0,
+        contentVerticalPadding: ThemeConstants.paddingSmall,
+        disableScrolling: true,
+        rightIcon: const Icon(
+          Icons.keyboard_arrow_down,
+          color: Colors.black,
+          size: 22,
+        ),
+        headerBorderRadius: ThemeConstants.borderRadiusSmall,
+        headerBorderWidth: 0,
+        paddingListHorizontal: 0,
+        headerBorderColorOpened: Colors.transparent,
+        headerBackgroundColor: Colors.transparent,
+        headerBackgroundColorOpened: Colors.transparent,
+        contentBackgroundColor: Colors.transparent,
+        contentBorderWidth: 0,
+        contentHorizontalPadding: 0,
+        scaleWhenAnimating: false,
+        openAndCloseAnimation: true,
+        headerPadding: const EdgeInsets.symmetric(vertical: 7),
+        sectionOpeningHapticFeedback: SectionHapticFeedback.heavy,
+        sectionClosingHapticFeedback: SectionHapticFeedback.light,
+        children: _sections.asMap().entries.map((entry) {
+          int i = entry.key;
+          Section section = entry.value;
+
+          return AccordionSection(
+            contentBackgroundColor: ThemeConstants.backgroundColor,
+            onOpenSection: () => _changeOpenedIndex(i),
+            key: Key(section.id),
+            isOpen: i == _openedSection,
+            contentVerticalPadding: ThemeConstants.paddingSmall,
+            header: Text(
+              section.title,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
               ),
             ),
+            content: widget._scrollPhysics is NeverScrollableScrollPhysics
+                ? Column(children: _buildSubList(i))
+                : ListView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    children: _buildSubList(i),
+                  ),
+          );
+        }).toList(),
+      ),
     ];
   }
 

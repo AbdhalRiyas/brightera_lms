@@ -2,7 +2,7 @@ import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/active_lesson.dart';
 import 'package:app/src/models/course.dart';
 import 'package:app/src/models/lecture.dart';
-import 'package:app/src/screens/courses/widgets/show_free_preview.dart';
+import 'package:app/src/screens/courses/components/show_free_preview.dart';
 import 'package:app/src/services/firebase_service.dart';
 import 'package:app/src/utils/num_extension.dart';
 import 'package:app/src/utils/string_extension.dart';

@@ -67,7 +67,9 @@ class ThemeConstants {
         color: Color(0xFF1F141F),
         fontSize: 22,
       ),
+      scrolledUnderElevation: 0,
     ),
+
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
       foregroundColor: primaryButtonTextColor,
       backgroundColor: primaryButtonColor,

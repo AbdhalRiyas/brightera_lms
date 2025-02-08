@@ -2,7 +2,6 @@ import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/course.dart';
 import 'package:app/src/models/order.dart';
 import 'package:app/src/models/payment_method.dart';
-import 'package:app/src/repositories/coupon_repository.dart';
 import 'package:app/src/repositories/course_repository.dart';
 import 'package:app/src/repositories/order_repository.dart';
 import 'package:app/src/repositories/payment_method_repository.dart';
@@ -57,9 +56,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
             body: Padding(
               padding: EdgeInsets.only(
-                left: ThemeConstants.paddingSmall,
-                right: ThemeConstants.paddingSmall,
-                bottom: MediaQuery.paddingOf(context).bottom,
+                left: ThemeConstants.paddingMedium,
+                right: ThemeConstants.paddingMedium,
+                bottom: MediaQuery.paddingOf(context).bottom +
+                    ThemeConstants.paddingSmall,
               ),
               child: ListView(
                 children: [
@@ -74,85 +74,85 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       listMode: true,
                     ),
                   ),
-                  const SizedBox(height: ThemeConstants.paddingLarge),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(
-                        ThemeConstants.borderRadiusMedium,
-                      ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: ThemeConstants.primaryShadowColor,
-                          blurRadius: 10,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    height: 50,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: SvgPicture.asset(
-                            "assets/icons/coupon.svg",
-                            colorFilter: const ColorFilter.mode(
-                              Colors.grey,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: TextField(
-                            controller: _couponCodeController,
-                            maxLength: 25,
-                            style: const TextStyle(fontSize: 12),
-                            decoration: const InputDecoration(
-                              counterText: '',
-                              hintText: "Enter Coupon",
-                              contentPadding: EdgeInsets.all(
-                                ThemeConstants.paddingSmall,
-                              ),
-                              disabledBorder: InputBorder.none,
-                              border: InputBorder.none,
-                            ),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () async {
-                            final couponCode = _couponCodeController.text;
-                            final result = await CouponRepository().applyCoupon(
-                              couponCode,
-                              widget.courses[0].id,
-                            );
-                            if (result.isSuccess) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Coupon applied successfully"),
-                                ),
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    result.error ?? "An error occurred",
-                                  ),
-                                ),
-                              );
-                            }
-                          },
-                          child: const Text(
-                            "Apply Coupon",
-                            style: TextStyle(
-                              color: ThemeConstants.primaryButtonColor,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  // const SizedBox(height: ThemeConstants.paddingLarge),
+                  // Container(
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.white,
+                  //     borderRadius: BorderRadius.circular(
+                  //       ThemeConstants.borderRadiusMedium,
+                  //     ),
+                  //     boxShadow: const [
+                  //       BoxShadow(
+                  //         color: ThemeConstants.primaryShadowColor,
+                  //         blurRadius: 10,
+                  //         offset: Offset(0, 2),
+                  //       ),
+                  //     ],
+                  //   ),
+                  //   height: 50,
+                  //   child: Row(
+                  //     crossAxisAlignment: CrossAxisAlignment.center,
+                  //     mainAxisSize: MainAxisSize.min,
+                  //     children: [
+                  //       Padding(
+                  //         padding: const EdgeInsets.symmetric(horizontal: 12),
+                  //         child: SvgPicture.asset(
+                  //           "assets/icons/coupon.svg",
+                  //           colorFilter: const ColorFilter.mode(
+                  //             Colors.grey,
+                  //             BlendMode.srcIn,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //       Expanded(
+                  //         child: TextField(
+                  //           controller: _couponCodeController,
+                  //           maxLength: 25,
+                  //           style: const TextStyle(fontSize: 12),
+                  //           decoration: const InputDecoration(
+                  //             counterText: '',
+                  //             hintText: "Enter Coupon",
+                  //             contentPadding: EdgeInsets.all(
+                  //               ThemeConstants.paddingSmall,
+                  //             ),
+                  //             disabledBorder: InputBorder.none,
+                  //             border: InputBorder.none,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //       TextButton(
+                  //         onPressed: () async {
+                  //           final couponCode = _couponCodeController.text;
+                  //           final result = await CouponRepository().applyCoupon(
+                  //             couponCode,
+                  //             widget.courses[0].id,
+                  //           );
+                  //           if (result.isSuccess) {
+                  //             ScaffoldMessenger.of(context).showSnackBar(
+                  //               const SnackBar(
+                  //                 content: Text("Coupon applied successfully"),
+                  //               ),
+                  //             );
+                  //           } else {
+                  //             ScaffoldMessenger.of(context).showSnackBar(
+                  //               SnackBar(
+                  //                 content: Text(
+                  //                   result.error ?? "An error occurred",
+                  //                 ),
+                  //               ),
+                  //             );
+                  //           }
+                  //         },
+                  //         child: const Text(
+                  //           "Apply Coupon",
+                  //           style: TextStyle(
+                  //             color: ThemeConstants.primaryButtonColor,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                   const SizedBox(height: ThemeConstants.paddingLarge),
                   Text(
                     "Payment method",
@@ -222,6 +222,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   text: value == -1 ? "Choose a payment method" : "Proceed",
                   onPressed: value != -1
                       ? () async {
+                          final navigator = Navigator.of(context);
+                          final scaffoldMessenger =
+                              ScaffoldMessenger.of(context);
+
                           final paymentMethods = await _paymentMethods;
                           switch (paymentMethods[_selectedPg.value].type) {
                             case 'payhere':
@@ -246,20 +250,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                               Result result =
                                   await OrderRepository().createOrder(order);
                               if (result.isSuccess) {
-                                Navigator.pop(context);
-                                Navigator.push(
-                                  context,
+                                navigator.popUntil((route) => route.isFirst);
+                                navigator.push(
                                   MaterialPageRoute(
                                     builder: (context) => const OrdersScreen(),
                                   ),
                                 );
-                                ScaffoldMessenger.of(context).showSnackBar(
+                                scaffoldMessenger.showSnackBar(
                                   const SnackBar(
                                     content: Text("Order created successfully"),
                                   ),
                                 );
                               } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
+                                scaffoldMessenger.showSnackBar(
                                   SnackBar(
                                     content: Text(
                                       result.error ?? "An error occurred",
@@ -332,7 +335,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Original Price",
+                      "Subtotal",
                       style: _buildSubHeadingStyles(14, FontWeight.w500),
                     ),
                     Builder(builder: (context) {
@@ -347,27 +350,27 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     }),
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Discounts",
-                      style: _buildSubHeadingStyles(14, FontWeight.w500),
-                    ),
-                    Builder(builder: (context) {
-                      num totalSalePrice = 0.00;
-                      num totalRegularPrice = 0.00;
-                      for (Course course in widget.courses) {
-                        totalSalePrice += course.salePrice;
-                        totalRegularPrice += course.regularPrice;
-                      }
-                      return Text(
-                        formatPrice(totalRegularPrice - totalSalePrice, true),
-                        style: _buildSubHeadingStyles(14),
-                      );
-                    }),
-                  ],
-                ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     Text(
+                //       "Discounts",
+                //       style: _buildSubHeadingStyles(14, FontWeight.w500),
+                //     ),
+                //     Builder(builder: (context) {
+                //       num totalSalePrice = 0.00;
+                //       num totalRegularPrice = 0.00;
+                //       for (Course course in widget.courses) {
+                //         totalSalePrice += course.salePrice;
+                //         totalRegularPrice += course.regularPrice;
+                //       }
+                //       return Text(
+                //         formatPrice(totalRegularPrice - totalSalePrice, true),
+                //         style: _buildSubHeadingStyles(14),
+                //       );
+                //     }),
+                //   ],
+                // ),
                 // const Padding(
                 //   padding: EdgeInsets.symmetric(
                 //       vertical: ThemeConstants.paddingSmall),
