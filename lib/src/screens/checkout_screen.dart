@@ -6,7 +6,7 @@ import 'package:app/src/repositories/course_repository.dart';
 import 'package:app/src/repositories/order_repository.dart';
 import 'package:app/src/repositories/payment_method_repository.dart';
 import 'package:app/src/repositories/user_repository.dart';
-import 'package:app/src/screens/orders/orders_screen.dart';
+import 'package:app/src/screens/orders/your_orders_screen.dart';
 import 'package:app/src/services/pay_here_service.dart';
 import 'package:app/src/utils/format_price.dart';
 import 'package:app/src/utils/result.dart';
@@ -237,15 +237,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 id: '123456',
                                 userId: UserRepository().getUserReference(
                                     UserRepository().currentUserUid),
-                                status: 'pending',
+                                status: OrderStatus.pending,
                                 courseId: CourseRepository()
                                     .getCourseReference(widget.courses[0].id),
                                 createdAt: DateTime.now(),
                                 paymentMethod:
                                     paymentMethods[_selectedPg.value].name,
-                                paymentStatus: 'pending',
                                 total: widget.courses[0].salePrice * 1,
-                                course: widget.courses[0].toFirestore(),
+                                discount: 0,
+                                course: widget.courses[0],
                               );
                               Result result =
                                   await OrderRepository().createOrder(order);
@@ -253,7 +253,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 navigator.popUntil((route) => route.isFirst);
                                 navigator.push(
                                   MaterialPageRoute(
-                                    builder: (context) => const OrdersScreen(),
+                                    builder: (context) =>
+                                        const YourOrdersScreen(),
                                   ),
                                 );
                                 scaffoldMessenger.showSnackBar(

@@ -1,3 +1,4 @@
+import 'package:app/src/admin/screens/courses/create_course/widgets/expiry_days_field.dart';
 import 'package:app/src/config/app_contants.dart';
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/course.dart';
@@ -41,6 +42,8 @@ class _CreateUpdateCourseScreenState extends State<CreateUpdateCourseScreen> {
   final TextEditingController _salePriceController = TextEditingController();
   final TextEditingController _regularPriceController = TextEditingController();
   final TextEditingController _durationController = TextEditingController();
+  final TextEditingController _expiresInDaysController =
+      TextEditingController();
 
   final ValueNotifier<bool> _isFeatured = ValueNotifier(false);
   final ValueNotifier<bool> _isPublished = ValueNotifier(false);
@@ -64,6 +67,8 @@ class _CreateUpdateCourseScreenState extends State<CreateUpdateCourseScreen> {
     _language.value = widget.course?.language;
     _language.value = widget.course?.language;
     _subject.value = widget.course?.subject?.path;
+    _expiresInDaysController.text =
+        widget.course?.expiresInDays.toString() ?? '';
     super.initState();
   }
 
@@ -119,6 +124,9 @@ class _CreateUpdateCourseScreenState extends State<CreateUpdateCourseScreen> {
                             salePriceController: _salePriceController,
                             regularPriceController: _regularPriceController,
                           ),
+                          ExpiryDaysField(
+                            expiresInDaysController: _expiresInDaysController,
+                          ),
                           const SizedBox(height: ThemeConstants.paddingSmall),
                           SubmitButton(
                             formKey: _formKey,
@@ -137,6 +145,7 @@ class _CreateUpdateCourseScreenState extends State<CreateUpdateCourseScreen> {
                             subjectRepository: _subjectRepository,
                             subject: _subject,
                             userRepository: _userRepository,
+                            expiresInDaysController: _expiresInDaysController,
                           ),
                         ],
                       ),

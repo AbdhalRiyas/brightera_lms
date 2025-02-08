@@ -93,20 +93,23 @@ class CourseCard extends StatelessWidget {
                               const SizedBox(height: 8),
                               Row(
                                 children: [
-                                  const Icon(
-                                    Icons.person,
-                                    color: Colors.grey,
-                                    size: 16,
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    "by ${_course.instructorInfo!.name}",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.black.withAlpha(150),
+                                  if (_course.instructorInfo != null) ...[
+                                    const Icon(
+                                      Icons.person,
+                                      color: Colors.grey,
+                                      size: 16,
                                     ),
-                                  ),
-                                  const SizedBox(width: 10),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      _course.instructorInfo!.name,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.black.withAlpha(150),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                  ] else
+                                    Container(),
                                   Text(
                                     _course.durationInHours != null
                                         ? '${_course.durationInHours} hours'

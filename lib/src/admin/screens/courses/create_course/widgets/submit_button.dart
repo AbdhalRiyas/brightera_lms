@@ -27,6 +27,7 @@ class SubmitButton extends StatelessWidget {
     required SubjectRepository subjectRepository,
     required ValueNotifier<String?> subject,
     required UserRepository userRepository,
+    required TextEditingController expiresInDaysController,
   })  : _formKey = formKey,
         _coverPicture = coverPicture,
         _repository = repository,
@@ -42,7 +43,8 @@ class SubmitButton extends StatelessWidget {
         _subjectRepository = subjectRepository,
         _subject = subject,
         _course = course,
-        _userRepository = userRepository;
+        _userRepository = userRepository,
+        _expiresInDaysController = expiresInDaysController;
 
   final GlobalKey<FormState> _formKey;
   final ValueNotifier<String> _coverPicture;
@@ -60,6 +62,7 @@ class SubmitButton extends StatelessWidget {
   final SubjectRepository _subjectRepository;
   final ValueNotifier<String?> _subject;
   final UserRepository _userRepository;
+  final TextEditingController _expiresInDaysController;
 
   @override
   Widget build(BuildContext context) {
@@ -106,6 +109,7 @@ class SubmitButton extends StatelessWidget {
                         .getSubjectReference(_subject.value!.split('/').last),
                     instructor: _userRepository
                         .getUserReference(_userRepository.currentUserUid),
+                    expiresInDays: int.parse(_expiresInDaysController.text),
                   )
                 : _course.copyWith(
                     title: _titleController.text,
@@ -124,6 +128,7 @@ class SubmitButton extends StatelessWidget {
                         .getSubjectReference(_subject.value!.split('/').last),
                     instructor: _userRepository
                         .getUserReference(_userRepository.currentUserUid),
+                    expiresInDays: int.parse(_expiresInDaysController.text),
                   );
 
             Result result = _course == null

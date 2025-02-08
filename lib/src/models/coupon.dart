@@ -33,7 +33,9 @@ class Coupon {
     return Coupon(
       code: doc.id,
       discount: data?['discount'],
-      type: DiscountType.values[data?['type']],
+      type: data?['type'] == 'percentage'
+          ? DiscountType.percentage
+          : DiscountType.fixedAmount,
       usageCount: data?['usageCount'] ?? 0,
       createdAt: (data?['createdAt'] as Timestamp?)?.toDate(),
       isActive: data?['isActive'],
@@ -47,7 +49,7 @@ class Coupon {
   Map<String, dynamic> toFirestore() {
     return {
       'discount': discount,
-      'type': type.index,
+      'type': type.name,
       'usageCount': usageCount,
       'isActive': isActive,
       'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : null,
