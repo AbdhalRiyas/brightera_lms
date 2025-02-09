@@ -1,31 +1,57 @@
 import 'package:app/src/config/theme_constants.dart';
+import 'package:app/src/models/announcement.dart';
+import 'package:app/src/repositories/announcement_repository.dart';
 import 'package:app/src/widgets/app_bar_back_button.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class NotificationsScreen extends StatelessWidget {
-  const NotificationsScreen({super.key});
+class Announcements extends StatefulWidget {
+  const Announcements({super.key});
 
   @override
+  State<Announcements> createState() => _AnnouncementsState();
+}
+
+class _AnnouncementsState extends State<Announcements> {
+  @override
   Widget build(BuildContext context) {
+    final AnnouncementRepository announcementRepository =
+        AnnouncementRepository();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notifications'),
+        title: const Text('Announcements'),
         leading: const AppBarBackButton(),
       ),
-      body: ListView.separated(
-        separatorBuilder: (context, index) => const SizedBox(height: 8),
-        itemBuilder: (context, index) {
-          return const NotificationCard(
-            leadingIcon: 'assets/icons/bell.svg',
-            title: 'New Course Available',
-            subtitle:
-                'Flutter for Beginners. Start learning now! and get 50% off, Hurry up!',
-            time: '2 hours ago',
-            trailingImage: 'assets/images/books.png',
+      body: FutureBuilder(
+        future: announcementRepository.getAllAnnouncements(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          }
+          if (snapshot.data == null || snapshot.data!.isEmpty) {
+            return const Center(
+              child: Text('No Announcements'),
+            );
+          }
+          final announcements = snapshot.data;
+          return ListView.separated(
+            separatorBuilder: (context, index) => const SizedBox(height: 8),
+            itemBuilder: (context, index) {
+              return NotificationCard(
+                announcement: announcements[index],
+              );
+            },
+            itemCount: announcements!.length,
           );
         },
-        itemCount: 5,
       ),
     );
   }
@@ -34,18 +60,10 @@ class NotificationsScreen extends StatelessWidget {
 class NotificationCard extends StatelessWidget {
   const NotificationCard({
     super.key,
-    required this.leadingIcon,
-    required this.title,
-    required this.subtitle,
-    required this.time,
-    required this.trailingImage,
+    required this.announcement,
   });
 
-  final String leadingIcon;
-  final String title;
-  final String subtitle;
-  final String time;
-  final String trailingImage;
+  final Announcement announcement;
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +85,7 @@ class NotificationCard extends StatelessWidget {
                   color: Colors.white,
                 ),
                 child: SvgPicture.asset(
-                  leadingIcon,
+                  'assets/icons/bell.svg',
                   colorFilter: const ColorFilter.mode(
                     ThemeConstants.primaryColor,
                     BlendMode.srcIn,
@@ -79,7 +97,7 @@ class NotificationCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    title,
+                    announcement.title,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -88,7 +106,7 @@ class NotificationCard extends StatelessWidget {
                   Container(
                     constraints: const BoxConstraints(maxWidth: 220),
                     child: Text(
-                      subtitle,
+                      announcement.shortDescription,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
@@ -98,7 +116,7 @@ class NotificationCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    time,
+                    announcement.createdAt,
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.black.withAlpha(150),
@@ -117,10 +135,14 @@ class NotificationCard extends StatelessWidget {
                   BorderRadius.circular(ThemeConstants.borderRadiusLarge),
               color: Colors.white,
             ),
-            // child: Image.asset(
-            //   trailingImage,
-            //   fit: BoxFit.fill,
-            // ),
+            child: CachedNetworkImage(
+              imageUrl: announcement.imageUrl,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => const Center(
+                child: CircularProgressIndicator(),
+              ),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+            ),
           ),
         ],
       ),

@@ -1,3 +1,4 @@
+import 'package:app/src/admin/screens/announcements/announcements_screen.dart';
 import 'package:app/src/admin/screens/banners/banners_screen.dart';
 import 'package:app/src/admin/screens/coupons/coupons_screen.dart';
 import 'package:app/src/admin/screens/courses/courses_screen.dart';
@@ -58,6 +59,11 @@ class _LmsScreenState extends State<LmsScreen> {
       "title": "Orders",
       "icon": Icons.storage,
       "navigation": const OrdersScreen(),
+    },
+    {
+      "title": "Announcements",
+      "icon": Icons.announcement,
+      "navigation": const AnnouncementsScreen(),
     },
   ];
 

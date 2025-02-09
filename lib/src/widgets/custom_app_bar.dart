@@ -1,4 +1,6 @@
-import 'package:app/src/screens/notifications/notifications_screen.dart';
+import 'package:app/src/config/theme_constants.dart';
+import 'package:app/src/screens/announcements/announcements.dart';
+import 'package:drop_shadow/drop_shadow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -22,35 +24,34 @@ class CustomAppBar extends StatelessWidget {
         ),
         Row(
           children: [
-            IconButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const NotificationsScreen(),
-                  ),
-                );
-                // NotificationService().showNotification(
-                //   title: 'Test',
-                //   body: 'This is a test notification',
-                // );
-              },
-              icon: Container(
-                padding: const EdgeInsets.all(6),
-                width: 36,
-                height: 36,
-                decoration: const ShapeDecoration(
-                  color: Colors.white,
-                  shape: OvalBorder(),
-                  shadows: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 10,
+            DropShadow(
+              blurRadius: 4,
+              offset: const Offset(2, 2),
+              color: ThemeConstants.primaryShadowColor,
+              child: IconButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const Announcements(),
                     ),
-                  ],
-                ),
-                child: SvgPicture.asset(
-                  'assets/icons/bell.svg',
-                  // color: ThemeConstants.primaryColor,
+                  );
+                  // NotificationService().showNotification(
+                  //   title: 'Test',
+                  //   body: 'This is a test notification',
+                  // );
+                },
+                icon: Container(
+                  padding: const EdgeInsets.all(6),
+                  width: 36,
+                  height: 36,
+                  decoration: const ShapeDecoration(
+                    color: Colors.white,
+                    shape: OvalBorder(),
+                  ),
+                  child: SvgPicture.asset(
+                    'assets/icons/Megaphone.svg',
+                    // color: ThemeConstants.primaryColor,
+                  ),
                 ),
               ),
             ),
