@@ -22,49 +22,36 @@ class CustomAppBar extends StatelessWidget {
             BlendMode.srcIn,
           ),
         ),
-        Row(
-          children: [
-            DropShadow(
-              blurRadius: 4,
-              offset: const Offset(2, 2),
-              color: ThemeConstants.primaryShadowColor,
-              child: IconButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const Announcements(),
-                    ),
-                  );
-                  // NotificationService().showNotification(
-                  //   title: 'Test',
-                  //   body: 'This is a test notification',
-                  // );
-                },
-                icon: Container(
-                  padding: const EdgeInsets.all(6),
-                  width: 36,
-                  height: 36,
-                  decoration: const ShapeDecoration(
-                    color: Colors.white,
-                    shape: OvalBorder(),
-                  ),
-                  child: SvgPicture.asset(
-                    'assets/icons/Megaphone.svg',
-                    // color: ThemeConstants.primaryColor,
-                  ),
+        DropShadow(
+          blurRadius: 4,
+          offset: const Offset(2, 2),
+          color: ThemeConstants.primaryShadowColor,
+          child: IconButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const Announcements(),
                 ),
+              );
+              // NotificationService().showNotification(
+              //   title: 'Test',
+              //   body: 'This is a test notification',
+              // );
+            },
+            icon: Container(
+              padding: const EdgeInsets.all(6),
+              width: 40,
+              height: 40,
+              decoration: const ShapeDecoration(
+                color: Colors.white,
+                shape: OvalBorder(),
+              ),
+              child: SvgPicture.asset(
+                'assets/icons/Megaphone.svg',
+                // color: ThemeConstants.primaryColor,
               ),
             ),
-            // IconButton(
-            //   onPressed: () {},
-            //   icon: CircleAvatar(
-            //     radius: 25,
-            //     backgroundImage: Image.asset(
-            //       'assets/images/profile-avatar.png',
-            //     ).image,
-            //   ),
-            // ),
-          ],
+          ),
         ),
       ],
     );
