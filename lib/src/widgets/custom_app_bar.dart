@@ -24,6 +24,7 @@ class CustomAppBar extends StatelessWidget {
         ),
         DropShadow(
           blurRadius: 4,
+          spread: 0,
           offset: const Offset(2, 2),
           color: ThemeConstants.primaryShadowColor,
           child: IconButton(
