@@ -179,6 +179,7 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
             physics: widget._scrollPhysics,
             shrinkWrap: true,
             controller: widget.syllabusScrollController,
+            scrollDirection: Axis.vertical,
             children: _buildSyllabusList,
           );
   }
@@ -197,6 +198,22 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
     }
 
     return [
+      if (widget.courseProgressBox != null)
+        ValueListenableBuilder(
+          valueListenable: widget.courseProgressBox!.listenable(),
+          builder: (context, value, child) {
+            return Text(
+              widget.courseProgressBox!.containsKey("lastLecture")
+                  ? "${widget.courseProgressBox!.length - 1}/${_sections.fold(0, (sum, section) => sum + section.lectures.length)} Completed"
+                  : "${widget.courseProgressBox!.length}/${_sections.fold(0, (sum, section) => sum + section.lectures.length)} Completed",
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.right,
+            );
+          },
+        ),
       Accordion(
         paddingListTop: 0,
         contentVerticalPadding: ThemeConstants.paddingSmall,
@@ -233,8 +250,9 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
             header: Text(
               section.title,
               style: const TextStyle(
-                fontSize: 13,
+                fontSize: 14,
                 fontWeight: FontWeight.w500,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             content: widget._scrollPhysics is NeverScrollableScrollPhysics
