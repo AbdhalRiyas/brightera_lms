@@ -17,7 +17,6 @@ class CourseCard extends StatelessWidget {
     this.backgroundColor,
     this.isEnrolled = false,
     this.isActive = false,
-    this.progress,
     this.expiresAt,
   }) : _course = course;
 
@@ -29,7 +28,6 @@ class CourseCard extends StatelessWidget {
   final Color? backgroundColor;
   final bool isEnrolled;
   final bool? isActive;
-  final double? progress;
   final int? expiresAt;
 
   @override
@@ -170,36 +168,11 @@ class CourseCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      isEnrolled
-                          ? SizedBox(
-                              width: 40,
-                              height: 40,
-                              child: Stack(
-                                fit: StackFit.expand,
-                                alignment: Alignment.center,
-                                children: [
-                                  CircularProgressIndicator(
-                                    value: progress,
-                                    backgroundColor: Colors.grey[200],
-                                    valueColor:
-                                        const AlwaysStoppedAnimation<Color>(
-                                      ThemeConstants.primaryColor,
-                                    ),
-                                    strokeWidth: 4,
-                                  ),
-                                  Center(
-                                    child: Text(
-                                      '${(progress! * 100).toInt()}%',
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : trailing ?? Container()
+                      // isEnrolled
+                      //     ? CourseProgress(
+                      //         course: _course,
+                      //       )
+                      //     : trailing ?? Container()
                     ],
                   ),
                 ),

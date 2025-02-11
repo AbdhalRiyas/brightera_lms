@@ -182,7 +182,6 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
                                   .inDays ??
                               0,
                           isActive: enrollment?.status == 'active',
-                          progress: 0,
                           onTap: () {
                             Navigator.pushNamed(
                               context,
