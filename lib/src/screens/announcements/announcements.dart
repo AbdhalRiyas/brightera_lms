@@ -135,6 +135,7 @@ class NotificationCard extends StatelessWidget {
                   BorderRadius.circular(ThemeConstants.borderRadiusLarge),
               color: Colors.white,
             ),
+            clipBehavior: Clip.hardEdge,
             child: CachedNetworkImage(
               imageUrl: announcement.imageUrl,
               fit: BoxFit.cover,

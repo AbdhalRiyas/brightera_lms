@@ -49,7 +49,6 @@ class _EnrollmentsScreenState extends State<EnrollmentsScreen> {
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Status: ${enrollment.status}'),
                     Text(
                         'Enrolled At: ${DateFormat('dd MMM yyyy').format(enrollment.startDate.toDate())}'),
                     Text(

@@ -39,7 +39,6 @@ class _EnrollmentAddEditDialogState extends State<EnrollmentAddEditDialog> {
   @override
   void initState() {
     _userController.text = widget.enrollment?.user.id ?? '';
-    _statusController.text = widget.enrollment?.status ?? '';
     _startDateController.text =
         widget.enrollment?.startDate.toDate().toString() ?? '';
     _endDateController.text =
@@ -225,7 +224,6 @@ class _EnrollmentAddEditDialogState extends State<EnrollmentAddEditDialog> {
                   course: _courseRepository
                       .getCourseReference(_course.value!.split('/').last),
                   user: _userRepository.getUserReference(_userController.text),
-                  status: _statusController.text,
                   startDate: Timestamp.fromDate(_startDate.value!),
                   endDate: Timestamp.fromDate(_endDate.value!),
                 );

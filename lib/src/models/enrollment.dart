@@ -7,7 +7,6 @@ class Enrollment {
   final DocumentReference user;
   final Timestamp startDate;
   final Timestamp endDate;
-  final String status;
   final DocumentSnapshot? snapshot;
   final Course? courseInfo;
 
@@ -17,7 +16,6 @@ class Enrollment {
     required this.user,
     required this.startDate,
     required this.endDate,
-    required this.status,
     this.snapshot,
     this.courseInfo,
   });
@@ -29,7 +27,6 @@ class Enrollment {
       user: doc.data()?['userId'] as DocumentReference,
       startDate: doc.data()?['startDate'],
       endDate: doc.data()?['endDate'],
-      status: doc.data()?['status'],
       snapshot: doc,
     );
   }
@@ -40,7 +37,6 @@ class Enrollment {
       'userId': user,
       'startDate': startDate,
       'endDate': endDate,
-      'status': status,
     };
   }
 
@@ -50,7 +46,6 @@ class Enrollment {
     DocumentReference? user,
     Timestamp? startDate,
     Timestamp? endDate,
-    String? status,
     DocumentSnapshot? snapshot,
     Course? courseInfo,
   }) {
@@ -60,7 +55,6 @@ class Enrollment {
       user: user ?? this.user,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
-      status: status ?? this.status,
       snapshot: snapshot ?? this.snapshot,
       courseInfo: courseInfo ?? this.courseInfo,
     );
