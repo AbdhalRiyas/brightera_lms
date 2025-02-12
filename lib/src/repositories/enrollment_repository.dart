@@ -82,4 +82,33 @@ class EnrollmentRepository {
       return enrollments;
     });
   }
+
+  // delete existing enrollment
+  Future<Result> deleteEnrollment(String enrollmentId) async {
+    return await _firebaseService.deleteDocument(
+      collection: 'enrollments',
+      documentId: enrollmentId,
+    );
+  }
+
+  Future<Result> checkExistingEnrollment(String courseId, String userId) async {
+    final data = await _firebaseService.getCollection(
+      collection: 'enrollments',
+      fromFirestore: Enrollment.fromFirestore,
+      comparisonField: 'userId',
+      referenceCollection: 'users',
+      referenceId: userId,
+      filters: {'courseId': courseId},
+    );
+    if (data.isNotEmpty) {
+      for (var doc in data) {
+        await _firebaseService.deleteDocument(
+          collection: 'enrollments',
+          documentId: doc.id,
+        );
+      }
+      return Result(error: 'Existing enrollments have been deleted');
+    }
+    return Result(data: 'Success');
+  }
 }

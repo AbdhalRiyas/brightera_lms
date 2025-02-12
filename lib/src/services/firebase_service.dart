@@ -653,4 +653,55 @@ class FirebaseService {
     final response = await callable.call();
     return DateTime.parse(response.data['serverTime']);
   }
+
+  // check document exists by two field
+  Future<Result> isDocumentExistsByTwoField({
+    required String collection,
+    required String field1,
+    required String value1,
+    required String field2,
+    required String value2,
+  }) async {
+    try {
+      final querySnapshot = await _firestore
+          .collection(collection)
+          .where(field1, isEqualTo: value1)
+          .where(field2, isEqualTo: value2)
+          .get();
+
+      return Result(data: querySnapshot.docs.isNotEmpty);
+    } on FirebaseException catch (e) {
+      return Result(error: e.message);
+    } catch (e) {
+      return Result(error: e.toString());
+    }
+  }
+
+  // delete existing document by two field
+  Future<Result> deleteDocumentByTwoField({
+    required String collection,
+    required String field1,
+    required String value1,
+    required String field2,
+    required String value2,
+  }) async {
+    try {
+      final querySnapshot = await _firestore
+          .collection(collection)
+          .where(field1, isEqualTo: value1)
+          .where(field2, isEqualTo: value2)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        await querySnapshot.docs.first.reference.delete();
+        return Result(data: 'Document deleted successfully');
+      } else {
+        return Result(error: 'Document not found');
+      }
+    } on FirebaseException catch (e) {
+      return Result(error: e.message);
+    } catch (e) {
+      return Result(error: e.toString());
+    }
+  }
 }

@@ -32,35 +32,132 @@ class _OrdersScreenState extends State<OrdersScreen> {
             itemCount: orders.length,
             itemBuilder: (context, index) {
               final Order order = orders[index];
-              return ListTile(
-                title: Text(order.id),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Course: ${order.course.title}"),
-                    Text("Amount: ${order.total}"),
-                    Text("Status: ${order.status}"),
-                    Text("Created At: ${order.createdAt}"),
-                    Text("Payment Method: ${order.paymentMethod}"),
-                    Text("User ID: ${order.userId.id}"),
-                    Text(order.paymentProof != null
-                        ? "Payment Proof: Attached"
-                        : "Payment Proof: No proof attached"),
-                  ],
+              return Card(
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                elevation: 4,
+                child: ListTile(
+                  contentPadding: const EdgeInsets.all(16),
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "User ID: ${order.userId.id}",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      Text(
+                        "Course: ${order.course.title}",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black54,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Text(
+                        "Total: ${order.total}",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black54,
+                        ),
+                      )
+                    ],
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 8),
+                      _buildDetailRow(Icons.book, "Order Id", order.id),
+                      _buildDetailRow(
+                        Icons.check_circle,
+                        "Status",
+                        order.status.name,
+                        statusColor(
+                          order.status,
+                        ), // Dynamic color based on status
+                      ),
+                      _buildDetailRow(
+                        Icons.calendar_today,
+                        "Created At",
+                        order.createdAt.toString(),
+                      ),
+                      _buildDetailRow(
+                          Icons.payment, "Payment Method", order.paymentMethod),
+                      _buildDetailRow(
+                        order.paymentProof != null
+                            ? Icons.attachment
+                            : Icons.warning,
+                        "Payment Proof",
+                        order.paymentProof != null
+                            ? "Attached"
+                            : "No proof attached",
+                        order.paymentProof != null ? Colors.green : Colors.red,
+                      ),
+                    ],
+                  ),
+                  trailing:
+                      const Icon(Icons.arrow_forward_ios, color: Colors.grey),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => OrderApproveScreen(order: order),
+                      ),
+                    );
+                  },
                 ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => OrderApproveScreen(order: order),
-                    ),
-                  );
-                },
               );
             },
           );
         },
       ),
     );
+  }
+}
+
+Widget _buildDetailRow(IconData icon, String label, String value,
+    [Color? color]) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4),
+    child: Row(
+      children: [
+        Icon(icon, size: 18, color: color ?? Colors.black54),
+        const SizedBox(width: 8),
+        Text(
+          "$label: ",
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: TextStyle(
+              fontWeight: FontWeight.w400,
+              color: color ?? Colors.black87,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Color statusColor(OrderStatus status) {
+  switch (status) {
+    case OrderStatus.pending:
+      return Colors.orange;
+    case OrderStatus.processing:
+      return Colors.blue;
+    case OrderStatus.completed:
+      return Colors.green;
+    case OrderStatus.refunded:
+      return Colors.grey;
+    case OrderStatus.cancelled:
+      return Colors.red;
+    case OrderStatus.failed:
+      return Colors.red;
   }
 }
