@@ -124,14 +124,14 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                           title: 'Total',
                           value: formatPrice(order.total),
                         ),
+                        // const SizedBox(height: 12),
+                        // OrderDetailRow(
+                        //   title: 'Discount',
+                        //   value: formatPrice(order.discount),
+                        // ),
                         const SizedBox(height: 12),
                         OrderDetailRow(
-                          title: 'Discount',
-                          value: formatPrice(order.discount),
-                        ),
-                        const SizedBox(height: 12),
-                        OrderDetailRow(
-                          title: 'Created At',
+                          title: 'Ordered At',
                           value: order.createdAt.toString(),
                         ),
                       ],
@@ -197,7 +197,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
                                     await _orderRepository.updateOrder(
                                       order.copyWith(
-                                          paymentProof: uploadResult.data),
+                                        paymentProof: uploadResult.data,
+                                        status: OrderStatus.processing,
+                                      ),
                                     );
 
                                     ScaffoldMessenger.of(context).showSnackBar(

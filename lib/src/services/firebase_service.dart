@@ -233,7 +233,7 @@ class FirebaseService {
     required String collection,
     required T Function(DocumentSnapshot<Map<String, dynamic>>) fromFirestore,
     String? comparisonField,
-    String? comparisonValue,
+    dynamic comparisonValue,
     String? referenceCollection,
     String? referenceId,
     Map<String, dynamic>? filters,
@@ -645,7 +645,7 @@ class FirebaseService {
     if (user == null) {
       throw Exception("User is not authenticated. Please log in.");
     }
-
+    await user.getIdToken();
     final HttpsCallable callable =
         FirebaseFunctions.instance.httpsCallable('getServerTime');
 

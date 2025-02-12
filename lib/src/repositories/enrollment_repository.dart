@@ -33,7 +33,7 @@ class EnrollmentRepository {
       comparisonField: 'userId',
       referenceCollection: 'users',
       referenceId: _firebaseService.currentUser?.uid,
-      filters: {'status': activeStatus},
+      // filters: {'status': activeStatus},
       limit: limit,
       lastDocument: lastDoc,
     );

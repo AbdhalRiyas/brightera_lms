@@ -6,8 +6,11 @@ class PaymentMethodRepository {
 
   Future<List<PaymentMethod>> getActivePaymentMethods() async {
     final collection = await _firebaseService.getCollection(
-        collection: 'paymentMethods',
-        fromFirestore: PaymentMethod.fromFireStore);
+      collection: 'paymentMethods',
+      fromFirestore: PaymentMethod.fromFireStore,
+      comparisonField: 'is_active',
+      comparisonValue: true,
+    );
 
     return collection;
   }

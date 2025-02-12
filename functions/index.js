@@ -604,5 +604,12 @@ exports.applyCoupon = functions.https.onCall(async (data, context) => {
 });
 
 exports.getServerTime = functions.https.onCall((data, context) => {
-  return { serverTime: new Date().toISOString() };
+  const now = new Date();
+
+  // Convert to Sri Lankan time (UTC+5:30)
+  const sriLankanTime = new Date(
+    now.getTime() + 5.5 * 60 * 60 * 1000
+  ).toISOString();
+
+  return { serverTime: sriLankanTime };
 });

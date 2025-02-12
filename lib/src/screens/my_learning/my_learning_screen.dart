@@ -32,10 +32,7 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
   void initState() {
     super.initState();
     fetchEnrolledCourses();
-    getServerTime().then((serverTime) {
-      DateTime now = serverTime;
-      print("Server Time: $now");
-    });
+    getServerTime();
     _scrollController.addListener(_scrollListener);
   }
 
@@ -52,6 +49,7 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
 
   Future<DateTime> getServerTime() async {
     final serverTime = await _firebaseService.getServerTime();
+    print("Server Time: $serverTime");
     return serverTime;
   }
 
@@ -62,11 +60,12 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
     super.dispose();
   }
 
-  // check expiration date
-  bool checkExpirationDate(Timestamp endDate) {
-    DateTime now = DateTime.now();
-    DateTime end = endDate.toDate();
-    return !now.isAfter(end);
+  // check expiration date with server time
+  Future<bool> checkExpirationDate(Timestamp? endDate) async {
+    if (endDate == null) return false;
+    final now = await getServerTime();
+    final expirationDate = endDate.toDate();
+    return now.isBefore(expirationDate);
   }
 
   Future<void> fetchEnrolledCourses({bool reset = false}) async {
@@ -210,13 +209,16 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
                                   .difference(DateTime.now())
                                   .inDays ??
                               0,
-                          isActive: checkExpirationDate(enrollment!.endDate),
+                          isActive: enrollment != null &&
+                              enrollment.endDate.toDate().isAfter(
+                                    DateTime.now(),
+                                  ),
                           onTap: () {
                             Navigator.pushNamed(
                               context,
                               '/course',
                               arguments: CourseScreenArguments(
-                                enrollment.courseInfo as Course,
+                                enrollment!.courseInfo as Course,
                               ),
                             );
                           },

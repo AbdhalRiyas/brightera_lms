@@ -1,6 +1,10 @@
 import 'package:app/src/config/theme_constants.dart';
+import 'package:app/src/models/enrollment.dart';
 import 'package:app/src/models/order.dart';
+import 'package:app/src/repositories/course_repository.dart';
+import 'package:app/src/repositories/enrollment_repository.dart';
 import 'package:app/src/repositories/order_repository.dart';
+import 'package:cloud_firestore/cloud_firestore.dart' as firestore;
 import 'package:flutter/material.dart';
 
 class OrderApproveScreen extends StatefulWidget {
@@ -14,6 +18,8 @@ class OrderApproveScreen extends StatefulWidget {
 
 class _OrderApproveScreenState extends State<OrderApproveScreen> {
   final OrderRepository _orderRepository = OrderRepository();
+  final EnrollmentRepository _enrollmentRepository = EnrollmentRepository();
+  final CourseRepository _courseRepository = CourseRepository();
 
   final ValueNotifier<OrderStatus> _status = ValueNotifier(OrderStatus.pending);
 
@@ -108,6 +114,18 @@ class _OrderApproveScreenState extends State<OrderApproveScreen> {
                   status: _status.value,
                 );
                 await _orderRepository.updateOrder(order);
+                // if order is completed, enroll user to course
+                final Enrollment enrollment = Enrollment(
+                  id: '',
+                  course: order.courseId,
+                  user: order.userId,
+                  startDate: firestore.Timestamp.fromDate(DateTime.now()),
+                  endDate: firestore.Timestamp.fromDate(
+                      DateTime.now().add(const Duration(days: 30))),
+                );
+                if (order.status == OrderStatus.completed) {
+                  await _enrollmentRepository.addEnrollment(enrollment);
+                }
                 Navigator.pop(context);
               },
               child: const Text('Save'),

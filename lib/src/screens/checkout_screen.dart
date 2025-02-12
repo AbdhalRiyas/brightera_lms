@@ -31,7 +31,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final ValueNotifier<int> _selectedPg = ValueNotifier(-1);
   final ValueNotifier<bool> _paymentOverlayVisibility =
       ValueNotifier(false); // it's used to prevent touch outside of payhere
-  TextEditingController _couponCodeController = TextEditingController();
+  // TextEditingController _couponCodeController = TextEditingController();
 
   @override
   void initState() {
@@ -234,7 +234,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                               break;
                             case 'bank':
                               Order order = Order(
-                                id: '123456',
+                                id: '',
                                 userId: UserRepository().getUserReference(
                                     UserRepository().currentUserUid),
                                 status: OrderStatus.pending,

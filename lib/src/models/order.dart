@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 
 //Pending, Processing, Completed, Refunded, Cancelled,Failed
 enum OrderStatus {
-  pending(name: 'Pending', color: Colors.orange),
-  processing(name: 'Processing', color: Colors.blue),
-  completed(name: 'Completed', color: Colors.green),
-  refunded(name: 'Refunded', color: Colors.grey),
-  cancelled(name: 'Cancelled', color: Colors.red),
-  failed(name: 'Failed', color: Colors.red);
+  pending(name: 'pending', color: Colors.orange),
+  processing(name: 'processing', color: Colors.blue),
+  completed(name: 'completed', color: Colors.green),
+  refunded(name: 'refunded', color: Colors.grey),
+  cancelled(name: 'cancelled', color: Colors.red),
+  failed(name: 'failed', color: Colors.red);
 
   final String name;
   final Color color;
