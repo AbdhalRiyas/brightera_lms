@@ -382,10 +382,11 @@ class FirebaseService {
                 'endDate',
                 isGreaterThan: serverTime,
               ) // Ensure subscription is active
-              .where('status', isEqualTo: 'active')
               .limit(
                   1) // Limit to one result as we only need to check existence
               .get();
+
+      print(subscriptionSnapshot.docs);
 
       // Return the query snapshot
       return subscriptionSnapshot;

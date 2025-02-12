@@ -236,6 +236,7 @@ class CourseButton extends StatelessWidget {
     return ValueListenableBuilder<bool>(
       valueListenable: _activeSubscription,
       builder: (context, hasEnrolled, ch) {
+        print(hasEnrolled);
         return SizedBox(
           height: 50,
           child: Padding(
