@@ -125,57 +125,57 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
             const EdgeInsets.symmetric(horizontal: ThemeConstants.paddingSmall),
         child: Column(
           children: [
-            Container(
-              height: 50,
-              alignment: Alignment.center,
-              child: ValueListenableBuilder<int>(
-                valueListenable: _selectedTab,
-                builder: (context, value, child) {
-                  return ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    shrinkWrap: true,
-                    itemCount: _tabs.length,
-                    itemBuilder: (context, index) {
-                      return FilterChip(
-                        color: WidgetStateProperty.all(
-                          value == index
-                              ? ThemeConstants.primaryColor
-                              : Colors.white,
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: ThemeConstants.paddingLarge,
-                          vertical: ThemeConstants.paddingSmall,
-                        ),
-                        side: BorderSide.none,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            ThemeConstants.borderRadiusLarge * 2,
-                          ),
-                        ),
-                        showCheckmark: false,
-                        label: Text(
-                          _tabs[index],
-                          style: TextStyle(
-                            color: value == index ? Colors.white : Colors.black,
-                            fontSize: ThemeConstants.fontSizeMedium,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                        selected: value == index,
-                        onSelected: (bool selected) {
-                          switchTab(index);
-                        },
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return const SizedBox(
-                        width: ThemeConstants.paddingSmall,
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
+            // Container(
+            //   height: 50,
+            //   alignment: Alignment.center,
+            //   child: ValueListenableBuilder<int>(
+            //     valueListenable: _selectedTab,
+            //     builder: (context, value, child) {
+            //       return ListView.separated(
+            //         scrollDirection: Axis.horizontal,
+            //         shrinkWrap: true,
+            //         itemCount: _tabs.length,
+            //         itemBuilder: (context, index) {
+            //           return FilterChip(
+            //             color: WidgetStateProperty.all(
+            //               value == index
+            //                   ? ThemeConstants.primaryColor
+            //                   : Colors.white,
+            //             ),
+            //             padding: const EdgeInsets.symmetric(
+            //               horizontal: ThemeConstants.paddingLarge,
+            //               vertical: ThemeConstants.paddingSmall,
+            //             ),
+            //             side: BorderSide.none,
+            //             shape: RoundedRectangleBorder(
+            //               borderRadius: BorderRadius.circular(
+            //                 ThemeConstants.borderRadiusLarge * 2,
+            //               ),
+            //             ),
+            //             showCheckmark: false,
+            //             label: Text(
+            //               _tabs[index],
+            //               style: TextStyle(
+            //                 color: value == index ? Colors.white : Colors.black,
+            //                 fontSize: ThemeConstants.fontSizeMedium,
+            //                 fontWeight: FontWeight.w800,
+            //               ),
+            //             ),
+            //             selected: value == index,
+            //             onSelected: (bool selected) {
+            //               switchTab(index);
+            //             },
+            //           );
+            //         },
+            //         separatorBuilder: (context, index) {
+            //           return const SizedBox(
+            //             width: ThemeConstants.paddingSmall,
+            //           );
+            //         },
+            //       );
+            //     },
+            //   ),
+            // ),
             Expanded(
               child: _enrollments.isEmpty && !_isLoading
                   ? const Center(
