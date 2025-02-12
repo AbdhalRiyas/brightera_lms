@@ -360,6 +360,8 @@ class FirebaseService {
       return null;
     }
 
+    DateTime serverTime = await getServerTime();
+
     try {
       // Reference to the specific course document (if needed for queries)
       DocumentReference courseRef =
@@ -376,9 +378,10 @@ class FirebaseService {
                   isEqualTo: userRef) // Use the user's UID directly
               .where('courseId',
                   isEqualTo: courseRef) // Compare course ID as a string
-              .where('endDate',
-                  isGreaterThan:
-                      Timestamp.now()) // Ensure subscription is active
+              .where(
+                'endDate',
+                isGreaterThan: serverTime,
+              ) // Ensure subscription is active
               .where('status', isEqualTo: 'active')
               .limit(
                   1) // Limit to one result as we only need to check existence
@@ -634,5 +637,19 @@ class FirebaseService {
       debugPrint(e.message);
       return Result(error: e.message);
     }
+  }
+
+  Future<DateTime> getServerTime() async {
+    // Ensure the user is logged in
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw Exception("User is not authenticated. Please log in.");
+    }
+
+    final HttpsCallable callable =
+        FirebaseFunctions.instance.httpsCallable('getServerTime');
+
+    final response = await callable.call();
+    return DateTime.parse(response.data['serverTime']);
   }
 }

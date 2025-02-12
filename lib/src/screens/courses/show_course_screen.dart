@@ -77,23 +77,6 @@ class _ShowCourseScreenState extends State<ShowCourseScreen>
                             fontWeight: FontWeight.w300,
                           ),
                         ),
-                      // Text.rich(
-                      //   TextSpan(
-                      //     text: "Taught by ",
-                      //     children: [
-                      //       TextSpan(
-                      //         text: widget.course.instructorInfo?.name,
-                      //         style: const TextStyle(
-                      //             fontWeight: FontWeight.w600),
-                      //       ),
-                      //       const TextSpan(text: " in "),
-                      //       TextSpan(text: widget.course.language),
-                      //     ],
-                      //   ),
-                      //   style: const TextStyle(
-                      //     fontSize: ThemeConstants.fontSizeSmall,
-                      //   ),
-                      // ),
                       const SizedBox(height: ThemeConstants.paddingLarge),
                       SizedBox(
                         height: 40,
@@ -136,8 +119,6 @@ class _ShowCourseScreenState extends State<ShowCourseScreen>
                       IndexedStack(
                         index: _tabController.index,
                         children: [
-                          // Ingredients
-                          // if (widget.recipe.ingredientsWithQuantites != null)
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -278,19 +259,30 @@ class CourseButton extends StatelessWidget {
                             Text(
                               formatPrice(widget.course.salePrice),
                               style: const TextStyle(
-                                fontSize: 14,
+                                // fontSize: 14,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            if (widget.course.regularPrice > 0) ...[
+                            // if (widget.course.regularPrice > 0) ...[
+                            //   const SizedBox(width: 10),
+                            //   Text(
+                            //     formatPrice(widget.course.regularPrice),
+                            //     style: const TextStyle(
+                            //       color: Colors.white,
+                            //       fontSize: 12,
+                            //       fontWeight: FontWeight.w400,
+                            //       decoration: TextDecoration.lineThrough,
+                            //     ),
+                            //   ),
+                            // ]
+                            if (widget.course.expiresInDays > 0) ...[
                               const SizedBox(width: 10),
                               Text(
-                                formatPrice(widget.course.regularPrice),
+                                "for ${widget.course.expiresInDays} days",
                                 style: const TextStyle(
                                   color: Colors.white,
-                                  fontSize: 12,
+                                  // fontSize: 12,
                                   fontWeight: FontWeight.w400,
-                                  decoration: TextDecoration.lineThrough,
                                 ),
                               ),
                             ]

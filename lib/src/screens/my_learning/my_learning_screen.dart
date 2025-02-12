@@ -4,6 +4,7 @@ import 'package:app/src/models/course.dart';
 import 'package:app/src/models/enrollment.dart';
 import 'package:app/src/repositories/enrollment_repository.dart';
 import 'package:app/src/route/screen_exports.dart';
+import 'package:app/src/services/firebase_service.dart';
 import 'package:app/src/widgets/course_card/course_card.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,6 +18,7 @@ class MyLearningScreen extends StatefulWidget {
 
 class _MyLearningScreenState extends State<MyLearningScreen> {
   final EnrollmentRepository _enrollmentRepository = EnrollmentRepository();
+  final FirebaseService _firebaseService = FirebaseService();
   final List<String> _tabs = ["Active", "Expired"];
   final ValueNotifier<int> _selectedTab = ValueNotifier(0);
   final List<Enrollment?> _enrollments = [];
@@ -30,6 +32,10 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
   void initState() {
     super.initState();
     fetchEnrolledCourses();
+    getServerTime().then((serverTime) {
+      DateTime now = serverTime;
+      print("Server Time: $now");
+    });
     _scrollController.addListener(_scrollListener);
   }
 
@@ -38,6 +44,29 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
       _selectedTab.value = index;
       fetchEnrolledCourses(reset: true);
     }
+  }
+//   getServerTime().then((serverTime) {
+//   DateTime now = serverTime.toDate();
+//   print("Server Time: $now");
+// });
+
+  Future<DateTime> getServerTime() async {
+    final serverTime = await _firebaseService.getServerTime();
+    return serverTime;
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  // check expiration date
+  bool checkExpirationDate(Timestamp endDate) {
+    DateTime now = DateTime.now();
+    DateTime end = endDate.toDate();
+    return !now.isAfter(end);
   }
 
   Future<void> fetchEnrolledCourses({bool reset = false}) async {
@@ -181,13 +210,13 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
                                   .difference(DateTime.now())
                                   .inDays ??
                               0,
-                          isActive: enrollment?.status == 'active',
+                          isActive: checkExpirationDate(enrollment!.endDate),
                           onTap: () {
                             Navigator.pushNamed(
                               context,
                               '/course',
                               arguments: CourseScreenArguments(
-                                enrollment?.courseInfo as Course,
+                                enrollment.courseInfo as Course,
                               ),
                             );
                           },

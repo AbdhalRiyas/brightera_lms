@@ -602,3 +602,7 @@ exports.applyCoupon = functions.https.onCall(async (data, context) => {
     );
   }
 });
+
+exports.getServerTime = functions.https.onCall((data, context) => {
+  return { serverTime: new Date().toISOString() };
+});
