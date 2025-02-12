@@ -159,6 +159,7 @@ class _OrderApproveScreenState extends State<OrderApproveScreen> {
 
   /// Function to save order status and enroll user if order is completed
   Future<void> _saveOrder() async {
+    final navigator = Navigator.of(context);
     final order = widget.order.copyWith(status: _status.value);
     await _orderRepository.updateOrder(order);
 
@@ -173,12 +174,12 @@ class _OrderApproveScreenState extends State<OrderApproveScreen> {
         endDate: firestore.Timestamp.fromDate(
             DateTime.now().add(const Duration(days: 30))),
       );
-      await _enrollmentRepository.addEnrollment(enrollment);
       await _enrollmentRepository.checkExistingEnrollment(
         enrollment.user.id,
         enrollment.course.id,
       );
+      await _enrollmentRepository.addEnrollment(enrollment);
     }
-    Navigator.pop(context);
+    navigator.pop();
   }
 }
