@@ -168,6 +168,7 @@ class CourseCard extends StatelessWidget {
                           ),
                         ),
                       ),
+                      if (trailing != null) trailing!
                       // isEnrolled
                       //     ? CourseProgress(
                       //         course: _course,
