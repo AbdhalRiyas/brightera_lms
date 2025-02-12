@@ -212,10 +212,7 @@ class _ShowCourseScreenState extends State<ShowCourseScreen>
           },
         ),
       ),
-      floatingActionButton: CourseButton(
-        activeSubscription: _activeSubscription,
-        widget: widget,
-      ),
+      floatingActionButton: CourseButton(course: widget.course),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
@@ -224,19 +221,57 @@ class _ShowCourseScreenState extends State<ShowCourseScreen>
 class CourseButton extends StatelessWidget {
   const CourseButton({
     super.key,
-    required ValueNotifier<bool> activeSubscription,
-    required this.widget,
-  }) : _activeSubscription = activeSubscription;
+    required this.course,
+  });
 
-  final ValueNotifier<bool> _activeSubscription;
-  final ShowCourseScreen widget;
+  final Course course;
+
+  Future<bool> _checkEnrollment() async {
+    final CourseRepository repository = CourseRepository();
+    return await repository.checkActiveEnrollment(course.id);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: _activeSubscription,
-      builder: (context, hasEnrolled, ch) {
-        print(hasEnrolled);
+    return FutureBuilder<bool>(
+      future: _checkEnrollment(),
+      builder: (context, snapshot) {
+        // Show loading indicator while waiting for data
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox(
+            height: 50,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: ThemeConstants.paddingMedium,
+              ),
+              child: ElevatedButton(
+                onPressed: null, // Disable button while loading
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          );
+        }
+
+        // Handle errors
+        if (snapshot.hasError) {
+          return const SizedBox(
+            height: 50,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: ThemeConstants.paddingMedium,
+              ),
+              child: ElevatedButton(
+                onPressed: null, // Disable button on error
+                child: Text("Error loading course"),
+              ),
+            ),
+          );
+        }
+
+        final bool hasEnrolled = snapshot.data ?? false;
+
         return SizedBox(
           height: 50,
           child: Padding(
@@ -246,9 +281,9 @@ class CourseButton extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () => hasEnrolled
                   ? Navigator.pushNamed(context, '/lectures',
-                      arguments: LecturesArguments(course: widget.course))
+                      arguments: LecturesArguments(course: course))
                   : Navigator.pushNamed(context, '/checkout',
-                      arguments: CheckoutScreenArguments([widget.course])),
+                      arguments: CheckoutScreenArguments([course])),
               child: hasEnrolled
                   ? const Text("Start Learning")
                   : Row(
@@ -258,31 +293,17 @@ class CourseButton extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              formatPrice(widget.course.salePrice),
+                              formatPrice(course.salePrice),
                               style: const TextStyle(
-                                // fontSize: 14,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            // if (widget.course.regularPrice > 0) ...[
-                            //   const SizedBox(width: 10),
-                            //   Text(
-                            //     formatPrice(widget.course.regularPrice),
-                            //     style: const TextStyle(
-                            //       color: Colors.white,
-                            //       fontSize: 12,
-                            //       fontWeight: FontWeight.w400,
-                            //       decoration: TextDecoration.lineThrough,
-                            //     ),
-                            //   ),
-                            // ]
-                            if (widget.course.expiresInDays > 0) ...[
+                            if (course.expiresInDays > 0) ...[
                               const SizedBox(width: 10),
                               Text(
-                                "for ${widget.course.expiresInDays} days",
+                                "for ${course.expiresInDays} days",
                                 style: const TextStyle(
                                   color: Colors.white,
-                                  // fontSize: 12,
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
