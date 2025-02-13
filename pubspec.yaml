@@ -60,7 +60,6 @@ dependencies:
   dropdown_search: ^6.0.1
   readmore: ^3.0.0
   drop_shadow: ^0.1.0
-  flutter_launcher_icons: ^0.14.3
 
 dev_dependencies:
   flutter_test:
@@ -75,6 +74,15 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "dev/app_icon.png"
+  min_sdk_android: 23 # android min sdk min:16, default 21
+  adaptive_icon_background: "#fff"
+  adaptive_icon_foreground: "dev/launcher_icon.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
