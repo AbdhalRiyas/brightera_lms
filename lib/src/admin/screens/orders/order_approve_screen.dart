@@ -33,15 +33,18 @@ class _OrderApproveScreenState extends State<OrderApproveScreen> {
       appBar: AppBar(
         title: const Text('Approve Order'),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         backgroundColor: ThemeConstants.primaryButtonColor,
         onPressed: _saveOrder,
-        child: const Text('Save'),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        label: const Text('Save'),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
+        child: ListView(
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,7 +101,7 @@ class _OrderApproveScreenState extends State<OrderApproveScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 50),
           ],
         ),
       ),
@@ -142,7 +145,6 @@ class _OrderApproveScreenState extends State<OrderApproveScreen> {
       borderRadius: BorderRadius.circular(12),
       child: Image.network(
         paymentProofUrl,
-        height: 400,
         width: double.infinity,
         fit: BoxFit.cover,
         loadingBuilder: (context, child, loadingProgress) {
