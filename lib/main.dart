@@ -8,10 +8,13 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import 'firebase_options.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  NotificationService().initNotification();
+  await Firebase.initializeApp();
+  await NotificationService.instance.initialize();
 
   await Hive.initFlutter();
 
@@ -44,6 +47,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Brightera',
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       theme: ThemeConstants.lightTheme,
       onGenerateRoute: RouteManager.generateRoute,

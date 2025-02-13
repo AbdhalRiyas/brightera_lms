@@ -5,6 +5,7 @@ import 'package:app/src/widgets/app_bar_back_button.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 
 class Announcements extends StatefulWidget {
   const Announcements({super.key});
@@ -116,7 +117,8 @@ class NotificationCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    announcement.createdAt,
+                    DateFormat('yyyy-MM-dd     kk:mm')
+                        .format(announcement.createdAt),
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.black.withAlpha(150),

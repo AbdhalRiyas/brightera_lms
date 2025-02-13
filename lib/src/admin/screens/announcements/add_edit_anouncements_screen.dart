@@ -161,7 +161,7 @@ class _AddEditAnouncementsScreenState extends State<AddEditAnouncementsScreen> {
                                         _shortDescriptionController.text,
                                     description: _descriptionController.text,
                                     imageUrl: _imageUrl.value,
-                                    createdAt: DateTime.now().toString(),
+                                    createdAt: DateTime.now(),
                                   )
                                 : Announcement(
                                     id: widget.announcement!.id,

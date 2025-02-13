@@ -34,10 +34,6 @@ class CustomAppBar extends StatelessWidget {
                   builder: (context) => const Announcements(),
                 ),
               );
-              // NotificationService().showNotification(
-              //   title: 'Test',
-              //   body: 'This is a test notification',
-              // );
             },
             icon: Container(
               padding: const EdgeInsets.all(6),

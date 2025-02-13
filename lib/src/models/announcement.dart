@@ -6,7 +6,7 @@ class Announcement {
   final String shortDescription;
   final String description;
   final String imageUrl;
-  final String createdAt;
+  final DateTime createdAt;
 
   Announcement({
     required this.id,
@@ -27,7 +27,7 @@ class Announcement {
       shortDescription: data?['shortDescription'],
       description: data?['description'],
       imageUrl: data?['imageUrl'],
-      createdAt: data?['createdAt'],
+      createdAt: data?['createdAt'].toDate(),
     );
   }
 
