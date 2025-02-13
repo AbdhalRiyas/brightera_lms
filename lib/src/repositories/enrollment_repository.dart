@@ -4,6 +4,7 @@ import 'package:app/src/repositories/course_repository.dart';
 import 'package:app/src/services/firebase_service.dart';
 import 'package:app/src/utils/result.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class EnrollmentRepository {
   final FirebaseService _firebaseService = FirebaseService();
@@ -92,16 +93,23 @@ class EnrollmentRepository {
   }
 
   Future<Result> checkExistingEnrollment(String courseId, String userId) async {
-    final data = await _firebaseService.getCollection(
-      collection: 'enrollments',
-      fromFirestore: Enrollment.fromFirestore,
-      comparisonField: 'userId',
-      referenceCollection: 'users',
-      referenceId: userId,
-      filters: {'courseId': courseId},
-    );
-    if (data.isNotEmpty) {
-      for (var doc in data) {
+    DocumentReference courseRef =
+        FirebaseFirestore.instance.collection('courses').doc(courseId);
+
+    DocumentReference userRef =
+        FirebaseFirestore.instance.collection('users').doc(userId);
+
+    // Query the subscriptions collection
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection('enrollments')
+        .where('userId', isEqualTo: userRef) // Use the user's UID directly
+        .where('courseId',
+            isEqualTo: courseRef) // Compare course ID as a string
+        .get();
+
+    if (snapshot.docs.isNotEmpty) {
+      for (var doc in snapshot.docs) {
         await _firebaseService.deleteDocument(
           collection: 'enrollments',
           documentId: doc.id,

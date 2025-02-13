@@ -18,7 +18,7 @@ class ThemeConstants {
   static const Color backgroundColor = Color(0xFFF3FAFF);
   static const Color lavenderMist = Color(0xFFE6DFF1);
   static const Color greyColor = Color(0xFFBDBDBD);
-  static const Color inputFieldFill = Color.fromARGB(255, 224, 226, 235);
+  static const Color inputFieldFill = Color.fromARGB(255, 224, 228, 235);
   static const Color primaryShadowColor = Color.fromARGB(79, 194, 202, 214);
 
   static const Color primaryButtonColor = primaryColor;

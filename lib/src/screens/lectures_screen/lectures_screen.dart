@@ -58,7 +58,10 @@ class _LecturesScreenState extends State<LecturesScreen>
     _controller = YoutubePlayerController(
       initialVideoId:
           YoutubePlayer.convertUrlToId(widget.course.previewVideo) ?? '',
-      flags: const YoutubePlayerFlags(autoPlay: false, mute: false),
+      flags: const YoutubePlayerFlags(
+        autoPlay: false,
+        mute: false,
+      ),
     );
 
     _controller.addListener(_ytPlayerListener);

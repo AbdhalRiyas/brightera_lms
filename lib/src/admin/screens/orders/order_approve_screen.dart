@@ -170,11 +170,14 @@ class _OrderApproveScreenState extends State<OrderApproveScreen> {
         user: order.userId,
         startDate: firestore.Timestamp.fromDate(DateTime.now()),
         endDate: firestore.Timestamp.fromDate(
-            DateTime.now().add(const Duration(days: 30))),
+          DateTime.now().add(
+            Duration(days: order.course.expiresInDays),
+          ),
+        ),
       );
       await _enrollmentRepository.checkExistingEnrollment(
-        enrollment.user.id,
         enrollment.course.id,
+        enrollment.user.id,
       );
       await _enrollmentRepository.addEnrollment(enrollment);
     }

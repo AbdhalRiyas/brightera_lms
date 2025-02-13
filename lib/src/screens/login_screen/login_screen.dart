@@ -41,8 +41,8 @@ class _LoginScreenState extends State<LoginScreen> with LoginScreenLogic {
                     child: SvgPicture.asset(
                       "assets/icons/brightera.svg",
                       height: 450,
-                      colorFilter: const ColorFilter.mode(
-                        Color(0xFFEBE0EB),
+                      colorFilter: ColorFilter.mode(
+                        ThemeConstants.primaryColor.withValues(alpha: 0.1),
                         BlendMode.srcIn,
                       ),
                     ),
