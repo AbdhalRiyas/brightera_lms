@@ -3,7 +3,6 @@ import 'package:app/src/screens/account/account_screen.dart';
 import 'package:app/src/screens/home/home_screen.dart';
 import 'package:app/src/screens/my_learning/my_learning_screen.dart';
 import 'package:app/src/widgets/bottom_navigation_icon.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 class EntryPoint extends StatefulWidget {
@@ -16,20 +15,6 @@ class EntryPoint extends StatefulWidget {
 }
 
 class _EntryPointState extends State<EntryPoint> {
-  void setupPutNotification() async {
-    final fcm = FirebaseMessaging.instance;
-
-    await fcm.requestPermission();
-
-    fcm.subscribeToTopic('notification');
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    setupPutNotification();
-  }
-
   final ValueNotifier<int> _selectedIndex = ValueNotifier(0);
   final PageController _pageController = PageController();
   final List<Widget> _tabs = const [

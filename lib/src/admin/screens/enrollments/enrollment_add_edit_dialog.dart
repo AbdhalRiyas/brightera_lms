@@ -185,7 +185,7 @@ class _EnrollmentAddEditDialogState extends State<EnrollmentAddEditDialog> {
                         DateTime? pickedDate = await showDatePicker(
                           context: context,
                           initialDate: value ?? DateTime.now(),
-                          firstDate: DateTime.now(),
+                          firstDate: DateTime(2000),
                           lastDate: DateTime(2101),
                         );
                         if (pickedDate != null) {
