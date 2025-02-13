@@ -1,7 +1,6 @@
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/enrollment.dart';
 import 'package:app/src/models/order.dart';
-import 'package:app/src/repositories/course_repository.dart';
 import 'package:app/src/repositories/enrollment_repository.dart';
 import 'package:app/src/repositories/order_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart' as firestore;
@@ -19,7 +18,6 @@ class OrderApproveScreen extends StatefulWidget {
 class _OrderApproveScreenState extends State<OrderApproveScreen> {
   final OrderRepository _orderRepository = OrderRepository();
   final EnrollmentRepository _enrollmentRepository = EnrollmentRepository();
-  final CourseRepository _courseRepository = CourseRepository();
 
   final ValueNotifier<OrderStatus> _status = ValueNotifier(OrderStatus.pending);
 

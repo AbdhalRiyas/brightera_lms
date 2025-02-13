@@ -38,12 +38,12 @@ class PayHereService {
     toggleOverlay();
 
     PayHere.startPayment(paymentObject, (paymentId) {
-      print("One Time Payment Success. Payment Id: $paymentId");
+      debugPrint("One Time Payment Success. Payment Id: $paymentId");
     }, (error) {
-      print("One Time Payment Failed. Error: $error");
+      debugPrint("One Time Payment Failed. Error: $error");
     }, () {
       toggleOverlay();
-      print("One Time Payment Dismissed");
+      debugPrint("One Time Payment Dismissed");
     });
   }
 }

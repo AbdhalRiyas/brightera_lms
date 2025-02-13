@@ -72,19 +72,19 @@ class _YoutubePlayerWidgetState extends State<YoutubePlayerWidget> {
         YoutubePlayer(
           controller: widget.controller,
           showVideoProgressIndicator: true,
-          bottomActions: [
-            const SizedBox(width: 14.0),
+          bottomActions: const [
+            SizedBox(width: 14.0),
             CurrentPosition(),
-            const SizedBox(width: 8.0),
+            SizedBox(width: 8.0),
             ProgressBar(
               isExpanded: true,
-              colors: const ProgressBarColors(
+              colors: ProgressBarColors(
                 handleColor: Colors.white,
                 playedColor: Colors.white,
               ),
             ),
             RemainingDuration(),
-            const PlaybackSpeedButton(
+            PlaybackSpeedButton(
               icon: Text("1x"),
             ),
             FullScreenButton(),

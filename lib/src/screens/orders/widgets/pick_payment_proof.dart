@@ -2,6 +2,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 Future<FilePickerResult?> pickPaymentProof(BuildContext context) async {
+  final scaffolMessenger = ScaffoldMessenger.of(context);
+
   try {
     // Prompt the user to pick a file
     final result = await FilePicker.platform.pickFiles(
@@ -14,8 +16,8 @@ Future<FilePickerResult?> pickPaymentProof(BuildContext context) async {
         result.files.isEmpty ||
         result.files.single.path == null) {
       // Show feedback if no file is selected
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
+      scaffolMessenger.clearSnackBars();
+      scaffolMessenger.showSnackBar(
         const SnackBar(
           content: Text('No payment proof selected.'),
           backgroundColor: Colors.orange,
@@ -26,8 +28,8 @@ Future<FilePickerResult?> pickPaymentProof(BuildContext context) async {
     return result;
   } catch (e) {
     // Handle errors (e.g., permissions, file picker issues)
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
+    scaffolMessenger.clearSnackBars();
+    scaffolMessenger.showSnackBar(
       SnackBar(
         content: Text('Error selecting payment proof: $e'),
         backgroundColor: Colors.red,

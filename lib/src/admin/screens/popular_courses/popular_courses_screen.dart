@@ -68,18 +68,21 @@ class _PopularCoursesScreenState extends State<PopularCoursesScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: ElevatedButton(
           onPressed: () async {
+            final scaffoldMessenger = ScaffoldMessenger.of(context);
+            final navigator = Navigator.of(context);
+
             Result result = await CourseRepository().updateHomeCourses(
               _selectedCourseIds,
               "popularCourses",
             );
 
-            ScaffoldMessenger.of(context).showSnackBar(
+            scaffoldMessenger.showSnackBar(
               SnackBar(
                 content: Text(result.data ?? result.error),
                 backgroundColor: result.isSuccess ? Colors.green : Colors.red,
               ),
             );
-            result.isSuccess ? Navigator.pop(context) : null;
+            result.isSuccess ? navigator.pop() : null;
           },
           child: const Text('Save'),
         ),

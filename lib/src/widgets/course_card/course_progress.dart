@@ -1,7 +1,5 @@
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/course.dart';
-import 'package:app/src/models/section.dart';
-import 'package:app/src/repositories/course_repository.dart';
 import 'package:app/src/services/firebase_service.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -20,17 +18,7 @@ class CourseProgress extends StatefulWidget {
 
 class _CourseProgressState extends State<CourseProgress> {
   Future<Box>? _courseProgressBox;
-  List<Section> _sections = [];
   final FirebaseService _firebaseService = FirebaseService();
-  final CourseRepository _courseRepository = CourseRepository();
-
-  Future<void> _fetchSections() async {
-    final sections =
-        await _courseRepository.fetchSectionsForCourse(widget.course.id);
-    setState(() {
-      _sections = sections;
-    });
-  }
 
   @override
   void initState() {
@@ -38,13 +26,6 @@ class _CourseProgressState extends State<CourseProgress> {
     _courseProgressBox = Hive.openBox(
       "${_firebaseService.currentUser?.uid}_${widget.course.id}",
     );
-    _fetchSections();
-    _courseProgressBox?.then((box) {
-      print('Box length: ${box.length}');
-      print(box.name);
-      print(box.keys);
-      print(_sections.length);
-    });
   }
 
   @override

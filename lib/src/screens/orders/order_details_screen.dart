@@ -184,6 +184,8 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         : Center(
                             child: ElevatedButton.icon(
                               onPressed: () async {
+                                final scaffoldMessenger =
+                                    ScaffoldMessenger.of(context);
                                 try {
                                   final result =
                                       await pickPaymentProof(context);
@@ -202,7 +204,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                       ),
                                     );
 
-                                    ScaffoldMessenger.of(context).showSnackBar(
+                                    scaffoldMessenger.showSnackBar(
                                       const SnackBar(
                                         content: Text(
                                             'Payment proof uploaded successfully!'),
@@ -211,7 +213,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                     );
                                   }
                                 } catch (e) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
+                                  scaffoldMessenger.showSnackBar(
                                     SnackBar(
                                       content: Text(
                                           'Error uploading payment proof: $e'),

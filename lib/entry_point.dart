@@ -21,9 +21,6 @@ class _EntryPointState extends State<EntryPoint> {
 
     await fcm.requestPermission();
 
-    final token = await fcm.getToken();
-    print('Token: $token');
-
     fcm.subscribeToTopic('notification');
   }
 

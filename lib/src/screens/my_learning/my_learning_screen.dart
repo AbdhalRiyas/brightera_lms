@@ -49,7 +49,6 @@ class _MyLearningScreenState extends State<MyLearningScreen> {
 
   Future<DateTime> getServerTime() async {
     final serverTime = await _firebaseService.getServerTime();
-    print("Server Time: $serverTime");
     return serverTime;
   }
 

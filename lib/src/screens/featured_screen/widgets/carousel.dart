@@ -84,7 +84,8 @@ class _CarouselState extends State<Carousel> {
                         color: (Theme.of(context).brightness == Brightness.dark
                                 ? Colors.white
                                 : ThemeConstants.primaryButtonColor)
-                            .withOpacity(_current == entry.key ? 0.9 : 0.6),
+                            .withValues(
+                                alpha: _current == entry.key ? 0.9 : 0.6),
                       ),
                     ),
                   );
