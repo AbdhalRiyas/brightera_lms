@@ -173,8 +173,8 @@ class _OrderApproveScreenState extends State<OrderApproveScreen> {
             DateTime.now().add(const Duration(days: 30))),
       );
       await _enrollmentRepository.checkExistingEnrollment(
-        enrollment.user.id,
         enrollment.course.id,
+        enrollment.user.id,
       );
       await _enrollmentRepository.addEnrollment(enrollment);
     }

@@ -269,6 +269,7 @@ class FirebaseService {
     }
 
     final snapshot = await query.get();
+
     return snapshot.docs.map((doc) => fromFirestore(doc)).toList();
   }
 
