@@ -289,8 +289,9 @@ class CourseButton extends StatelessWidget {
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
+                        Column(
                           mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               formatPrice(course.salePrice),
@@ -304,6 +305,7 @@ class CourseButton extends StatelessWidget {
                                 "for ${course.expiresInDays} days",
                                 style: const TextStyle(
                                   color: Colors.white,
+                                  fontSize: 11,
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
