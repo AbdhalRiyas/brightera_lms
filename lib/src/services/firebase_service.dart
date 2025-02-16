@@ -9,7 +9,6 @@ import 'package:app/src/utils/result.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_device_identifier/mobile_device_identifier.dart';
@@ -666,21 +665,58 @@ class FirebaseService {
     }
   }
 
-  Future<Result> sendNotificationToAll() async {
-    debugPrint('start');
+  Future<Result> sendNotificationToAll(
+      {required String title, required String body, String? type}) async {
+    debugPrint('Start sending notification');
+
     final HttpsCallable callable =
-        _functions.httpsCallable('sendNotificationToAll');
+        FirebaseFunctions.instance.httpsCallable('sendNotificationToAll');
 
     try {
-      final response = await callable.call();
+      final response = await callable.call(
+        <String, dynamic>{
+          'title': title,
+          'body': body,
+          'type': type,
+        },
+      );
 
-      debugPrint('end');
-
-      debugPrint(response.toString());
+      debugPrint('End sending notification');
+      debugPrint('Response: ${response.data}');
 
       return Result(data: response.data);
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint('Error: $e');
+      return Result(error: e.toString());
+    }
+  }
+
+  Future<Result> sendNotificationToEnrolledUsersByCourse(
+      {required String courseId,
+      required String title,
+      required String body,
+      String? type}) async {
+    debugPrint('Start sending notification');
+
+    final HttpsCallable callable = FirebaseFunctions.instance
+        .httpsCallable('sendNotificationToEnrolledUsersByCourse');
+
+    try {
+      final response = await callable.call(
+        {
+          'courseId': courseId,
+          'title': title,
+          'body': body,
+          'type': type,
+        },
+      );
+
+      debugPrint('End sending notification');
+      debugPrint('Response: ${response.data}');
+
+      return Result(data: response.data);
+    } catch (e) {
+      debugPrint('Error: $e');
       return Result(error: e.toString());
     }
   }

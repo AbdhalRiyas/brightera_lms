@@ -128,25 +128,28 @@ class NotificationCard extends StatelessWidget {
               ),
             ],
           ),
-          Container(
-            margin: const EdgeInsets.all(16),
-            height: 60,
-            width: 60,
-            decoration: BoxDecoration(
-              borderRadius:
-                  BorderRadius.circular(ThemeConstants.borderRadiusLarge),
-              color: Colors.white,
-            ),
-            clipBehavior: Clip.hardEdge,
-            child: CachedNetworkImage(
-              imageUrl: announcement.imageUrl,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => const Center(
-                child: CircularProgressIndicator(),
-              ),
-              errorWidget: (context, url, error) => const Icon(Icons.error),
-            ),
-          ),
+          announcement.imageUrl == null
+              ? const SizedBox()
+              : Container(
+                  margin: const EdgeInsets.all(16),
+                  height: 60,
+                  width: 60,
+                  decoration: BoxDecoration(
+                    borderRadius:
+                        BorderRadius.circular(ThemeConstants.borderRadiusLarge),
+                    color: Colors.white,
+                  ),
+                  clipBehavior: Clip.hardEdge,
+                  child: CachedNetworkImage(
+                    imageUrl: announcement.imageUrl!,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
+                  ),
+                ),
         ],
       ),
     );

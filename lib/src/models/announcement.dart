@@ -5,7 +5,7 @@ class Announcement {
   final String title;
   final String shortDescription;
   final String description;
-  final String imageUrl;
+  String? imageUrl;
   final DateTime createdAt;
 
   Announcement({
@@ -13,7 +13,7 @@ class Announcement {
     required this.title,
     required this.shortDescription,
     required this.description,
-    required this.imageUrl,
+    this.imageUrl,
     required this.createdAt,
   });
 
@@ -26,7 +26,7 @@ class Announcement {
       title: data?['title'],
       shortDescription: data?['shortDescription'],
       description: data?['description'],
-      imageUrl: data?['imageUrl'],
+      imageUrl: data?['imageUrl'] ?? '',
       createdAt: data?['createdAt'].toDate(),
     );
   }

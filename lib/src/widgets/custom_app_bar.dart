@@ -1,6 +1,5 @@
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/screens/announcements/announcements.dart';
-import 'package:app/src/services/firebase_service.dart';
 import 'package:drop_shadow/drop_shadow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -30,12 +29,15 @@ class CustomAppBar extends StatelessWidget {
           color: ThemeConstants.primaryShadowColor,
           child: IconButton(
             onPressed: () async {
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(
-              //     builder: (context) => const Announcements(),
-              //   ),
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const Announcements(),
+                ),
+              );
+              // await FirebaseService().sendNotificationToAll(
+              //   'New Announcement',
+              //   'Check out the latest announcement',
               // );
-              await FirebaseService().sendNotificationToAll();
             },
             icon: Container(
               padding: const EdgeInsets.all(6),

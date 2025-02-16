@@ -3,6 +3,7 @@ import 'package:app/src/admin/screens/courses/create_course/widgets/pick_course_
 import 'package:app/src/config/app_contants.dart';
 import 'package:app/src/models/announcement.dart';
 import 'package:app/src/repositories/announcement_repository.dart';
+import 'package:app/src/services/firebase_service.dart';
 import 'package:app/src/utils/result.dart';
 import 'package:flutter/material.dart';
 
@@ -22,18 +23,19 @@ class AddEditAnouncementsScreen extends StatefulWidget {
 class _AddEditAnouncementsScreenState extends State<AddEditAnouncementsScreen> {
   final _formKey = GlobalKey<FormState>();
   final AnnouncementRepository _repository = AnnouncementRepository();
+  final FirebaseService _firebaseService = FirebaseService();
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _shortDescriptionController =
       TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final ValueNotifier<String> _imageUrl = ValueNotifier('');
+  final ValueNotifier<String?> _imageUrl = ValueNotifier('');
 
   @override
   void initState() {
     super.initState();
     _imageUrl.value =
-        widget.announcement == null || widget.announcement!.imageUrl.isEmpty
+        widget.announcement == null || widget.announcement!.imageUrl!.isEmpty
             ? AppContants.courseCoverPlaceHolder
             : widget.announcement!.imageUrl;
     _titleController.text = widget.announcement?.title ?? '';
@@ -67,11 +69,11 @@ class _AddEditAnouncementsScreenState extends State<AddEditAnouncementsScreen> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    ValueListenableBuilder<String>(
+                    ValueListenableBuilder<String?>(
                       valueListenable: _imageUrl,
                       builder: (_, value, ch) => Column(
                         children: [
-                          buildImage(context, value),
+                          buildImage(context, value!),
                           TextButton(
                             onPressed: () async {
                               final coverPic = await pickImage(context);
@@ -79,7 +81,7 @@ class _AddEditAnouncementsScreenState extends State<AddEditAnouncementsScreen> {
                                   _imageUrl.value;
                             },
                             child: Text(
-                              _imageUrl.value.isNotEmpty &&
+                              _imageUrl.value!.isNotEmpty &&
                                       _imageUrl.value !=
                                           AppContants.courseCoverPlaceHolder
                                   ? "Change Banner"
@@ -135,7 +137,7 @@ class _AddEditAnouncementsScreenState extends State<AddEditAnouncementsScreen> {
                           if (_imageUrl.value !=
                               widget.announcement?.imageUrl) {
                             Result result = await _repository
-                                .uploadAnnouncementImage(_imageUrl.value);
+                                .uploadAnnouncementImage(_imageUrl.value!);
 
                             if (result.isSuccess) {
                               _imageUrl.value = result.data;
@@ -177,6 +179,14 @@ class _AddEditAnouncementsScreenState extends State<AddEditAnouncementsScreen> {
                                     .addAnnouncement(announcement)
                                 : await _repository
                                     .updateAnnouncement(announcement);
+
+                            if (widget.announcement == null) {
+                              await _firebaseService.sendNotificationToAll(
+                                title: announcement.title,
+                                body: announcement.shortDescription,
+                                type: 'announcement',
+                              );
+                            }
 
                             if (result.isSuccess) {
                               Navigator.of(context).pop();

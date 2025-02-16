@@ -41,7 +41,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
             separatorBuilder: (context, index) => const SizedBox(height: 8),
             itemBuilder: (context, index) {
               return ListTile(
-                leading: Image.network(announcements[index].imageUrl),
+                leading: Image.network(announcements[index].imageUrl!),
                 title: Text(announcements[index].title),
                 subtitle: Text(announcements[index].shortDescription),
                 onTap: () {

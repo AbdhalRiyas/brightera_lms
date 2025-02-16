@@ -6,9 +6,9 @@ import 'package:app/src/utils/result.dart';
 class AnnouncementRepository {
   final FirebaseService _firebaseService = FirebaseService();
 
-  Future<Result> uploadAnnouncementImage(String filePath) async {
+  Future<Result> uploadAnnouncementImage(String? filePath) async {
     return await _firebaseService.uploadFile(
-      'announcements/${generateUniqueFileName(filePath.split('.').last)}',
+      'announcements/${generateUniqueFileName(filePath!.split('.').last)}',
       filePath,
     );
   }

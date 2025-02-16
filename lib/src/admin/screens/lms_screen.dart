@@ -3,6 +3,7 @@ import 'package:app/src/admin/screens/banners/banners_screen.dart';
 import 'package:app/src/admin/screens/courses/courses_screen.dart';
 import 'package:app/src/admin/screens/enrollments/enrollments_screen.dart';
 import 'package:app/src/admin/screens/featured_courses/featured_courses_screen.dart';
+import 'package:app/src/admin/screens/notifications/notification_screen.dart';
 import 'package:app/src/admin/screens/orders/orders_screen.dart';
 import 'package:app/src/admin/screens/popular_courses/popular_courses_screen.dart';
 import 'package:app/src/admin/screens/subjects/subjects_screen.dart';
@@ -63,6 +64,11 @@ class _LmsScreenState extends State<LmsScreen> {
       "title": "Announcements",
       "icon": Icons.announcement,
       "navigation": const AnnouncementsScreen(),
+    },
+    {
+      "title": "Notifications",
+      "icon": Icons.notifications,
+      "navigation": const NotificationScreen(),
     },
   ];
 

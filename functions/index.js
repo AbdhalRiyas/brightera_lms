@@ -2,6 +2,7 @@ const functions = require("firebase-functions/v1");
 const admin = require("firebase-admin");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
+const { type } = require("os");
 
 admin.initializeApp();
 
@@ -614,33 +615,74 @@ exports.getServerTime = functions.https.onCall((data, context) => {
   return { serverTime: sriLankanTime };
 });
 
-exports.sendNotificationToAll = functions.https.onRequest(async (res) => {
-  try {
-    const usersRef = admin.firestore().collection("users");
-    const users = await usersRef.get();
-    let tokens = [];
+exports.sendNotificationToEnrolledUsersByCourse = functions.https.onCall(
+  async (data, context) => {
+    try {
+      const { courseId, title, body, type } = data;
 
-    users.forEach((doc) => {
-      if (doc.data().fcmToken) {
-        tokens.push(doc.data().fcmToken);
+      if (!courseId || !title || !body) {
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          "Missing required fields."
+        );
       }
-    });
 
-    if (tokens.length === 0) {
-      return res.status(400).send("No tokens available");
+      // Convert courseId string to a Firestore DocumentReference
+      const courseRef = admin.firestore().doc(`courses/${courseId}`);
+
+      // Fetch enrolled users for the given course
+      const enrollmentsRef = admin
+        .firestore()
+        .collection("enrollments")
+        .where("courseId", "==", courseRef); // Compare with Firestore reference
+      const enrollments = await enrollmentsRef.get();
+
+      let userIds = [];
+      enrollments.forEach((doc) => {
+        if (doc.data().userId) {
+          userIds.push(doc.data().userId);
+        }
+      });
+
+      if (userIds.length === 0) {
+        throw new functions.https.HttpsError(
+          "not-found",
+          "No enrolled users found for this course."
+        );
+      }
+
+      // Fetch FCM tokens of enrolled users in a single query
+      const usersRef = admin
+        .firestore()
+        .collection("users")
+        .where(admin.firestore.FieldPath.documentId(), "in", userIds);
+      const users = await usersRef.get();
+
+      let tokens = [];
+      users.forEach((doc) => {
+        if (doc.data().fcmToken) {
+          tokens.push(doc.data().fcmToken);
+        }
+      });
+
+      if (tokens.length === 0) {
+        throw new functions.https.HttpsError(
+          "not-found",
+          "No tokens available for enrolled users in this course."
+        );
+      }
+
+      const message = {
+        notification: { title, body },
+        data: type ? { type } : {},
+        tokens,
+      };
+
+      const response = await admin.messaging().sendEachForMulticast(message);
+      return { success: true, response };
+    } catch (error) {
+      console.error(error);
+      throw new functions.https.HttpsError("internal", error.message);
     }
-
-    const message = {
-      notification: {
-        title: "New Notification",
-        body: "Hello, this is a test notification!",
-      },
-    };
-
-    const response = await admin.messaging().sendEachForMulticast({ tokens, ...message });
-    res.status(200).send(response);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send(error);
   }
-});
+);
