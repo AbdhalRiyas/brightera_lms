@@ -614,7 +614,7 @@ exports.getServerTime = functions.https.onCall((data, context) => {
   return { serverTime: sriLankanTime };
 });
 
-exports.sendNotificationToAll = functions.https.onRequest(async (req, res) => {
+exports.sendNotificationToAll = functions.https.onRequest(async (res) => {
   try {
     const usersRef = admin.firestore().collection("users");
     const users = await usersRef.get();
@@ -635,12 +635,12 @@ exports.sendNotificationToAll = functions.https.onRequest(async (req, res) => {
         title: "New Notification",
         body: "Hello, this is a test notification!",
       },
-      tokens: tokens,
     };
 
-    const response = await admin.messaging().sendMulticast(message);
+    const response = await admin.messaging().sendEachForMulticast({ tokens, ...message });
     res.status(200).send(response);
   } catch (error) {
+    console.log(error);
     res.status(500).send(error);
   }
 });

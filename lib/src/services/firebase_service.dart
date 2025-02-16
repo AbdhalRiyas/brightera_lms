@@ -667,13 +667,20 @@ class FirebaseService {
   }
 
   Future<Result> sendNotificationToAll() async {
+    debugPrint('start');
     final HttpsCallable callable =
         _functions.httpsCallable('sendNotificationToAll');
 
     try {
       final response = await callable.call();
+
+      debugPrint('end');
+
+      debugPrint(response.toString());
+
       return Result(data: response.data);
     } catch (e) {
+      debugPrint(e.toString());
       return Result(error: e.toString());
     }
   }
