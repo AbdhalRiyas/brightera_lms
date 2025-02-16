@@ -29,12 +29,13 @@ class NotificationService {
     // setup flutter notifications
     await setupFlutterNotifications();
 
-    // get FCM token
-    final token = await _messaging.getToken();
-    print('Token: $token');
-
     // subscribe to all devices/broadcast
     subscribeToTopic('all_devices');
+  }
+
+  // get token
+  Future<String?> getToken() async {
+    return await _messaging.getToken();
   }
 
   Future<void> _requestPermission() async {

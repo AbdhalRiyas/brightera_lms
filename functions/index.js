@@ -613,3 +613,34 @@ exports.getServerTime = functions.https.onCall((data, context) => {
 
   return { serverTime: sriLankanTime };
 });
+
+exports.sendNotificationToAll = functions.https.onRequest(async (req, res) => {
+  try {
+    const usersRef = admin.firestore().collection("users");
+    const users = await usersRef.get();
+    let tokens = [];
+
+    users.forEach((doc) => {
+      if (doc.data().fcmToken) {
+        tokens.push(doc.data().fcmToken);
+      }
+    });
+
+    if (tokens.length === 0) {
+      return res.status(400).send("No tokens available");
+    }
+
+    const message = {
+      notification: {
+        title: "New Notification",
+        body: "Hello, this is a test notification!",
+      },
+      tokens: tokens,
+    };
+
+    const response = await admin.messaging().sendMulticast(message);
+    res.status(200).send(response);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});

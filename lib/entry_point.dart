@@ -1,4 +1,5 @@
 import 'package:app/src/config/theme_constants.dart';
+import 'package:app/src/repositories/user_repository.dart';
 import 'package:app/src/screens/account/account_screen.dart';
 import 'package:app/src/screens/home/home_screen.dart';
 import 'package:app/src/screens/my_learning/my_learning_screen.dart';
@@ -15,6 +16,7 @@ class EntryPoint extends StatefulWidget {
 }
 
 class _EntryPointState extends State<EntryPoint> {
+  final UserRepository _userRepository = UserRepository();
   final ValueNotifier<int> _selectedIndex = ValueNotifier(0);
   final PageController _pageController = PageController();
   final List<Widget> _tabs = const [
@@ -24,6 +26,16 @@ class _EntryPointState extends State<EntryPoint> {
     // FeaturedScreen(),
     AccountScreen(),
   ];
+
+  Future<void> saveTokenToFirestore() async {
+    await _userRepository.saveFcmToken(_userRepository.currentUserUid);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    saveTokenToFirestore();
+  }
 
   @override
   Widget build(BuildContext context) {

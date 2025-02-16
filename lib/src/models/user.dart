@@ -5,12 +5,14 @@ enum UserRole { student, instructor, admin }
 class User {
   final String id, name, mobileNumber;
   final UserRole userRole;
+  String? fcmToken;
 
   User({
     required this.id,
     required this.name,
     required this.mobileNumber,
     required this.userRole,
+    this.fcmToken,
   });
 
   // Add methods for serialization and deserialization

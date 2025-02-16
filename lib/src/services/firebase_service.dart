@@ -1,12 +1,15 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:app/src/models/course.dart';
 import 'package:app/src/models/user.dart' as usermodal;
 import 'package:app/src/services/auth_manager.dart';
+import 'package:app/src/services/notification_service.dart';
 import 'package:app/src/utils/result.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_device_identifier/mobile_device_identifier.dart';
@@ -653,52 +656,23 @@ class FirebaseService {
     return DateTime.parse(response.data['serverTime']);
   }
 
-  // check document exists by two field
-  Future<Result> isDocumentExistsByTwoField({
-    required String collection,
-    required String field1,
-    required String value1,
-    required String field2,
-    required String value2,
-  }) async {
-    try {
-      final querySnapshot = await _firestore
-          .collection(collection)
-          .where(field1, isEqualTo: value1)
-          .where(field2, isEqualTo: value2)
-          .get();
-
-      return Result(data: querySnapshot.docs.isNotEmpty);
-    } on FirebaseException catch (e) {
-      return Result(error: e.message);
-    } catch (e) {
-      return Result(error: e.toString());
+  Future<void> saveTokenToFirestore(String userId) async {
+    String? token = await NotificationService.instance.getToken();
+    log('Token: $token');
+    if (token != null) {
+      await FirebaseFirestore.instance.collection('users').doc(userId).update({
+        'fcmToken': token,
+      });
     }
   }
 
-  // delete existing document by two field
-  Future<Result> deleteDocumentByTwoField({
-    required String collection,
-    required String field1,
-    required String value1,
-    required String field2,
-    required String value2,
-  }) async {
-    try {
-      final querySnapshot = await _firestore
-          .collection(collection)
-          .where(field1, isEqualTo: value1)
-          .where(field2, isEqualTo: value2)
-          .get();
+  Future<Result> sendNotificationToAll() async {
+    final HttpsCallable callable =
+        _functions.httpsCallable('sendNotificationToAll');
 
-      if (querySnapshot.docs.isNotEmpty) {
-        await querySnapshot.docs.first.reference.delete();
-        return Result(data: 'Document deleted successfully');
-      } else {
-        return Result(error: 'Document not found');
-      }
-    } on FirebaseException catch (e) {
-      return Result(error: e.message);
+    try {
+      final response = await callable.call();
+      return Result(data: response.data);
     } catch (e) {
       return Result(error: e.toString());
     }

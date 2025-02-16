@@ -4,7 +4,6 @@ import 'package:app/src/repositories/course_repository.dart';
 import 'package:app/src/services/firebase_service.dart';
 import 'package:app/src/utils/result.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 class EnrollmentRepository {
   final FirebaseService _firebaseService = FirebaseService();

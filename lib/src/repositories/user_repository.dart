@@ -56,4 +56,8 @@ class UserRepository {
     // Delete a user from Firebase
     await _firebaseService.deleteUser(id);
   }
+
+  Future<void> saveFcmToken(String userId) async {
+    await _firebaseService.saveTokenToFirestore(userId);
+  }
 }
