@@ -28,7 +28,6 @@ class _EnrollmentAddEditDialogState extends State<EnrollmentAddEditDialog> {
   final EnrollmentRepository _enrollmentRepository = EnrollmentRepository();
 
   final TextEditingController _userController = TextEditingController();
-  final TextEditingController _statusController = TextEditingController();
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
 
@@ -76,38 +75,39 @@ class _EnrollmentAddEditDialogState extends State<EnrollmentAddEditDialog> {
                     }
                     if (snapshot.hasData) {
                       return DropdownSearch<String>(
-                          mode: Mode.form,
-                          items: (filter, loadProps) => snapshot.data!
-                              .map((course) => course.title)
-                              .toList(),
-                          selectedItem: snapshot.data!
-                              .firstWhere(
-                                (course) =>
-                                    "courses/${course.id}" == _course.value,
-                                orElse: () => snapshot.data!.first,
-                              )
-                              .title,
-                          popupProps: const PopupPropsMultiSelection.menu(
-                            showSearchBox: true,
-                            searchFieldProps: TextFieldProps(
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                hintText: "Search courses",
-                              ),
-                            ),
-                          ),
-                          decoratorProps: const DropDownDecoratorProps(
+                        mode: Mode.form,
+                        items: (filter, loadProps) => snapshot.data!
+                            .map((course) => course.title)
+                            .toList(),
+                        selectedItem: snapshot.data!
+                            .firstWhere(
+                              (course) =>
+                                  "courses/${course.id}" == _course.value,
+                              orElse: () => snapshot.data!.first,
+                            )
+                            .title,
+                        popupProps: const PopupPropsMultiSelection.menu(
+                          showSearchBox: true,
+                          searchFieldProps: TextFieldProps(
                             decoration: InputDecoration(
-                              labelText: "Select Courses",
-                              hintText: "Search and select courses",
+                              border: OutlineInputBorder(),
+                              hintText: "Search courses",
                             ),
                           ),
-                          onChanged: (String? selectedTitle) {
-                            final selectedCourse = snapshot.data!.firstWhere(
-                              (course) => course.title == selectedTitle,
-                            );
-                            _course.value = "courses/${selectedCourse.id}";
-                          });
+                        ),
+                        decoratorProps: const DropDownDecoratorProps(
+                          decoration: InputDecoration(
+                            labelText: "Select Courses",
+                            hintText: "Search and select courses",
+                          ),
+                        ),
+                        onChanged: (String? selectedTitle) {
+                          final selectedCourse = snapshot.data!.firstWhere(
+                            (course) => course.title == selectedTitle,
+                          );
+                          _course.value = "courses/${selectedCourse.id}";
+                        },
+                      );
                     } else {
                       return const Center(
                         child: Text("Couldn't fetch courses"),
@@ -127,17 +127,6 @@ class _EnrollmentAddEditDialogState extends State<EnrollmentAddEditDialog> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a user';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  decoration: const InputDecoration(
-                      labelText: 'Status', hintText: 'active, expired'),
-                  controller: _statusController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a status';
                     }
                     return null;
                   },
