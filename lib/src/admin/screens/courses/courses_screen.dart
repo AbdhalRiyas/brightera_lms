@@ -3,6 +3,7 @@ import 'package:app/src/admin/screens/courses/create_course/create_update_course
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/course.dart';
 import 'package:app/src/repositories/course_repository.dart';
+import 'package:app/src/services/firebase_service.dart';
 import 'package:app/src/widgets/course_card/course_card.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +16,7 @@ class CoursesScreen extends StatefulWidget {
 
 class _CoursesScreenState extends State<CoursesScreen> {
   final CourseRepository _repository = CourseRepository();
+  final FirebaseService _firebaseService = FirebaseService();
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +70,46 @@ class _CoursesScreenState extends State<CoursesScreen> {
                               ),
                             );
                             break;
+                          case 'Start Live Class':
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text('Start Live Class'),
+                                  content: const Text(
+                                      'Are you sure you want to start a live class for this course? This will notify all enrolled students.'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () async {
+                                        // Start live class
+                                        await _firebaseService
+                                            .sendNotificationToEnrolledUsersByCourse(
+                                          courseId: course.id,
+                                          title: 'Live Class Started',
+                                          body:
+                                              'A live class has started for ${course.title}',
+                                        );
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              'Live class notification sent',
+                                            ),
+                                          ),
+                                        );
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('Start'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                            break;
                           default:
                             break;
                         }
@@ -77,6 +119,10 @@ class _CoursesScreenState extends State<CoursesScreen> {
                         const PopupMenuItem<String>(
                           value: 'Edit Syllabus',
                           child: Text('Edit Syllabus'),
+                        ),
+                        const PopupMenuItem<String>(
+                          value: 'Start Live Class',
+                          child: Text('Start Live Class'),
                         ),
                         // const PopupMenuItem<String>(
                         //   value: 'Delete',
