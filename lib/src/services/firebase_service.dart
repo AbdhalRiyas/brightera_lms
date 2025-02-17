@@ -720,4 +720,16 @@ class FirebaseService {
       return Result(error: e.toString());
     }
   }
+
+  Future<Result> updateUserName(String name) async {
+    try {
+      await _firestore.collection('users').doc(currentUser!.uid).update({
+        'name': name,
+      });
+
+      return Result(data: 'Name updated successfully');
+    } catch (e) {
+      return Result(error: 'Failed to update name: $e');
+    }
+  }
 }

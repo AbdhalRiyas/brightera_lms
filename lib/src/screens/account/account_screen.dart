@@ -1,4 +1,5 @@
 import 'package:app/src/models/user.dart' show UserRole;
+import 'package:app/src/screens/account/account_edit_dialog.dart';
 import 'package:app/src/screens/account/profile_card.dart';
 import 'package:app/src/services/auth_manager.dart';
 import 'package:app/src/services/firebase_service.dart';
@@ -18,6 +19,10 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends State<AccountScreen> {
+  void refresh() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
@@ -46,7 +51,13 @@ class _AccountScreenState extends State<AccountScreen> {
                               uId: currentUser.uid,
                               imageSrc: "assets/icons/Avatar.svg",
                               press: () {
-                                // Navigator.pushNamed(context, userInfoScreenRoute);
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AccountEditDialog(
+                                    userName: snapshot.data?['name'],
+                                    onNameChanged: refresh,
+                                  ),
+                                );
                               },
                             ),
                             if (snapshot.data?['userRole'] !=

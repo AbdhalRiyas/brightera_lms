@@ -16,7 +16,7 @@ class AuthManager {
   }
 
   Future<Map<String, dynamic>?> getUserDetails() async {
-    if (FirebaseService().currentUser != null && userDetails == null) {
+    if (FirebaseService().currentUser != null) {
       final details = await FirebaseService().getCurrentUserDetails();
       setUserDetails(details);
     }

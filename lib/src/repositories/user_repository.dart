@@ -47,10 +47,10 @@ class UserRepository {
     await _firebaseService.createUser(user, password);
   }
 
-  // Future<void> updateUser(User user) async {
-  //   // Update an existing user in Firebase
-  //   await _firebaseService.updateUser(user);
-  // }
+  Future<Result> updateUserName(String name) async {
+    // Update the user name in Firebase
+    return await _firebaseService.updateUserName(name);
+  }
 
   Future<void> deleteUser(String id) async {
     // Delete a user from Firebase

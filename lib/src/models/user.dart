@@ -36,4 +36,28 @@ class User {
       userRole: getUserRole(doc.data()?['userRole']),
     );
   }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'name': name,
+      'mobileNumber': mobileNumber,
+      'userRole': userRole.toString().split('.').last,
+      'fcmToken': fcmToken,
+    };
+  }
+
+  User copyWith({
+    String? name,
+    String? mobileNumber,
+    UserRole? userRole,
+    String? fcmToken,
+  }) {
+    return User(
+      id: id,
+      name: name ?? this.name,
+      mobileNumber: mobileNumber ?? this.mobileNumber,
+      userRole: userRole ?? this.userRole,
+      fcmToken: fcmToken ?? this.fcmToken,
+    );
+  }
 }
