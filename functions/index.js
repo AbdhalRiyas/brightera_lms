@@ -18,7 +18,6 @@ const DEVICE_BLOCK_DURATION = 60; // in minutes
 
 // SMS Gateway config
 const SMS_GATEWAY_URL = config.sms.gateway.url;
-const SMS_GATEWAY_USER_ID = config.sms.gateway.user_id;
 const SMS_GATEWAY_API_KEY = config.sms.gateway.api_key;
 const SMS_GATEWAY_SENDER_ID = config.sms.gateway.sender_id;
 
@@ -216,22 +215,21 @@ function generateOtp() {
 async function sendOtpSms(phoneNumber, otp) {
   const message = `Use the code: ${otp} to verify your phone number. It will expire in ${OTP_EXPIRY_MINUTES} minutes.`;
 
-  // Create the query parameters
-  const params = new URLSearchParams({
-    user_id: SMS_GATEWAY_USER_ID,
-    api_key: SMS_GATEWAY_API_KEY,
-    sender_id: SMS_GATEWAY_SENDER_ID,
-    to: phoneNumber,
-    message: message,
-  });
-
-  // Construct the full URL with parameters
-  const url = `${SMS_GATEWAY_URL}?${params.toString()}`;
-
-  console.log(url);
-
   try {
-    const response = await fetch(url);
+    const response = await fetch(SMS_GATEWAY_URL, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${SMS_GATEWAY_API_KEY}`,
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    },
+    body: JSON.stringify({
+        "recipient": phoneNumber,
+        "sender_id": SMS_GATEWAY_SENDER_ID,
+        "type": "plain",
+        "message": message
+    })
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
