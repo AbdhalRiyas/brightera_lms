@@ -25,17 +25,20 @@ class CourseRepository {
   }
 
   Future<Result> createCourse(Course course) async {
+    final data = course.toFirestore()
+      ..['createdAt'] = FieldValue.serverTimestamp()
+      ..['updatedAt'] = FieldValue.serverTimestamp();
     return await _firebaseService.createDocument(
       collection: 'courses',
-      data: course.toFirestore(),
+      data: data,
     );
   }
 
   Future<Result> updateCourse(Course course) async {
+    final data = course.toFirestore()
+      ..['updatedAt'] = FieldValue.serverTimestamp();
     return await _firebaseService.updateDocument(
-        collection: 'courses',
-        documentId: course.id,
-        data: course.toFirestore());
+        collection: 'courses', documentId: course.id, data: data);
   }
 
   Future<Result> createSection(
