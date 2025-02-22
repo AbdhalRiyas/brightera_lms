@@ -14,7 +14,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp();
-  // await NotificationService.instance.initialize();
+  await NotificationService.instance.initialize();
 
   await Hive.initFlutter();
 

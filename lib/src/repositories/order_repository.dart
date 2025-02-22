@@ -55,6 +55,8 @@ class OrderRepository {
       referenceId: userId,
       limit: limit,
       lastDocument: lastDoc,
+      orderByField: 'createdAt',
+      descending: true,
     );
 
     return data;
