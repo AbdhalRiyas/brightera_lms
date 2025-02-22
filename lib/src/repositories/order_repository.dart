@@ -72,6 +72,10 @@ class OrderRepository {
     return _firebaseService.getCollectionStream(
       collection: collection,
       fromFirestore: order_model.Order.fromFirestore,
+      orderByField: 'createdAt',
+      descending: true,
+      comparisonField: 'status',
+      comparisonValue: 'processing',
     );
   }
 }

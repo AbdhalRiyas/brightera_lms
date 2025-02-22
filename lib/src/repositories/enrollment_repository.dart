@@ -71,6 +71,8 @@ class EnrollmentRepository {
         .getCollectionStream(
       collection: 'enrollments',
       fromFirestore: Enrollment.fromFirestore,
+      orderByField: 'startDate',
+      descending: true,
     )
         .asyncMap((docs) async {
       List<Enrollment> enrollments = [];
