@@ -213,6 +213,8 @@ class FirebaseService {
     String? comparisonValue,
     String? referenceCollection,
     String? referenceId,
+    String? orderByField, // Optional field to order by
+    bool descending = false, // Optional flag to specify order direction
   }) {
     Query<Map<String, dynamic>> query = _firestore.collection(collection);
 
@@ -225,6 +227,10 @@ class FirebaseService {
       } else {
         query = query.where(comparisonField, isEqualTo: comparisonValue);
       }
+    }
+
+    if (orderByField != null) {
+      query = query.orderBy(orderByField, descending: descending);
     }
 
     return query.snapshots().map(
@@ -241,6 +247,8 @@ class FirebaseService {
     Map<String, dynamic>? filters,
     int limit = 10, // Pagination limit
     DocumentSnapshot? lastDocument, // Last fetched document for pagination
+    String? orderByField, // Optional field to order by
+    bool descending = false, // Optional flag to specify order direction
   }) async {
     Query<Map<String, dynamic>> query = _firestore.collection(collection);
 
@@ -262,6 +270,11 @@ class FirebaseService {
           query = query.where(field, isEqualTo: value);
         }
       });
+    }
+
+    // Add optional ordering
+    if (orderByField != null) {
+      query = query.orderBy(orderByField, descending: descending);
     }
 
     // Add pagination

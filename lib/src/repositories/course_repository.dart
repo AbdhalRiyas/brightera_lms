@@ -154,11 +154,13 @@ class CourseRepository {
       collection: 'courses',
       fromFirestore: Course.fromFirestore,
       comparisonField:
-          userDetails?['userRole'] != UserRole.admin ? 'instructor' : null,
+          userDetails?['userRole'] != UserRole.admin.name ? 'instructor' : null,
       referenceCollection: 'users',
-      referenceId: userDetails?['userRole'] != UserRole.admin
+      referenceId: userDetails?['userRole'] != UserRole.admin.name
           ? _firebaseService.currentUser?.uid
           : null,
+      orderByField: 'createdAt',
+      descending: true,
     );
   }
 

@@ -11,9 +11,10 @@ class EnrollmentRepository {
 
   Future<List<Enrollment>> getAllEnrollments() async {
     final data = await _firebaseService.getCollection(
-      collection: 'enrollments',
-      fromFirestore: Enrollment.fromFirestore,
-    );
+        collection: 'enrollments',
+        fromFirestore: Enrollment.fromFirestore,
+        orderByField: 'startDate',
+        descending: true);
     final List<Enrollment> enrollments = [];
     for (var doc in data) {
       Enrollment enrollment = doc;
