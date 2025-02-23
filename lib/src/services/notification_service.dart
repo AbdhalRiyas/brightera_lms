@@ -68,7 +68,7 @@ class NotificationService {
         ?.createNotificationChannel(channel);
 
     const initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/launcher_icon');
 
     // ios setup
     const initializationSettingsDarwing = DarwinInitializationSettings(
