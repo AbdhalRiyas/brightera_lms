@@ -43,8 +43,10 @@ class EnrollmentRepository {
       Enrollment enrollment = doc;
       Course? course =
           await _courseRepository.getCourseDetails(enrollment.course.id);
-      enrollment = enrollment.copyWith(courseInfo: course);
-      enrollments.add(enrollment);
+      if (course != null) {
+        enrollment = enrollment.copyWith(courseInfo: course);
+        enrollments.add(enrollment);
+      }
     }
     return enrollments;
   }

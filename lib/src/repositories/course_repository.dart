@@ -122,6 +122,11 @@ class CourseRepository {
     );
   }
 
+  Future<Result> deleteCourse({required String courseId}) async {
+    return await _firebaseService.deleteDocument(
+        collection: 'courses', documentId: courseId);
+  }
+
   Future<List<Course>> getCoursesBySubject(String subjectId,
       [bool onlyFeatured = false]) async {
     // Fetch user data from Firebase
@@ -236,14 +241,19 @@ class CourseRepository {
   }
 
   Future<Course?> getCourseDetails(String courseId) async {
-    final courseData =
-        await _firebaseService.getDocumentById(courseId, 'courses');
-    final course = Course.fromFirestore(courseData);
-    if (course.instructor != null) {
-      final instructor = await _getInstructorInfo(course.instructor!);
-      return course.copyWith(instructorInfo: instructor);
+    try {
+      final courseData =
+          await _firebaseService.getDocumentById(courseId, 'courses');
+
+      final course = Course.fromFirestore(courseData);
+      if (course.instructor != null) {
+        final instructor = await _getInstructorInfo(course.instructor!);
+        return course.copyWith(instructorInfo: instructor);
+      }
+      return course;
+    } catch (e) {
+      return null;
     }
-    return course;
   }
 
   Future<List<Course>> getCourses() {

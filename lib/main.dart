@@ -14,7 +14,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp();
-  await NotificationService.instance.initialize();
+  // await NotificationService.instance.initialize();
 
   await Hive.initFlutter();
 
@@ -23,7 +23,7 @@ void main() async {
   );
 
   await Hive.openBox(
-      AppContants.appStateBox); // this will hold app initial states
+      AppContants.appStateBox); // this will hold app initial states 
 
   runApp(const MyApp());
 }

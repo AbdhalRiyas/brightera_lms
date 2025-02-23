@@ -70,6 +70,42 @@ class _CoursesScreenState extends State<CoursesScreen> {
                               ),
                             );
                             break;
+                          case 'Delete Course':
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text('Delete Course'),
+                                  content: const Text(
+                                      'Are you sure you want to delete this course?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () async {
+                                        // Start live class
+                                        await _firebaseService.deleteCourse(
+                                          course.id,
+                                        );
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              'Course has been deleted!',
+                                            ),
+                                          ),
+                                        );
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('Delete'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                            break;
                           case 'Start Live Class':
                             showDialog(
                               context: context,
@@ -86,7 +122,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
                                     TextButton(
                                       onPressed: () async {
                                         // Start live class
-                                        await _firebaseService
+                                        _firebaseService
                                             .sendNotificationToEnrolledUsersByCourse(
                                           courseId: course.id,
                                           title: 'Live Class Started',
@@ -123,6 +159,13 @@ class _CoursesScreenState extends State<CoursesScreen> {
                         const PopupMenuItem<String>(
                           value: 'Start Live Class',
                           child: Text('Start Live Class'),
+                        ),
+                        const PopupMenuItem<String>(
+                          value: 'Delete Course',
+                          child: Text(
+                            'Delete Course',
+                            style: TextStyle(color: Colors.red),
+                          ),
                         ),
                         // const PopupMenuItem<String>(
                         //   value: 'Delete',
