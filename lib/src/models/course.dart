@@ -20,6 +20,7 @@ class Course {
   final User? instructorInfo;
   final bool isFeatured, isPublished;
   final int expiresInDays;
+  final int totalStudent;
 
   Course({
     required this.id,
@@ -39,6 +40,7 @@ class Course {
     required this.isFeatured,
     required this.isPublished,
     required this.expiresInDays,
+    this.totalStudent = 0,
   });
 
   factory Course.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc,
@@ -59,6 +61,7 @@ class Course {
       isFeatured: doc.data()?['isFeatured'] ?? false,
       isPublished: doc.data()?['isPublished'] ?? false,
       expiresInDays: doc.data()?['expiresInDays'] ?? 0,
+      totalStudent: doc.data()?['totalStudent'] ?? 0,
     );
   }
 
@@ -77,6 +80,7 @@ class Course {
       'isFeatured': isFeatured,
       'isPublished': isPublished,
       'expiresInDays': expiresInDays,
+      'totalStudent': totalStudent,
     };
   }
 
@@ -97,6 +101,7 @@ class Course {
     bool? isFeatured,
     bool? isPublished,
     int? expiresInDays,
+    int? totalStudent,
   }) {
     return Course(
       id: id ?? this.id,
@@ -116,6 +121,7 @@ class Course {
       isFeatured: isFeatured ?? this.isFeatured,
       isPublished: isPublished ?? this.isPublished,
       expiresInDays: expiresInDays ?? this.expiresInDays,
+      totalStudent: totalStudent ?? this.totalStudent,
     );
   }
 
@@ -140,6 +146,7 @@ class Course {
       isFeatured: data['isFeatured'] ?? false,
       isPublished: data['isPublished'] ?? false,
       expiresInDays: data['expiresInDays'] ?? 0,
+      totalStudent: data['totalStudent'] ?? 0,
     );
   }
 }

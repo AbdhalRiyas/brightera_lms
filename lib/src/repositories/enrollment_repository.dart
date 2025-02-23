@@ -98,7 +98,7 @@ class EnrollmentRepository {
     );
   }
 
-  Future<Result> checkExistingEnrollment(String courseId, String userId) async {
+  Future<bool> checkExistingEnrollment(String courseId, String userId) async {
     DocumentReference courseRef =
         FirebaseFirestore.instance.collection('courses').doc(courseId);
 
@@ -121,8 +121,8 @@ class EnrollmentRepository {
           documentId: doc.id,
         );
       }
-      return Result(error: 'Existing enrollments have been deleted');
+      return true;
     }
-    return Result(data: 'Success');
+    return false;
   }
 }

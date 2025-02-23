@@ -143,11 +143,12 @@ class _ShowCourseScreenState extends State<ShowCourseScreen>
                                     icon: "assets/icons/language.svg",
                                     value: widget.course.language,
                                   ),
-                                  const CourseSpecContainer(
-                                    color: Color(0x3FFFDD67),
+                                  CourseSpecContainer(
+                                    color: const Color(0x3FFFDD67),
                                     title: "Total Students",
                                     icon: "assets/icons/students.svg",
-                                    value: "100",
+                                    value:
+                                        widget.course.totalStudent.toString(),
                                   ),
                                 ],
                               ),

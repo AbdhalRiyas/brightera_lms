@@ -369,4 +369,16 @@ class CourseRepository {
     }
     return courses;
   }
+
+  // increment total student count
+  Future<Result> incrementTotalStudentCount(String courseId) async {
+    final courseData =
+        await _firebaseService.getDocumentById(courseId, 'courses');
+    final totalStudent = courseData.data()?['totalStudent'] ?? 0;
+    return await _firebaseService.updateDocument(
+      collection: 'courses',
+      documentId: courseId,
+      data: {'totalStudent': totalStudent + 1},
+    );
+  }
 }
