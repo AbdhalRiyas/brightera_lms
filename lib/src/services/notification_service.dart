@@ -47,7 +47,6 @@ class NotificationService {
         announcement: false,
         carPlay: false,
         criticalAlert: false);
-    print('Permission granted: ${settings.authorizationStatus}');
   }
 
   Future<void> setupFlutterNotifications() async {
@@ -86,8 +85,15 @@ class NotificationService {
     await _localNotificationsPlugin.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse: (details) {
-        print('Notification received: ${details.payload}');
         if (details.payload == 'announcement') {
+          navigatorKey.currentState?.push(
+            MaterialPageRoute(
+              builder: (context) => const Announcements(),
+            ),
+          );
+        }
+
+        if (details.payload == 'live') {
           navigatorKey.currentState?.push(
             MaterialPageRoute(
               builder: (context) => const Announcements(),
@@ -148,7 +154,6 @@ class NotificationService {
   }
 
   void _handleBackgroundMessage(String message) {
-    print(message == 'announcement');
     navigatorKey.currentState?.push(
       MaterialPageRoute(
         builder: (context) => const Announcements(),
@@ -158,6 +163,5 @@ class NotificationService {
 
   Future<void> subscribeToTopic(String topic) async {
     await FirebaseMessaging.instance.subscribeToTopic(topic);
-    print('Subscribed to $topic');
   }
 }
