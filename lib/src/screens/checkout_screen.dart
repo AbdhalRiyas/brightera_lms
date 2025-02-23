@@ -33,6 +33,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       ValueNotifier(false); // it's used to prevent touch outside of payhere
   // TextEditingController _couponCodeController = TextEditingController();
 
+  final ValueNotifier<bool> _isLoading = ValueNotifier(false);
+
   @override
   void initState() {
     _paymentMethods = _paymentMethodRepository.getActivePaymentMethods();
@@ -218,65 +220,88 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               child: ValueListenableBuilder<int>(
                 valueListenable: _selectedPg,
                 builder: (BuildContext context, int value, Widget? child) =>
-                    PrimaryButton(
-                  text: value == -1 ? "Choose a payment method" : "Proceed",
-                  onPressed: value != -1
-                      ? () async {
-                          final navigator = Navigator.of(context);
-                          final scaffoldMessenger =
-                              ScaffoldMessenger.of(context);
+                    ValueListenableBuilder<bool>(
+                  valueListenable: _isLoading,
+                  builder: (BuildContext context, isLoading, Widget? child) =>
+                      isLoading
+                          ? const Center(
+                              child: CircularProgressIndicator.adaptive())
+                          : PrimaryButton(
+                              text: value == -1
+                                  ? "Choose a payment method"
+                                  : "Proceed",
+                              onPressed: value != -1
+                                  ? () async {
+                                      _isLoading.value = true;
+                                      final navigator = Navigator.of(context);
+                                      final scaffoldMessenger =
+                                          ScaffoldMessenger.of(context);
 
-                          final paymentMethods = await _paymentMethods;
-                          switch (paymentMethods[_selectedPg.value].type) {
-                            case 'payhere':
-                              PayHereService()
-                                  .processPayment(_togglePaymentOverlay);
-                              break;
-                            case 'bank':
-                              Order order = Order(
-                                id: '',
-                                userId: UserRepository().getUserReference(
-                                    UserRepository().currentUserUid),
-                                status: OrderStatus.pending,
-                                courseId: CourseRepository()
-                                    .getCourseReference(widget.courses[0].id),
-                                createdAt: DateTime.now(),
-                                paymentMethod:
-                                    paymentMethods[_selectedPg.value].name,
-                                total: widget.courses[0].salePrice * 1,
-                                discount: 0,
-                                course: widget.courses[0],
-                              );
-                              Result result =
-                                  await OrderRepository().createOrder(order);
-                              if (result.isSuccess) {
-                                navigator.popUntil((route) => route.isFirst);
-                                navigator.push(
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const YourOrdersScreen(),
-                                  ),
-                                );
-                                scaffoldMessenger.showSnackBar(
-                                  const SnackBar(
-                                    content: Text("Order created successfully"),
-                                  ),
-                                );
-                              } else {
-                                scaffoldMessenger.showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      result.error ?? "An error occurred",
-                                    ),
-                                  ),
-                                );
-                              }
-                              break;
-                            default:
-                              break;
-                          }
-                        }
-                      : null,
+                                      final paymentMethods =
+                                          await _paymentMethods;
+                                      switch (paymentMethods[_selectedPg.value]
+                                          .type) {
+                                        case 'payhere':
+                                          PayHereService().processPayment(
+                                              _togglePaymentOverlay);
+                                          break;
+                                        case 'bank':
+                                          Order order = Order(
+                                            id: '',
+                                            userId: UserRepository()
+                                                .getUserReference(
+                                                    UserRepository()
+                                                        .currentUserUid),
+                                            status: OrderStatus.pending,
+                                            courseId: CourseRepository()
+                                                .getCourseReference(
+                                                    widget.courses[0].id),
+                                            createdAt: DateTime.now(),
+                                            paymentMethod: paymentMethods[
+                                                    _selectedPg.value]
+                                                .name,
+                                            total:
+                                                widget.courses[0].salePrice * 1,
+                                            discount: 0,
+                                            course: widget.courses[0],
+                                          );
+                                          Result result =
+                                              await OrderRepository()
+                                                  .createOrder(order);
+                                          if (result.isSuccess) {
+                                            navigator.popUntil(
+                                                (route) => route.isFirst);
+                                            navigator.push(
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const YourOrdersScreen(),
+                                              ),
+                                            );
+                                            scaffoldMessenger.showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                    "Order created successfully"),
+                                              ),
+                                            );
+                                          } else {
+                                            scaffoldMessenger.showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  result.error ??
+                                                      "An error occurred",
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                          break;
+                                        default:
+                                          break;
+                                      }
+
+                                      _isLoading.value = false;
+                                    }
+                                  : null,
+                            ),
                 ),
               ),
             ),

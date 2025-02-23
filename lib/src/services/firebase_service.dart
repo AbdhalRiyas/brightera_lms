@@ -267,7 +267,11 @@ class FirebaseService {
     if (filters != null) {
       filters.forEach((field, value) {
         if (value != null) {
-          query = query.where(field, isEqualTo: value);
+          if (value is List) {
+            query = query.where(field, arrayContains: value);
+          } else {
+            query = query.where(field, isEqualTo: value);
+          }
         }
       });
     }

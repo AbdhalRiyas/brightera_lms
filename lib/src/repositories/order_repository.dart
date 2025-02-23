@@ -10,6 +10,41 @@ class OrderRepository {
   final String collection = 'orders';
 
   Future<Result> createOrder(order_model.Order order) async {
+    // Check for existing orders with the same courseId and userId with status 'pending' or 'processing'
+    final existingOrders = await _firebaseService.getCollection(
+        collection: collection,
+        fromFirestore: order_model.Order.fromFirestore,
+        filters: {
+          'userId': order.userId,
+          'courseId': order.courseId,
+          'status': 'pending',
+        });
+
+    for (var existingOrder in existingOrders) {
+      await _firebaseService.deleteDocument(
+        collection: collection,
+        documentId: existingOrder.id,
+      );
+    }
+
+    // Check for existing orders with the same courseId and userId with status 'pending' or 'processing'
+    final existingProcessingOrders = await _firebaseService.getCollection(
+        collection: collection,
+        fromFirestore: order_model.Order.fromFirestore,
+        filters: {
+          'userId': order.userId,
+          'courseId': order.courseId,
+          'status': 'processing',
+        });
+
+    for (var existingOrder in existingProcessingOrders) {
+      await _firebaseService.deleteDocument(
+        collection: collection,
+        documentId: existingOrder.id,
+      );
+    }
+
+    // Create the new order
     return await _firebaseService.createDocument(
       collection: collection,
       data: order.toFirestore(),
