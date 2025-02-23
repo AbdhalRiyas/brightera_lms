@@ -35,88 +35,109 @@ class _OrdersScreenState extends State<OrdersScreen> {
               final Order order = orders[index];
               return orders.isEmpty
                   ? const Center(child: Text('No orders found'))
-                  : Card(
-                      margin: const EdgeInsets.symmetric(
-                        vertical: 8,
-                        horizontal: 12,
+                  : Dismissible(
+                      key: Key(order.id),
+                      direction: DismissDirection.endToStart,
+                      confirmDismiss: (direction) async {
+                        final result =
+                            await _orderRepository.deleteOrder(order.id);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(result.data ?? result.error),
+                            backgroundColor:
+                                result.isSuccess ? Colors.green : Colors.red,
+                          ),
+                        );
+                        return result.isSuccess;
+                      },
+                      background: Container(
+                        color: Colors.red,
+                        alignment: Alignment.centerRight,
+                        child: const Icon(Icons.delete, color: Colors.white),
                       ),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                      elevation: 4,
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.all(16),
-                        title: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "User ID: ${order.userId.id}",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            Text(
-                              "Course: ${order.course.title}",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black54,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            Text(
-                              "Total: ${order.total}",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black54,
-                              ),
-                            )
-                          ],
+                      child: Card(
+                        margin: const EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 12,
                         ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 8),
-                            _buildDetailRow(Icons.book, "Order Id", order.id),
-                            _buildDetailRow(
-                              Icons.check_circle,
-                              "Status",
-                              order.status.name,
-                              statusColor(
-                                order.status,
-                              ), // Dynamic color based on status
-                            ),
-                            _buildDetailRow(
-                              Icons.calendar_today,
-                              "Created At",
-                              order.createdAt.toString(),
-                            ),
-                            _buildDetailRow(Icons.payment, "Payment Method",
-                                order.paymentMethod),
-                            _buildDetailRow(
-                              order.paymentProof != null
-                                  ? Icons.attachment
-                                  : Icons.warning,
-                              "Payment Proof",
-                              order.paymentProof != null
-                                  ? "Attached"
-                                  : "No proof attached",
-                              order.paymentProof != null
-                                  ? Colors.green
-                                  : Colors.red,
-                            ),
-                          ],
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        elevation: 4,
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(16),
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "User ID: ${order.userId.id}",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Text(
+                                "Course: ${order.course.title}",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black54,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Text(
+                                "Total: ${order.total}",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black54,
+                                ),
+                              )
+                            ],
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 8),
+                              _buildDetailRow(Icons.book, "Order Id", order.id),
+                              _buildDetailRow(
+                                Icons.check_circle,
+                                "Status",
+                                order.status.name,
+                                statusColor(
+                                  order.status,
+                                ), // Dynamic color based on status
+                              ),
+                              _buildDetailRow(
+                                Icons.calendar_today,
+                                "Created At",
+                                order.createdAt.toString(),
+                              ),
+                              _buildDetailRow(Icons.payment, "Payment Method",
+                                  order.paymentMethod),
+                              _buildDetailRow(
+                                order.paymentProof != null
+                                    ? Icons.attachment
+                                    : Icons.warning,
+                                "Payment Proof",
+                                order.paymentProof != null
+                                    ? "Attached"
+                                    : "No proof attached",
+                                order.paymentProof != null
+                                    ? Colors.green
+                                    : Colors.red,
+                              ),
+                            ],
+                          ),
+                          trailing: const Icon(Icons.arrow_forward_ios,
+                              color: Colors.grey),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    OrderApproveScreen(order: order),
+                              ),
+                            );
+                          },
                         ),
-                        trailing: const Icon(Icons.arrow_forward_ios,
-                            color: Colors.grey),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  OrderApproveScreen(order: order),
-                            ),
-                          );
-                        },
                       ),
                     );
             },

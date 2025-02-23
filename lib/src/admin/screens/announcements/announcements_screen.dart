@@ -40,19 +40,41 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
           return ListView.separated(
             separatorBuilder: (context, index) => const SizedBox(height: 8),
             itemBuilder: (context, index) {
-              return ListTile(
-                leading: Image.network(announcements[index].imageUrl!),
-                title: Text(announcements[index].title),
-                subtitle: Text(announcements[index].shortDescription),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => AddEditAnouncementsScreen(
-                        announcement: announcements[index],
-                      ),
+              return Dismissible(
+                key: Key(announcements[index].id),
+                direction: DismissDirection.endToStart,
+                confirmDismiss: (direction) async {
+                  final result = await _announcementRepository
+                      .deleteAnnouncement(announcements[index].id);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(result.data ?? result.error),
+                      backgroundColor:
+                          result.isSuccess ? Colors.green : Colors.red,
                     ),
                   );
+                  return result.isSuccess;
                 },
+                background: Container(
+                  color: Colors.red,
+                  alignment: Alignment.centerRight,
+                  padding: const EdgeInsets.only(right: 16),
+                  child: const Icon(Icons.delete),
+                ),
+                child: ListTile(
+                  leading: Image.network(announcements[index].imageUrl!),
+                  title: Text(announcements[index].title),
+                  subtitle: Text(announcements[index].shortDescription),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => AddEditAnouncementsScreen(
+                          announcement: announcements[index],
+                        ),
+                      ),
+                    );
+                  },
+                ),
               );
             },
             itemCount: announcements!.length,

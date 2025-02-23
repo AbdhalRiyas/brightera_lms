@@ -50,6 +50,13 @@ class BannerRespository {
     );
   }
 
+  Future<Result> deleteBanner(Appbanner banner) async {
+    return await _firebaseService.deleteDocument(
+      collection: "banners",
+      documentId: banner.id,
+    );
+  }
+
   Future<List<Appbanner>> getAllBanners() async {
     // Fetch user data from Firebase
     final data = await _firebaseService.getAllBanners(activeOnly: false);

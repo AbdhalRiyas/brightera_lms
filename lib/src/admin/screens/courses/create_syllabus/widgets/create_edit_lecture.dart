@@ -127,6 +127,15 @@ void createEditLecture({
                                   }
                                   return null;
                                 },
+                                onChanged: (value) {
+                                  const livePattern =
+                                      r'^(https?\:\/\/)?(www\.youtube\.com\/live)\/.+$';
+                                  if (RegExp(livePattern).hasMatch(value)) {
+                                    final regularUrl = value.replaceFirst(
+                                        '/live/', '/watch?v=');
+                                    sourceController.text = regularUrl;
+                                  }
+                                },
                               ),
 
                               // Duration (seconds) field

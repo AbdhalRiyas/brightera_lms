@@ -24,6 +24,13 @@ class OrderRepository {
     );
   }
 
+  Future<Result> deleteOrder(String orderId) async {
+    return await _firebaseService.deleteDocument(
+      collection: collection,
+      documentId: orderId,
+    );
+  }
+
   Future<Result> addPaymentProof(String filePath) async {
     return await _firebaseService.uploadFile(
       'paymentProofs/${generateUniqueFileName(filePath.split('.').last)}',
