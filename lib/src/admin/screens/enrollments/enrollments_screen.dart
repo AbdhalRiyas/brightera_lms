@@ -1,6 +1,7 @@
 import 'package:app/src/admin/screens/enrollments/enrollment_add_edit_dialog.dart';
 import 'package:app/src/models/enrollment.dart';
 import 'package:app/src/repositories/enrollment_repository.dart';
+import 'package:app/src/utils/result.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -34,39 +35,65 @@ class _EnrollmentsScreenState extends State<EnrollmentsScreen> {
           }
 
           final enrollments = snapshot.data!;
-          return ListView.builder(
+          return ListView.separated(
             itemCount: enrollments.length,
             itemBuilder: (_, index) {
               final enrollment = enrollments[index];
-              return ListTile(
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(enrollment.user.id),
-                    Text(enrollment.courseInfo!.title),
-                  ],
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                        'Enrolled At: ${DateFormat('dd MMM yyyy').format(enrollment.startDate.toDate())}'),
-                    Text(
-                        'Expires At: ${DateFormat('dd MMM yyyy').format(enrollment.endDate.toDate())}'),
-                  ],
-                ),
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return EnrollmentAddEditDialog(
-                        enrollment: enrollment,
-                      );
-                    },
+              return Dismissible(
+                key: Key(enrollments[index].id),
+                direction:
+                    DismissDirection.endToStart, // Swipe from right to left
+                confirmDismiss: (direction) async {
+                  Result result =
+                      await _repository.deleteEnrollment(enrollment.id);
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(result.data ?? result.error),
+                      backgroundColor:
+                          result.isSuccess ? Colors.green : Colors.red,
+                    ),
                   );
+
+                  return result.isSuccess;
                 },
+                background: Container(
+                  color: Colors.red,
+                  padding: const EdgeInsets.only(right: 20),
+                  alignment: Alignment.centerRight,
+                  child: const Icon(Icons.delete, color: Colors.white),
+                ),
+                child: ListTile(
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(enrollment.user.id),
+                      Text(enrollment.courseInfo!.title),
+                    ],
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                          'Enrolled At: ${DateFormat('dd MMM yyyy').format(enrollment.startDate.toDate())}'),
+                      Text(
+                          'Expires At: ${DateFormat('dd MMM yyyy').format(enrollment.endDate.toDate())}'),
+                    ],
+                  ),
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return EnrollmentAddEditDialog(
+                          enrollment: enrollment,
+                        );
+                      },
+                    );
+                  },
+                ),
               );
             },
+            separatorBuilder: (context, i) => const Divider(),
           );
         },
       ),
