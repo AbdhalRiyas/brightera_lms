@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
@@ -210,31 +211,55 @@ class FirebaseService {
     required String collection,
     required T Function(DocumentSnapshot<Map<String, dynamic>>) fromFirestore,
     String? comparisonField,
-    String? comparisonValue,
+    dynamic comparisonValue,
     String? referenceCollection,
     String? referenceId,
-    String? orderByField, // Optional field to order by
-    bool descending = false, // Optional flag to specify order direction
+    String? orderByField,
+    bool descending = false,
+    int limit = 10, // Pagination limit
+    DocumentSnapshot?
+        startAfterDocument, // Last fetched document for pagination
   }) {
+    final StreamController<List<T>> controller = StreamController<List<T>>();
     Query<Map<String, dynamic>> query = _firestore.collection(collection);
 
+    // Apply filtering
     if (comparisonField != null) {
       if (referenceCollection != null && referenceId != null) {
-        DocumentReference? docRef =
+        DocumentReference docRef =
             _firestore.collection(referenceCollection).doc(referenceId);
-
         query = query.where(comparisonField, isEqualTo: docRef);
       } else {
         query = query.where(comparisonField, isEqualTo: comparisonValue);
       }
     }
 
+    // Apply ordering
     if (orderByField != null) {
       query = query.orderBy(orderByField, descending: descending);
     }
 
-    return query.snapshots().map(
-        (snapshot) => snapshot.docs.map((doc) => fromFirestore(doc)).toList());
+    // Apply limit for pagination
+    query = query.limit(limit);
+
+    // Apply startAfter for pagination
+    if (startAfterDocument != null) {
+      query = query.startAfterDocument(startAfterDocument);
+    }
+
+    // Listen to the Firestore stream
+    StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? subscription;
+    subscription = query.snapshots().listen((snapshot) {
+      final data = snapshot.docs.map((doc) => fromFirestore(doc)).toList();
+      controller.add(data); // Emit the new data to the stream
+    });
+
+    // Handle stream cleanup
+    controller.onCancel = () {
+      subscription?.cancel();
+    };
+
+    return controller.stream;
   }
 
   Future<List<T>> getCollection<T>({

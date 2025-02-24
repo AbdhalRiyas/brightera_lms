@@ -68,13 +68,16 @@ class EnrollmentRepository {
     return result;
   }
 
-  Stream<List<Enrollment>> getEnrollmentsStream() {
+  Stream<List<Enrollment>> getEnrollmentsStream(
+      {int limit = 10, DocumentSnapshot? startAfter}) {
     return _firebaseService
         .getCollectionStream(
       collection: 'enrollments',
       fromFirestore: Enrollment.fromFirestore,
       orderByField: 'startDate',
       descending: true,
+      limit: limit,
+      startAfterDocument: startAfter,
     )
         .asyncMap((docs) async {
       List<Enrollment> enrollments = [];

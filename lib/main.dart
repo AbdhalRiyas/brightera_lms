@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app/src/config/app_contants.dart';
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/route/routes.dart';
@@ -14,7 +16,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp();
-  // await NotificationService.instance.initialize();
+
+  await Firebase.initializeApp();
+
+  if (Platform.isAndroid) {
+    await NotificationService.instance.initialize();
+  }
 
   await Hive.initFlutter();
 
@@ -23,7 +30,7 @@ void main() async {
   );
 
   await Hive.openBox(
-      AppContants.appStateBox); // this will hold app initial states 
+      AppContants.appStateBox); // this will hold app initial states
 
   runApp(const MyApp());
 }
