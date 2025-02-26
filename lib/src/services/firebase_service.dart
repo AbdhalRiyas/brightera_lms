@@ -686,10 +686,9 @@ class FirebaseService {
   Future<DateTime> getServerTime() async {
     // Ensure the user is logged in
     User? user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      throw Exception("User is not authenticated. Please log in.");
+    if (user != null) {
+      await user.getIdToken();
     }
-    await user.getIdToken();
     final HttpsCallable callable =
         FirebaseFunctions.instance.httpsCallable('getServerTime');
 

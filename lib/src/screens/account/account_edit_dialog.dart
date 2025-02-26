@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:app/src/repositories/user_repository.dart';
 import 'package:app/src/utils/result.dart';
 import 'package:flutter/material.dart';

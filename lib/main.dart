@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:app/src/config/app_contants.dart';
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/route/routes.dart';
@@ -19,9 +17,7 @@ void main() async {
 
   await Firebase.initializeApp();
 
-  if (Platform.isAndroid) {
-    await NotificationService.instance.initialize();
-  }
+  await NotificationService.instance.initialize();
 
   await Hive.initFlutter();
 

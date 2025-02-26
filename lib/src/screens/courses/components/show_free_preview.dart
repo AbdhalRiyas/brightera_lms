@@ -11,7 +11,13 @@ void showFreePreview(BuildContext context, String source) {
         borderRadius: BorderRadius.circular(ThemeConstants.borderRadiusLarge),
         child: YoutubePlayer(
           controller: YoutubePlayerController(
-              initialVideoId: YoutubePlayer.convertUrlToId(source) ?? ''),
+            initialVideoId: YoutubePlayer.convertUrlToId(source) ?? '',
+            flags: const YoutubePlayerFlags(
+              autoPlay: true,
+              mute: false,
+              useHybridComposition: false,
+            ),
+          ),
           showVideoProgressIndicator: true,
           progressIndicatorColor: ThemeConstants.primaryColor,
           progressColors: const ProgressBarColors(

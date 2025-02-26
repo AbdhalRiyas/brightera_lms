@@ -61,6 +61,8 @@ class _LecturesScreenState extends State<LecturesScreen>
       flags: const YoutubePlayerFlags(
         autoPlay: false,
         mute: false,
+        hideThumbnail: true,
+        useHybridComposition: false,
       ),
     );
 

@@ -103,9 +103,7 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
               : [],
         });
 
-        Future.delayed(const Duration(milliseconds: 2000), () {
-          widget.youtubePlayerController?.load(videoId);
-        });
+        widget.youtubePlayerController?.cue(videoId);
       }
     } catch (error) {
       debugPrint("Error fetching sections: $error");
