@@ -65,4 +65,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'arzam-physics-app.appspot.com',
     iosBundleId: 'lk.brightera.app',
   );
+
 }
