@@ -3,7 +3,6 @@ import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/route/routes.dart';
 import 'package:app/src/services/notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -26,7 +25,7 @@ Future<void> main() async {
   // Initialize Notification Service
   await NotificationService.instance.initialize();
 
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+  // FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
 
   runApp(const MyApp());
 }
