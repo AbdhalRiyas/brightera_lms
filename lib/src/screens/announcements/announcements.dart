@@ -68,89 +68,134 @@ class NotificationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: ThemeConstants.primaryShadowColor,
-      height: 100,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(ThemeConstants.paddingSmall),
-                margin: const EdgeInsets.all(8),
-                height: 50,
-                width: 50,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
-                ),
-                child: SvgPicture.asset(
-                  'assets/icons/bell.svg',
-                  colorFilter: const ColorFilter.mode(
-                    ThemeConstants.primaryColor,
-                    BlendMode.srcIn,
-                  ),
+    return InkWell(
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(
+                announcement.shortDescription,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    announcement.title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Container(
-                    constraints: const BoxConstraints(maxWidth: 220),
-                    child: Text(
-                      announcement.shortDescription,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    DateFormat('yyyy-MM-dd     kk:mm')
-                        .format(announcement.createdAt),
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.black.withAlpha(150),
-                    ),
-                  ),
-                ],
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    Text(announcement.description),
+                    const SizedBox(height: 10),
+                    announcement.imageUrl != null
+                        ? CachedNetworkImage(
+                            imageUrl: announcement.imageUrl!,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.error),
+                          )
+                        : const SizedBox(),
+                  ],
+                ),
               ),
-            ],
-          ),
-          announcement.imageUrl == null
-              ? const SizedBox()
-              : Container(
-                  margin: const EdgeInsets.all(16),
-                  height: 60,
-                  width: 60,
-                  decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.circular(ThemeConstants.borderRadiusLarge),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Close'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+      child: Container(
+        color: ThemeConstants.primaryShadowColor,
+        height: 100,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(ThemeConstants.paddingSmall),
+                  margin: const EdgeInsets.all(8),
+                  height: 50,
+                  width: 50,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
                     color: Colors.white,
                   ),
-                  clipBehavior: Clip.hardEdge,
-                  child: CachedNetworkImage(
-                    imageUrl: announcement.imageUrl!,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => const Center(
-                      child: CircularProgressIndicator(),
+                  child: SvgPicture.asset(
+                    'assets/icons/bell.svg',
+                    colorFilter: const ColorFilter.mode(
+                      ThemeConstants.primaryColor,
+                      BlendMode.srcIn,
                     ),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
                   ),
                 ),
-        ],
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      announcement.title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Container(
+                      constraints: const BoxConstraints(maxWidth: 220),
+                      child: Text(
+                        announcement.shortDescription,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      DateFormat('yyyy-MM-dd     kk:mm')
+                          .format(announcement.createdAt),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.black.withAlpha(150),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            announcement.imageUrl == null
+                ? const SizedBox()
+                : Container(
+                    margin: const EdgeInsets.all(16),
+                    height: 60,
+                    width: 60,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(
+                          ThemeConstants.borderRadiusLarge),
+                      color: Colors.white,
+                    ),
+                    clipBehavior: Clip.hardEdge,
+                    child: CachedNetworkImage(
+                      imageUrl: announcement.imageUrl!,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
+                    ),
+                  ),
+          ],
+        ),
       ),
     );
   }
