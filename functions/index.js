@@ -649,19 +649,32 @@ exports.sendNotificationToEnrolledUsersByCourse = functions.https.onCall(
         );
       }
 
-      // Fetch FCM tokens of enrolled users in a single query
-      const usersRef = admin
-        .firestore()
-        .collection("users")
-        .where(admin.firestore.FieldPath.documentId(), "in", userIds);
-      const users = await usersRef.get();
-
-      let tokens = [];
-      users.forEach((doc) => {
-        if (doc.data().fcmToken) {
-          tokens.push(doc.data().fcmToken);
+      // Function to chunk the userIds into groups of 30
+      const chunkArray = (array, size) => {
+        const chunks = [];
+        for (let i = 0; i < array.length; i += size) {
+          chunks.push(array.slice(i, i + size));
         }
-      });
+        return chunks;
+      };
+
+      const userChunks = chunkArray(userIds, 30);
+      let tokens = [];
+
+      for (const chunk of userChunks) {
+        // Fetch FCM tokens of enrolled users in chunks
+        const usersRef = admin
+          .firestore()
+          .collection("users")
+          .where(admin.firestore.FieldPath.documentId(), "in", chunk);
+        const users = await usersRef.get();
+
+        users.forEach((doc) => {
+          if (doc.data().fcmToken) {
+            tokens.push(doc.data().fcmToken);
+          }
+        });
+      }
 
       if (tokens.length === 0) {
         throw new functions.https.HttpsError(

@@ -19,6 +19,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
   final List<Course> _courses = [];
   final _formKey = GlobalKey<FormState>();
 
+  bool _isSending = false;
+
   Future<void> _getCourses() async {
     final courses = await _courseRepository.getCourses();
     _courses.addAll(courses);
@@ -105,49 +107,61 @@ class _NotificationScreenState extends State<NotificationScreen> {
               Flexible(
                 // Now correctly inside the Column
                 child: ElevatedButton(
-                  child: const Text('Send Notification'),
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (BuildContext context) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        },
-                      );
+                  onPressed: _isSending
+                      ? null
+                      : () async {
+                          setState(() {
+                            _isSending = true;
+                          });
+                          if (_formKey.currentState!.validate()) {
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (BuildContext context) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              },
+                            );
 
-                      try {
-                        _courseId.value != null
-                            ? await _firebaseService
-                                .sendNotificationToEnrolledUsersByCourse(
-                                courseId: _courseId.value!,
-                                title: _titleController.text,
-                                body: _descriptionController.text,
-                              )
-                            : await _firebaseService.sendNotificationToAll(
-                                title: _titleController.text,
-                                body: _descriptionController.text,
+                            try {
+                              _courseId.value != null
+                                  ? _firebaseService
+                                      .sendNotificationToEnrolledUsersByCourse(
+                                      courseId: _courseId.value!,
+                                      title: _titleController.text,
+                                      body: _descriptionController.text,
+                                    )
+                                  : _firebaseService.sendNotificationToAll(
+                                      title: _titleController.text,
+                                      body: _descriptionController.text,
+                                    );
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content:
+                                      Text('Notification sent successfully'),
+                                ),
                               );
+                              Navigator.of(context).pop();
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content:
+                                      Text('Failed to send notification: $e'),
+                                ),
+                              );
+                            } finally {
+                              Navigator.of(context)
+                                  .pop(); // Close the loading dialog
+                            }
+                          }
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Notification sent successfully'),
-                          ),
-                        );
-                        Navigator.of(context).pop();
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Failed to send notification: $e'),
-                          ),
-                        );
-                      } finally {
-                        Navigator.of(context).pop(); // Close the loading dialog
-                      }
-                    }
-                  },
+                          setState(() {
+                            _isSending = false;
+                          });
+                        },
+                  child: const Text('Send Notification'),
                 ),
               ),
             ],
