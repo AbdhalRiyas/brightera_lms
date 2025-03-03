@@ -10,7 +10,7 @@ class YouTubeService {
     try {
       var manifest = await yt.videos.streams.getManifest(videoId);
 
-      log(manifest.videoOnly.toString());
+      log(manifest.streams.length.toString());
       log(manifest.audioOnly.toString());
 
       String? videoUrl;
@@ -23,6 +23,8 @@ class YouTubeService {
 
       if (manifest.audioOnly.isNotEmpty) {
         var audioStreamInfo = manifest.audioOnly.withHighestBitrate();
+
+        print(audioStreamInfo.url);
         audioUrl = audioStreamInfo.url.toString();
       }
 
