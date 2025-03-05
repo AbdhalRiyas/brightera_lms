@@ -1,6 +1,7 @@
 import 'package:app/src/models/course.dart';
 import 'package:app/src/repositories/course_repository.dart';
 import 'package:app/src/services/firebase_service.dart';
+import 'package:app/src/utils/toggle_loader.dart';
 import 'package:flutter/material.dart';
 
 class NotificationScreen extends StatefulWidget {
@@ -113,26 +114,20 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           setState(() {
                             _isSending = true;
                           });
+
                           if (_formKey.currentState!.validate()) {
-                            showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (BuildContext context) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              },
-                            );
+                            showLoader(context, 'Sending notification...');
 
                             try {
                               _courseId.value != null
-                                  ? _firebaseService
+                                  ? await _firebaseService
                                       .sendNotificationToEnrolledUsersByCourse(
                                       courseId: _courseId.value!,
                                       title: _titleController.text,
                                       body: _descriptionController.text,
                                     )
-                                  : _firebaseService.sendNotificationToAll(
+                                  : await _firebaseService
+                                      .sendNotificationToAll(
                                       title: _titleController.text,
                                       body: _descriptionController.text,
                                     );
@@ -143,6 +138,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                       Text('Notification sent successfully'),
                                 ),
                               );
+
                               Navigator.of(context).pop();
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(

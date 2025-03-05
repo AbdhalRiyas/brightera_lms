@@ -31,6 +31,8 @@ class _AddEditAnouncementsScreenState extends State<AddEditAnouncementsScreen> {
   final TextEditingController _descriptionController = TextEditingController();
   final ValueNotifier<String?> _imageUrl = ValueNotifier('');
 
+  bool _isSending = false;
+
   @override
   void initState() {
     super.initState();
@@ -130,85 +132,102 @@ class _AddEditAnouncementsScreenState extends State<AddEditAnouncementsScreen> {
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          bool canUpdate = true;
+                      onPressed: _isSending
+                          ? null
+                          : () async {
+                              if (_formKey.currentState!.validate()) {
+                                setState(() {
+                                  _isSending = true;
+                                });
+                                bool canUpdate = true;
 
-                          if (_imageUrl.value !=
-                              widget.announcement?.imageUrl) {
-                            Result result = await _repository
-                                .uploadAnnouncementImage(_imageUrl.value!);
+                                if (_imageUrl.value !=
+                                    widget.announcement?.imageUrl) {
+                                  Result result =
+                                      await _repository.uploadAnnouncementImage(
+                                          _imageUrl.value!);
 
-                            if (result.isSuccess) {
-                              _imageUrl.value = result.data;
-                            } else {
-                              _imageUrl.value = widget.announcement?.imageUrl ??
-                                  AppContants.courseCoverPlaceHolder;
-                              canUpdate = false;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(result.error ?? ''),
-                                ),
-                              );
-                            }
-                          }
+                                  if (result.isSuccess) {
+                                    _imageUrl.value = result.data;
+                                  } else {
+                                    _imageUrl.value =
+                                        widget.announcement?.imageUrl ??
+                                            AppContants.courseCoverPlaceHolder;
+                                    canUpdate = false;
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(result.error ?? ''),
+                                      ),
+                                    );
+                                  }
+                                }
 
-                          if (canUpdate) {
-                            Announcement announcement = widget.announcement ==
-                                    null
-                                ? Announcement(
-                                    id: '',
-                                    title: _titleController.text,
-                                    shortDescription:
-                                        _shortDescriptionController.text,
-                                    description: _descriptionController.text,
-                                    imageUrl: _imageUrl.value,
-                                    createdAt: DateTime.now(),
-                                  )
-                                : Announcement(
-                                    id: widget.announcement!.id,
-                                    title: _titleController.text,
-                                    shortDescription:
-                                        _shortDescriptionController.text,
-                                    description: _descriptionController.text,
-                                    imageUrl: _imageUrl.value,
-                                    createdAt: widget.announcement!.createdAt,
-                                  );
-                            final Result result = widget.announcement == null
-                                ? await _repository
-                                    .addAnnouncement(announcement)
-                                : await _repository
-                                    .updateAnnouncement(announcement);
+                                if (canUpdate) {
+                                  Announcement announcement = widget
+                                              .announcement ==
+                                          null
+                                      ? Announcement(
+                                          id: '',
+                                          title: _titleController.text,
+                                          shortDescription:
+                                              _shortDescriptionController.text,
+                                          description:
+                                              _descriptionController.text,
+                                          imageUrl: _imageUrl.value,
+                                          createdAt: DateTime.now(),
+                                        )
+                                      : Announcement(
+                                          id: widget.announcement!.id,
+                                          title: _titleController.text,
+                                          shortDescription:
+                                              _shortDescriptionController.text,
+                                          description:
+                                              _descriptionController.text,
+                                          imageUrl: _imageUrl.value,
+                                          createdAt:
+                                              widget.announcement!.createdAt,
+                                        );
+                                  final Result result =
+                                      widget.announcement == null
+                                          ? await _repository
+                                              .addAnnouncement(announcement)
+                                          : await _repository
+                                              .updateAnnouncement(announcement);
 
-                            if (widget.announcement == null) {
-                              await _firebaseService.sendNotificationToAll(
-                                title: announcement.title,
-                                body: announcement.shortDescription,
-                                type: 'announcement',
-                              );
-                            }
+                                  if (widget.announcement == null) {
+                                    await _firebaseService
+                                        .sendNotificationToAll(
+                                      title: announcement.title,
+                                      body: announcement.shortDescription,
+                                      type: 'announcement',
+                                    );
+                                  }
 
-                            if (result.isSuccess) {
-                              Navigator.of(context).pop();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    widget.announcement != null
-                                        ? "Announcement Updated Successfully"
-                                        : "Announcement Created Successfully",
-                                  ),
-                                ),
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(result.error ?? ''),
-                                ),
-                              );
-                            }
-                          }
-                        }
-                      },
+                                  if (result.isSuccess) {
+                                    Navigator.of(context).pop();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          widget.announcement != null
+                                              ? "Announcement Updated Successfully"
+                                              : "Announcement Created Successfully",
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(result.error ?? ''),
+                                      ),
+                                    );
+                                  }
+                                }
+
+                                setState(() {
+                                  _isSending = false;
+                                });
+                              }
+                            },
                       child: Text(
                         widget.announcement != null
                             ? "Update Announcement"

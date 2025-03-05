@@ -697,3 +697,65 @@ exports.sendNotificationToEnrolledUsersByCourse = functions.https.onCall(
     }
   }
 );
+
+exports.sendNotificationToAll = functions.https.onCall(
+  async (data, context) => {
+    try {
+      const { title, body, type } = data;
+
+      if (!title || !body) {
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          "Missing title or body."
+        );
+      }
+
+      const usersRef = admin.firestore().collection("users");
+      const users = await usersRef.get();
+      let tokens = [];
+
+      users.forEach((doc) => {
+        if (doc.data().fcmToken) {
+          tokens.push(doc.data().fcmToken);
+        }
+      });
+
+      if (tokens.length === 0) {
+        throw new functions.https.HttpsError(
+          "not-found",
+          "No tokens available."
+        );
+      }
+
+      // Function to chunk the tokens into groups of 30
+      const chunkArray = (array, size) => {
+        const chunks = [];
+        for (let i = 0; i < array.length; i += size) {
+          chunks.push(array.slice(i, i + size));
+        }
+        return chunks;
+      };
+
+      const tokenChunks = chunkArray(tokens, 30); // Chunk tokens into groups of 30
+
+      let responses = [];
+
+      // Send notifications for each chunk of tokens
+      for (const chunk of tokenChunks) {
+        const message = {
+          notification: { title, body },
+          data: type ? { type } : {},
+          tokens: chunk,
+        };
+
+        const response = await admin.messaging().sendEachForMulticast(message);
+        responses.push(response);
+      }
+
+      return { success: true, responses };
+    } catch (error) {
+      console.error(error);
+      throw new functions.https.HttpsError("internal", error.message);
+    }
+  }
+);
