@@ -216,10 +216,25 @@ class _EnrollmentAddEditDialogState extends State<EnrollmentAddEditDialog> {
                   startDate: Timestamp.fromDate(_startDate.value!),
                   endDate: Timestamp.fromDate(_endDate.value!),
                 );
+
+                bool isExisting = false;
+
+                if (widget.enrollment == null) {
+                  isExisting =
+                      await _enrollmentRepository.checkExistingEnrollment(
+                    enrollment.course.id,
+                    enrollment.user.id,
+                  );
+                }
+
                 Result result = widget.enrollment == null
                     ? await _enrollmentRepository.addEnrollment(enrollment)
                     : await _enrollmentRepository.updateEnrollment(enrollment);
                 if (result.isSuccess) {
+                  if (!isExisting) {
+                    await _courseRepository
+                        .incrementTotalStudentCount(enrollment.course.id);
+                  }
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
