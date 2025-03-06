@@ -1,5 +1,5 @@
+import 'package:app/src/packages/youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class YoutubePlayerWidget extends StatefulWidget {
   final YoutubePlayerController controller;
@@ -72,19 +72,19 @@ class _YoutubePlayerWidgetState extends State<YoutubePlayerWidget> {
         YoutubePlayer(
           controller: widget.controller,
           showVideoProgressIndicator: true,
-          bottomActions: [
-            const SizedBox(width: 14.0),
+          bottomActions: const [
+            SizedBox(width: 14.0),
             CurrentPosition(),
-            const SizedBox(width: 8.0),
+            SizedBox(width: 8.0),
             ProgressBar(
               isExpanded: true,
-              colors: const ProgressBarColors(
+              colors: ProgressBarColors(
                 handleColor: Colors.white,
                 playedColor: Colors.white,
               ),
             ),
             RemainingDuration(),
-            const PlaybackSpeedButton(
+            PlaybackSpeedButton(
               icon: Icon(
                 Icons.speed,
                 color: Colors.white,
@@ -115,7 +115,7 @@ class _YoutubePlayerWidgetState extends State<YoutubePlayerWidget> {
                         onPressed: widget.prevVideo,
                         icon: const Icon(
                           Icons.skip_previous,
-                          size: 48,
+                          size: 38,
                           color: Colors.white,
                         ),
                       ),
@@ -123,7 +123,7 @@ class _YoutubePlayerWidgetState extends State<YoutubePlayerWidget> {
                         onPressed: _replayBackward,
                         icon: const Icon(
                           Icons.replay_10,
-                          size: 48,
+                          size: 38,
                           color: Colors.white,
                         ),
                       ),
@@ -136,14 +136,14 @@ class _YoutubePlayerWidgetState extends State<YoutubePlayerWidget> {
                         icon: const Icon(
                           Icons.forward_10,
                           color: Colors.white,
-                          size: 48,
+                          size: 38,
                         ),
                       ),
                       IconButton(
                         onPressed: widget.nextVideo,
                         icon: const Icon(
                           Icons.skip_next,
-                          size: 48,
+                          size: 38,
                           color: Colors.white,
                         ),
                       ),

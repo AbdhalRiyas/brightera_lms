@@ -2,7 +2,9 @@ import 'package:app/src/config/app_contants.dart';
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/route/routes.dart';
 import 'package:app/src/services/notification_service.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -17,6 +19,18 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  if (kReleaseMode) {
+    await FirebaseAppCheck.instance.activate(
+      androidProvider: AndroidProvider.playIntegrity,
+      appleProvider: AppleProvider.appAttest,
+    );
+  } else {
+    await FirebaseAppCheck.instance.activate(
+      androidProvider: AndroidProvider.debug,
+      appleProvider: AppleProvider.appAttest,
+    );
+  }
 
   // Initialize Hive
   await Hive.initFlutter();

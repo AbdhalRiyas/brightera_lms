@@ -37,6 +37,7 @@ class FirebaseService {
   Future<Result<String>> requestOtp(String phoneNumber) async {
     try {
       String deviceId = await MobileDeviceIdentifier().getDeviceId() ?? '';
+
       final HttpsCallable callable = _functions
           .httpsCallable('requestOtp'); // Replace with your Cloud Function name
       await callable.call(<String, dynamic>{
@@ -46,6 +47,7 @@ class FirebaseService {
 
       return Result(data: 'OTP sent successfully');
     } on FirebaseFunctionsException catch (e) {
+      print(e.stackTrace);
       String errorMessage = _handleFirebaseError(e);
       return Result(error: errorMessage);
     } catch (e) {

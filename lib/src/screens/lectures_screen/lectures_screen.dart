@@ -1,6 +1,7 @@
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/active_lesson.dart';
 import 'package:app/src/models/course.dart';
+import 'package:app/src/packages/youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:app/src/screens/lectures_screen/widgets/downloads_tab.dart';
 import 'package:app/src/screens/lectures_screen/widgets/lecture_notes_tab.dart';
 import 'package:app/src/screens/lectures_screen/widgets/lecture_tab_bar.dart';
@@ -9,7 +10,6 @@ import 'package:app/src/widgets/syllabus/syllabus_accordion.dart';
 import 'package:app/src/screens/lectures_screen/widgets/youtube_player_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class LecturesArguments {
   final Course course;
