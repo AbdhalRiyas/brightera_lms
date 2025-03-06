@@ -4,11 +4,11 @@ import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/active_lesson.dart';
 import 'package:app/src/models/course.dart';
 import 'package:app/src/models/section.dart';
-import 'package:app/src/packages/youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:app/src/repositories/course_repository.dart';
 import 'package:app/src/widgets/syllabus/syllabus_lesson.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class SyllabusAccordion extends StatefulWidget {
   const SyllabusAccordion({

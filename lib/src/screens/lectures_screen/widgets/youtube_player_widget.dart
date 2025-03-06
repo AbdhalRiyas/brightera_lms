@@ -1,5 +1,5 @@
-import 'package:app/src/packages/youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class YoutubePlayerWidget extends StatefulWidget {
   final YoutubePlayerController controller;
@@ -72,19 +72,19 @@ class _YoutubePlayerWidgetState extends State<YoutubePlayerWidget> {
         YoutubePlayer(
           controller: widget.controller,
           showVideoProgressIndicator: true,
-          bottomActions: const [
-            SizedBox(width: 14.0),
+          bottomActions: [
+            const SizedBox(width: 14.0),
             CurrentPosition(),
-            SizedBox(width: 8.0),
+            const SizedBox(width: 8.0),
             ProgressBar(
               isExpanded: true,
-              colors: ProgressBarColors(
+              colors: const ProgressBarColors(
                 handleColor: Colors.white,
                 playedColor: Colors.white,
               ),
             ),
             RemainingDuration(),
-            PlaybackSpeedButton(
+            const PlaybackSpeedButton(
               icon: Icon(
                 Icons.speed,
                 color: Colors.white,

@@ -3,11 +3,11 @@
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/lecture.dart';
 import 'package:app/src/models/section.dart';
-import 'package:app/src/packages/youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:app/src/repositories/course_repository.dart';
 import 'package:app/src/utils/convert_to_gdrive_direct_link.dart';
 import 'package:app/src/utils/result.dart';
 import 'package:flutter/material.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 void createEditLecture({
   required BuildContext context,

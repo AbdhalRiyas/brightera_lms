@@ -60,8 +60,8 @@ dependencies:
   flutter_local_notifications: ^17.2.3
   nb_utils: ^7.1.1
   upgrader: ^11.3.1
-  flutter_inappwebview: ^6.1.5
   firebase_app_check: ^0.3.2+4
+  youtube_player_flutter: ^9.1.1
 
 dev_dependencies:
   flutter_test:
