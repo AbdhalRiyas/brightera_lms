@@ -1,3 +1,4 @@
+import 'package:app/packages/youtube_embed_player.dart';
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/active_lesson.dart';
 import 'package:app/src/models/course.dart';
@@ -7,6 +8,7 @@ import 'package:app/src/services/firebase_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import 'lesson_duration.dart';
@@ -14,7 +16,7 @@ import 'lesson_duration.dart';
 class SyllabusLesson extends StatefulWidget {
   final Course? course;
   final Lecture lecture;
-  final YoutubePlayerController? youtubePlayerController;
+  final WebViewController? youtubePlayerController;
   final ValueNotifier<ActiveLesson>? activeLesson;
   final int index;
   final int sectionIndex;
@@ -45,8 +47,8 @@ class _SyllabusLessonState extends State<SyllabusLesson> {
 
   @override
   Widget build(BuildContext context) {
-    bool isActive = YoutubePlayer.convertUrlToId(widget.lecture.source) ==
-        widget.activeLesson?.value.source;
+    bool isActive =
+        getEmbedUrl(widget.lecture.source) == widget.activeLesson?.value.source;
     return ListTile(
       tileColor: isActive ? ThemeConstants.lavenderMist : null,
       leading: Text(
@@ -104,9 +106,7 @@ class _SyllabusLessonState extends State<SyllabusLesson> {
               ? () => showFreePreview(context, widget.lecture.source)
               : widget.youtubePlayerController != null
                   ? () async {
-                      String videoId =
-                          YoutubePlayer.convertUrlToId(widget.lecture.source) ??
-                              '';
+                      String videoId = getEmbedUrl(widget.lecture.source);
 
                       widget.activeLesson?.value = ActiveLesson.fromJson({
                         "source": videoId,
@@ -116,9 +116,8 @@ class _SyllabusLessonState extends State<SyllabusLesson> {
                         "downloads": widget.lecture.downloads,
                       });
 
-                      widget.youtubePlayerController?.load(
-                        videoId,
-                        startAt: 0,
+                      widget.youtubePlayerController?.loadRequest(
+                        Uri.parse(videoId),
                       );
 
                       widget.courseProgressBox?.put(

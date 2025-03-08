@@ -11,8 +11,8 @@ class AppBarBackButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropShadow(
-      blurRadius: 4,
-      offset: const Offset(2, 2),
+      blurRadius: 0,
+      offset: const Offset(2, 0),
       color: ThemeConstants.primaryShadowColor,
       child: IconButton(
         onPressed: () {

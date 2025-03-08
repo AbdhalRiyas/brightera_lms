@@ -1,5 +1,6 @@
 import 'package:accordion/accordion.dart';
 import 'package:accordion/controllers.dart';
+import 'package:app/packages/youtube_embed_player.dart';
 import 'package:app/src/config/theme_constants.dart';
 import 'package:app/src/models/active_lesson.dart';
 import 'package:app/src/models/course.dart';
@@ -8,7 +9,7 @@ import 'package:app/src/repositories/course_repository.dart';
 import 'package:app/src/widgets/syllabus/syllabus_lesson.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class SyllabusAccordion extends StatefulWidget {
   const SyllabusAccordion({
@@ -22,7 +23,7 @@ class SyllabusAccordion extends StatefulWidget {
   }) : _scrollPhysics = scrollPhysics;
 
   final Course course;
-  final YoutubePlayerController? youtubePlayerController;
+  final WebViewController? youtubePlayerController;
   final ValueNotifier<ActiveLesson>? activeLesson;
   final Box? courseProgressBox;
   final ScrollController? syllabusScrollController;
@@ -83,9 +84,8 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
           lastLecture = 0;
         }
 
-        String videoId = YoutubePlayer.convertUrlToId(
-                _sections[lastSection].lectures[lastLecture].source) ??
-            '';
+        String videoId =
+            getEmbedUrl(_sections[lastSection].lectures[lastLecture].source);
 
         _openedSection = lastSection;
 
@@ -103,7 +103,7 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
               : [],
         });
 
-        widget.youtubePlayerController?.cue(videoId);
+        widget.youtubePlayerController?.loadRequest(Uri.parse(videoId));
       }
     } catch (error) {
       debugPrint("Error fetching sections: $error");
@@ -146,8 +146,8 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
       widget.activeLesson!.value = ActiveLesson.fromJson({
         'section': newSection,
         'lecture': newLecture,
-        'source': YoutubePlayer.convertUrlToId(
-            _sections[newSection].lectures[newLecture].source),
+        'source':
+            getEmbedUrl(_sections[newSection].lectures[newLecture].source),
         'notes': _sections[newSection].lectures[newLecture].pdfNotes,
         'downloads': _sections[newSection].lectures[newLecture].downloads,
       });
@@ -156,7 +156,8 @@ class SyllabusAccordionState extends State<SyllabusAccordion>
         _changeOpenedIndex(newSection);
       }
 
-      widget.youtubePlayerController?.load(widget.activeLesson!.value.source);
+      widget.youtubePlayerController
+          ?.loadRequest(Uri.parse(widget.activeLesson!.value.source));
     }
   }
 
