@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:nb_utils/nb_utils.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class YoutubeEmbedPlayer extends StatefulWidget {
@@ -35,6 +34,12 @@ class _YoutubeEmbedPlayerState extends State<YoutubeEmbedPlayer> {
               _isLoading = false; // Hide overlay after rendering
             });
           },
+          onNavigationRequest: (NavigationRequest request) {
+            if (!request.url.contains('/embed/')) {
+              return NavigationDecision.prevent;
+            }
+            return NavigationDecision.navigate;
+          },
         ),
       );
 
@@ -43,26 +48,15 @@ class _YoutubeEmbedPlayerState extends State<YoutubeEmbedPlayer> {
       'FullscreenChannel',
       onMessageReceived: (JavaScriptMessage message) {
         final isFullscreen = message.message == 'true';
-        if (isIOS) {
-          if (!isFullscreen) {
-            SystemChrome.setPreferredOrientations([
-              DeviceOrientation.landscapeLeft,
-              DeviceOrientation.landscapeRight,
-            ]);
-          } else {
-            SystemChrome.setPreferredOrientations(
-                [DeviceOrientation.portraitUp]);
-          }
+        if (isFullscreen) {
+          SystemChrome.setPreferredOrientations([
+            DeviceOrientation.landscapeLeft,
+            DeviceOrientation.landscapeRight,
+          ]);
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
         } else {
-          if (isFullscreen) {
-            SystemChrome.setPreferredOrientations([
-              DeviceOrientation.landscapeLeft,
-              DeviceOrientation.landscapeRight,
-            ]);
-          } else {
-            SystemChrome.setPreferredOrientations(
-                [DeviceOrientation.portraitUp]);
-          }
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+          SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
         }
       },
     );
@@ -114,15 +108,25 @@ class _YoutubeEmbedPlayerState extends State<YoutubeEmbedPlayer> {
       });
       observer.observe(document.body, { childList: true, subtree: true });
 
-      // Listen for fullscreen changes
-      setInterval(() => {
-        const isFullscreen = document.fullscreenElement !== null;
-        console.log(isFullscreen);
-        if (isFullscreen !== window.isFullscreen) {
-          window.isFullscreen = isFullscreen;
-          FullscreenChannel.postMessage(isFullscreen);
+      // Prevent right-click context menu
+      document.addEventListener('contextmenu', event => event.preventDefault());
+
+      // Listen for fullscreen changes by observing the .html5-video-player element
+      const videoPlayerObserver = new MutationObserver((mutations) => {
+        const videoPlayer = document.querySelector('.html5-video-player');
+        if (videoPlayer) {
+          const isFullscreen = videoPlayer.classList.contains('ytp-fullscreen');
+          if (isFullscreen !== window.isFullscreen) {
+            window.isFullscreen = isFullscreen;
+            FullscreenChannel.postMessage(isFullscreen);
+          }
         }
-      }, 100);
+      });
+
+      // Start observing the .html5-video-player element
+      waitForElements('.html5-video-player', (elements) => {
+        videoPlayerObserver.observe(elements[0], { attributes: true, attributeFilter: ['class'] });
+      });
     ''');
   }
 
@@ -134,8 +138,7 @@ class _YoutubeEmbedPlayerState extends State<YoutubeEmbedPlayer> {
         // Overlay when loading
         if (_isLoading)
           Container(
-            color:
-                Colors.black.withValues(alpha: 0.5), // Semi-transparent overlay
+            color: Colors.black.withOpacity(0.5), // Semi-transparent overlay
             child: const Center(
               child: CircularProgressIndicator(color: Colors.white),
             ),
