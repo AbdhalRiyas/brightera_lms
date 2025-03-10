@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -33,10 +30,7 @@ class DefaultFirebaseOptions {
           'you can reconfigure this by running the FlutterFire CLI again.',
         );
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -64,6 +58,24 @@ class DefaultFirebaseOptions {
     projectId: 'arzam-physics-app',
     storageBucket: 'arzam-physics-app.appspot.com',
     iosBundleId: 'lk.brightera.app',
+  );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyB8aL16bMg-zPc0mHGsl49-NYAmkxk7Z1U',
+    appId: '1:330277784027:web:48e2a93ac8325d46333ffe',
+    messagingSenderId: '330277784027',
+    projectId: 'arzam-physics-app',
+    authDomain: 'arzam-physics-app.firebaseapp.com',
+    storageBucket: 'arzam-physics-app.appspot.com',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyB8aL16bMg-zPc0mHGsl49-NYAmkxk7Z1U',
+    appId: '1:330277784027:web:8d3c44b503ff1df9333ffe',
+    messagingSenderId: '330277784027',
+    projectId: 'arzam-physics-app',
+    authDomain: 'arzam-physics-app.firebaseapp.com',
+    storageBucket: 'arzam-physics-app.appspot.com',
   );
 
 }

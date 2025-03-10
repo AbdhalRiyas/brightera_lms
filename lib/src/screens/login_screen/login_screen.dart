@@ -151,6 +151,7 @@ class _LoginScreenState extends State<LoginScreen> with LoginScreenLogic {
           controller: otpController,
           codeLength: 6,
           textInputAction: TextInputAction.done,
+          keyboardType: TextInputType.number,
           onCodeChanged: (code) {
             if (otpController.text.length == 6) {
               // Check the length of the code directly
@@ -158,6 +159,8 @@ class _LoginScreenState extends State<LoginScreen> with LoginScreenLogic {
             }
           },
           onCodeSubmitted: (code) => verifyOtp(code),
+          // Add this line to make it typable on Flutter web
+          currentCode: otpController.text,
         ),
         const SizedBox(height: ThemeConstants.paddingSmall),
         const Text(

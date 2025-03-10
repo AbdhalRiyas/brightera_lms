@@ -13,6 +13,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_device_identifier/mobile_device_identifier.dart';
+import 'package:nb_utils/nb_utils.dart';
 
 class FirebaseService {
   FirebaseService._privateConstructor();
@@ -36,7 +37,8 @@ class FirebaseService {
   /// Request a new OTP for the given phone number
   Future<Result<String>> requestOtp(String phoneNumber) async {
     try {
-      String deviceId = await MobileDeviceIdentifier().getDeviceId() ?? '';
+      String deviceId =
+          isWeb ? '' : await MobileDeviceIdentifier().getDeviceId() ?? '';
 
       final HttpsCallable callable = _functions
           .httpsCallable('requestOtp'); // Replace with your Cloud Function name
@@ -58,7 +60,8 @@ class FirebaseService {
   /// Validate the OTP provided by the user
   Future<Result<String>> validateOtp(String phoneNumber, String otp) async {
     try {
-      String deviceId = await MobileDeviceIdentifier().getDeviceId() ?? '';
+      String deviceId =
+          isWeb ? '' : await MobileDeviceIdentifier().getDeviceId() ?? '';
       final HttpsCallable callable = _functions
           .httpsCallable('verifyOtp'); // Replace with your Cloud Function name
       final response = await callable.call(<String, dynamic>{

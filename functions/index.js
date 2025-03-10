@@ -13,7 +13,7 @@ const config = functions.config();
 const MAX_OTPS_PER_PHONE = 3;
 const MAX_OTPS_PER_IP = 10;
 const OTP_EXPIRY_MINUTES = 10;
-const OTP_RESEND_WAIT_MINUTES = 10;
+const OTP_RESEND_WAIT_MINUTES = 2;
 const DEVICE_BLOCK_DURATION = 60; // in minutes
 
 // SMS Gateway config
@@ -21,17 +21,26 @@ const SMS_GATEWAY_URL = config.sms.gateway.url;
 const SMS_GATEWAY_API_KEY = config.sms.gateway.api_key;
 const SMS_GATEWAY_SENDER_ID = config.sms.gateway.sender_id;
 
+function generateUniqueId() {
+  const timestamp = Date.now().toString(); // Get current timestamp
+  const randomSuffix = Math.floor(Math.random() * 1000).toString(); // Add randomness
+  return `${timestamp}-${randomSuffix}`; // Combine timestamp and random suffix
+}
+
 exports.requestOtp = functions.https.onCall(async (data, context) => {
   const { phoneNumber, deviceId } = data;
   const requestIp = context.rawRequest.ip;
 
   // Validate input
-  if (!phoneNumber || !deviceId) {
+  if (!phoneNumber) {
     throw new functions.https.HttpsError(
       "invalid-argument",
-      "Missing phone number or device ID."
+      "Missing phone number."
     );
   }
+
+  // Generate a unique device ID if not provided
+  const uniqueDeviceId = deviceId || generateUniqueId();
 
   // Format phone number if necessary
   const formattedPhoneNumber = phoneNumber.startsWith("94")
@@ -39,7 +48,7 @@ exports.requestOtp = functions.https.onCall(async (data, context) => {
     : "94" + phoneNumber.substring(1);
 
   // Check if the IP, phone number, or device ID is blocked
-  if (await isBlocked(requestIp, formattedPhoneNumber, deviceId)) {
+  if (await isBlocked(requestIp, formattedPhoneNumber, uniqueDeviceId)) {
     throw new functions.https.HttpsError(
       "permission-denied",
       "Access blocked for security reasons."
@@ -59,7 +68,7 @@ exports.requestOtp = functions.https.onCall(async (data, context) => {
   const otpLimitExceeded = await hasExceededOtpLimits(
     requestIp,
     formattedPhoneNumber,
-    deviceId
+    uniqueDeviceId
   );
   if (otpLimitExceeded) {
     throw new functions.https.HttpsError(
@@ -85,7 +94,7 @@ exports.requestOtp = functions.https.onCall(async (data, context) => {
     let isSmsSent = await sendOtpSms(formattedPhoneNumber, otp);
 
     if (isSmsSent) {
-      await storeOtp(formattedPhoneNumber, otp, requestIp, deviceId);
+      await storeOtp(formattedPhoneNumber, otp, requestIp, uniqueDeviceId);
 
       // Increment daily OTP count
       await incrementDailyOtpCount(formattedPhoneNumber);
@@ -110,10 +119,10 @@ exports.verifyOtp = functions.https.onCall(async (data, context) => {
   const { phoneNumber, otp, deviceId } = data;
 
   // Validate input
-  if (!phoneNumber || !otp || !deviceId) {
+  if (!phoneNumber || !otp) {
     throw new functions.https.HttpsError(
       "invalid-argument",
-      "Missing phone number, OTP, or device ID."
+      "Missing phone number or OTP."
     );
   }
 
@@ -134,9 +143,11 @@ exports.verifyOtp = functions.https.onCall(async (data, context) => {
 
   // Check OTP expiration
   const otpAgeMinutes =
-    (Date.now() - otpData.timestamp.toDate().getTime()) / 60000; // Fixing division by 60000 for correct minute calculation
+    (Date.now() - otpData.timestamp.toDate().getTime()) / 60000;
   if (otpAgeMinutes > OTP_EXPIRY_MINUTES) {
-    await blockDevice(deviceId, DEVICE_BLOCK_DURATION);
+    if (deviceId) {
+      await blockDevice(deviceId, DEVICE_BLOCK_DURATION);
+    }
     throw new functions.https.HttpsError(
       "deadline-exceeded",
       "OTP has expired. Please request a new one."
@@ -145,7 +156,9 @@ exports.verifyOtp = functions.https.onCall(async (data, context) => {
 
   // Verify OTP
   if (otpData.otp !== otp) {
-    await incrementFailedAttempts(formattedPhoneNumber, deviceId);
+    if (deviceId) {
+      await incrementFailedAttempts(formattedPhoneNumber, deviceId);
+    }
     throw new functions.https.HttpsError(
       "invalid-argument",
       "Incorrect OTP. Please try again."
@@ -169,7 +182,7 @@ exports.verifyOtp = functions.https.onCall(async (data, context) => {
     const customToken = await admin
       .auth()
       .createCustomToken(formattedPhoneNumber, {
-        role: userData.userRole || "student", // default role if not set
+        role: userData.userRole || "student",
         name: userData.name,
         mobileNumber: userData.mobileNumber || formattedPhoneNumber,
       });
@@ -180,9 +193,9 @@ exports.verifyOtp = functions.https.onCall(async (data, context) => {
   } else {
     // User does not exist, create a new user document
     const newUserData = {
-      name: "New Student", // Default name, can be updated later
+      name: "New Student",
       mobileNumber: formattedPhoneNumber,
-      userRole: "student", // Default role
+      userRole: "student",
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     };
